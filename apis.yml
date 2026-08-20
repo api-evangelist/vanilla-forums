@@ -42,6 +42,14 @@ tags:
 - Community
 - Forums
 - Community Management
+- Webhook
+- Customer Experience
+- Knowledge Base
+- Software-as-a-Service
+tags_raw:
+- Community
+- Forums
+- Community Management
 - Webhooks
 - Customer Experience
 - Knowledge Base
@@ -186,6 +194,8 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
+  - Collection
+  tags_raw:
   - Collections
   properties:
   - type: OpenAPI
@@ -295,6 +305,8 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
+  - Email Templates
+  tags_raw:
   - email-templates
   properties:
   - type: OpenAPI
@@ -319,6 +331,8 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
+  - Email Templates
+  tags_raw:
   - emailTemplates
   properties:
   - type: OpenAPI
@@ -331,6 +345,8 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
+  - Export
+  tags_raw:
   - Exports
   properties:
   - type: OpenAPI
@@ -429,6 +445,8 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
+  - Notification
+  tags_raw:
   - Notifications
   properties:
   - type: OpenAPI
@@ -731,6 +749,8 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
