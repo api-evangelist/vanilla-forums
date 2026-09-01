@@ -317,7 +317,7 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
-  - email-templates
+  - Email Templates
   tags_raw:
   - email-templates
   properties:
@@ -342,7 +342,8 @@ apis:
   description: The emailTemplates API from Vanilla Forums — 4 operation(s) for emailtemplates.
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
-  tags: []
+  tags:
+  - Email Templates
   tags_raw:
   - emailTemplates
   properties:
