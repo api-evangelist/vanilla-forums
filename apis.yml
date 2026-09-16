@@ -70,18 +70,6 @@ tags_raw:
 - Knowledge Base
 - SaaS
 apis:
-- aid: vanilla-forums:vanilla-forums-addons-api
-  name: Vanilla Forums Addons API
-  description: The Addons API from Vanilla Forums — 2 operation(s) for addons.
-  humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
-  baseURL: https://open.vanillaforums.com/api/v2
-  tags:
-  - Addons
-  properties:
-  - type: OpenAPI
-    url: openapi/vanilla-forums-addons-api-openapi.yml
-  - type: Documentation
-    url: https://success.vanillaforums.com/kb/categories/97-api-and-webhooks
 - aid: vanilla-forums:vanilla-forums-ai-processing-preferences-api
   name: Vanilla Forums AI Processing Preferences API
   description: >-
@@ -265,18 +253,6 @@ apis:
     url: openapi/vanilla-forums-dashboard-api-openapi.yml
   - type: Documentation
     url: https://success.vanillaforums.com/kb/categories/97-api-and-webhooks
-- aid: vanilla-forums:vanilla-forums-datasource-api
-  name: Vanilla Forums DataSource API
-  description: The DataSource API from Vanilla Forums — 3 operation(s) for datasource.
-  humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
-  baseURL: https://open.vanillaforums.com/api/v2
-  tags:
-  - DataSource
-  properties:
-  - type: OpenAPI
-    url: openapi/vanilla-forums-datasource-api-openapi.yml
-  - type: Documentation
-    url: https://success.vanillaforums.com/kb/categories/97-api-and-webhooks
 - aid: vanilla-forums:vanilla-forums-discussion-statuses-api
   name: Vanilla Forums Discussion Statuses API
   description: >-
@@ -338,20 +314,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/vanilla-forums-emails-api-openapi.yml
-  - type: Documentation
-    url: https://success.vanillaforums.com/kb/categories/97-api-and-webhooks
-- aid: vanilla-forums:vanilla-forums-emailtemplates-api
-  name: Vanilla Forums emailTemplates API
-  description: The emailTemplates API from Vanilla Forums — 4 operation(s) for emailtemplates.
-  humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
-  baseURL: https://open.vanillaforums.com/api/v2
-  tags:
-  - Email Templates
-  tags_raw:
-  - emailTemplates
-  properties:
-  - type: OpenAPI
-    url: openapi/vanilla-forums-emailtemplates-api-openapi.yml
   - type: Documentation
     url: https://success.vanillaforums.com/kb/categories/97-api-and-webhooks
 - aid: vanilla-forums:vanilla-forums-exports-api
@@ -782,6 +744,30 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/vanilla-forums-widgets-api-openapi.yml
+  - type: Documentation
+    url: https://success.vanillaforums.com/kb/categories/97-api-and-webhooks
+- aid: vanilla-forums:vanilla-forums-add-ons-api
+  name: Vanilla Forums Add Ons API
+  description: The Add Ons API from Vanilla Forums — 2 operation(s) for add ons.
+  humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
+  baseURL: https://open.vanillaforums.com/api/v2
+  tags:
+  - Add Ons
+  properties:
+  - type: OpenAPI
+    url: openapi/vanilla-forums-add-ons-api-openapi.yml
+  - type: Documentation
+    url: https://success.vanillaforums.com/kb/categories/97-api-and-webhooks
+- aid: vanilla-forums:vanilla-forums-data-source-api
+  name: Vanilla Forums Data Source API
+  description: The Data Source API from Vanilla Forums — 3 operation(s) for data source.
+  humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
+  baseURL: https://open.vanillaforums.com/api/v2
+  tags:
+  - Data Source
+  properties:
+  - type: OpenAPI
+    url: openapi/vanilla-forums-data-source-api-openapi.yml
   - type: Documentation
     url: https://success.vanillaforums.com/kb/categories/97-api-and-webhooks
 maintainers:
