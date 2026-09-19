@@ -247,6 +247,8 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
+  - Dashboards
+  tags_raw:
   - Dashboard
   properties:
   - type: OpenAPI
@@ -310,6 +312,8 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
+  - Email
+  tags_raw:
   - Emails
   properties:
   - type: OpenAPI
@@ -690,6 +694,8 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
+  - Translation
+  tags_raw:
   - Translations
   properties:
   - type: OpenAPI
@@ -752,6 +758,8 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
+  - Addons
+  tags_raw:
   - Add Ons
   properties:
   - type: OpenAPI
@@ -764,6 +772,8 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
+  - DataSource
+  tags_raw:
   - Data Source
   properties:
   - type: OpenAPI
@@ -776,6 +786,16 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+
+- type: ParentCompany
+
+  url: https://higherlogic.com/
+
+  name: Higher Logic
+
+  x-relationship: acquired
+
+  x-evidence: description names the acquirer and https://vanillaforums.com/ now redirects to higherlogic.com (roadmap#390, corroborate-dead.py)
 - type: CapabilityMap
   url: capabilities/vanilla-forums-capability-edges.yml
   name: Vanilla Forums Business Capability Map
