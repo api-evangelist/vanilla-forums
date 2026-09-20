@@ -787,6 +787,8 @@ maintainers:
   email: info@apis.io
 common:
 
+- type: Plans
+  url: plans/vanilla-forums-plans-pricing.yml
 - type: ParentCompany
 
   url: https://higherlogic.com/
