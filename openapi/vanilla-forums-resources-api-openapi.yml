@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Resources API
+  title: Vanilla Resources API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /resources:
     get:
-      summary: List the resources available on the site.
+      summary: List the resources available on the site
       tags:
       - Resources
       parameters:
@@ -49,9 +49,11 @@ paths:
         '403':
           $ref: '#/components/responses/PermissionError'
       x-addon: dashboard
+      operationId: getResources
+      x-operation-id-source: derived
   /resources/dirty-records/{recordType}:
     delete:
-      summary: Delete resources dirty records.
+      summary: Delete resources dirty records
       tags:
       - Resources
       parameters:
@@ -71,9 +73,11 @@ paths:
         '204':
           description: Success
       x-addon: dashboard
+      operationId: deleteResourcesDirtyRecordsByRecordType
+      x-operation-id-source: derived
   /resources/{recordType}:
     get:
-      summary: Get the details of a resource.
+      summary: Get the details of a resource
       tags:
       - Resources
       parameters:
@@ -113,8 +117,29 @@ paths:
         '403':
           $ref: '#/components/responses/PermissionError'
       x-addon: dashboard
+      operationId: getResourcesByRecordType
+      x-operation-id-source: derived
 components:
   schemas:
+    ResourceFragment:
+      description: Meta information about a resource.
+      type: object
+      properties:
+        recordType:
+          type: string
+          description: The record the resource represents. Also the unique ID of the resource.
+        url:
+          type: string
+          description: The URL of the resource meta information.
+          format: uri
+        crawlable:
+          type: boolean
+          description: Whether or not the resource has crawl information.
+      required:
+      - recordType
+      - url
+      - crawlable
+      x-addon: dashboard
     Resource:
       type: object
       properties:
@@ -165,25 +190,6 @@ components:
           max: 500000,
           count: 499560,
           parameter: discussionID
-      x-addon: dashboard
-    ResourceFragment:
-      description: Meta information about a resource.
-      type: object
-      properties:
-        recordType:
-          type: string
-          description: The record the resource represents. Also the unique ID of the resource.
-        url:
-          type: string
-          description: The URL of the resource meta information.
-          format: uri
-        crawlable:
-          type: boolean
-          description: Whether or not the resource has crawl information.
-      required:
-      - recordType
-      - url
-      - crawlable
       x-addon: dashboard
   responses:
     PermissionError:
@@ -332,8 +338,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

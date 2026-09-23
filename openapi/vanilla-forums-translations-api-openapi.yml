@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Translations API
+  title: Vanilla Translations API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /locales/translations/{locale}:
     get:
-      summary: Get all of the application's translation strings.
+      summary: Get all of the application's translation strings
       tags:
       - Translations
       parameters:
@@ -35,14 +35,14 @@ paths:
                   type: string
           description: Success
       x-addon: dashboard
+      operationId: getLocalesTranslationsByLocale
+      x-operation-id-source: derived
   /locales/translations/{locale}.js:
     get:
-      summary: Get the application's translations strings as a javascrpt file.
-      description: 'This endpoint is intended for application optimization where translations are requested within a `<script>` tag
+      summary: Get the application's translations strings as a javascrpt file
+      description: 'This endpoint is intended for application optimization where translations are requested within a `` tag
 
-        rather than as an external API call.
-
-        '
+        rather than as an external API call.'
       tags:
       - Translations
       parameters:
@@ -64,6 +64,8 @@ paths:
               schema:
                 type: string
       x-addon: dashboard
+      operationId: getLocalesTranslations{locale}Js
+      x-operation-id-source: derived
   /translations/{resourceUrlCode}:
     get:
       parameters:
@@ -135,8 +137,10 @@ paths:
           description: Success
       tags:
       - Translations
-      summary: Get translations from a specified resource.
+      summary: Get translations from a specified resource
       x-addon: dashboard
+      operationId: getTranslationsByResourceUrlCode
+      x-operation-id-source: derived
     patch:
       parameters:
       - description: resource to add\update in.
@@ -158,8 +162,10 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchTranslations'
         required: true
-      summary: Add or update translations.
+      summary: Add or update translations
       x-addon: dashboard
+      operationId: patchTranslationsByResourceUrlCode
+      x-operation-id-source: derived
   /translations/{resourceUrlCode}/remove:
     patch:
       parameters:
@@ -201,10 +207,52 @@ paths:
                 - locale
                 - propertyName
                 type: object
-      summary: Delete specified translations.
+      summary: Delete specified translations
       x-addon: dashboard
+      operationId: patchTranslationsByResourceUrlCodeRemove
+      x-operation-id-source: derived
 components:
+  parameters:
+    LocaleCodeParameter:
+      name: locale
+      in: path
+      description: The locale code requested.
+      required: true
+      schema:
+        type: string
+        pattern: '[a-zA-Z0-9-]+'
+      x-addon: dashboard
+    CacheBusterParameter:
+      name: etag
+      in: query
+      description: 'Whether or not output is cached.
+
+        '
+      schema:
+        type: string
+      x-addon: dashboard
   schemas:
+    Translation:
+      properties:
+        resource:
+          description: Name of the resource.
+          type: string
+        key:
+          description: a unique translation identifier.
+          type: string
+        locale:
+          description: The locale of the translation.
+          type: string
+        translation:
+          description: The translation sentence.
+          type: string
+      required:
+      - resource
+      - key
+      - locale
+      - translation
+      type: object
+      x-addon: dashboard
     PatchTranslations:
       type: array
       items:
@@ -233,46 +281,6 @@ components:
         - propertyName
         - translation
         type: object
-      x-addon: dashboard
-    Translation:
-      properties:
-        resource:
-          description: Name of the resource.
-          type: string
-        key:
-          description: a unique translation identifier.
-          type: string
-        locale:
-          description: The locale of the translation.
-          type: string
-        translation:
-          description: The translation sentence.
-          type: string
-      required:
-      - resource
-      - key
-      - locale
-      - translation
-      type: object
-      x-addon: dashboard
-  parameters:
-    CacheBusterParameter:
-      name: etag
-      in: query
-      description: 'Whether or not output is cached.
-
-        '
-      schema:
-        type: string
-      x-addon: dashboard
-    LocaleCodeParameter:
-      name: locale
-      in: path
-      description: The locale code requested.
-      required: true
-      schema:
-        type: string
-        pattern: '[a-zA-Z0-9-]+'
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -380,8 +388,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

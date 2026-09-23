@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Rich API
+  title: Vanilla Rich API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /rich/quote:
     post:
-      summary: Create a rich-compatible HTML representation of a string for quoting.
+      summary: Create a rich-compatible HTML representation of a string for quoting
       requestBody:
         content:
           application/json:
@@ -44,6 +44,8 @@ paths:
       tags:
       - Rich
       x-addon: dashboard
+      operationId: postRichQuote
+      x-operation-id-source: derived
 components:
   schemas:
     Format:
@@ -164,8 +166,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

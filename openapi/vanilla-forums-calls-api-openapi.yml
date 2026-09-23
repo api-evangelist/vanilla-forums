@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Calls API
+  title: Vanilla Calls API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /calls/run:
     post:
-      summary: Continue running a callbackPayload from a previous API call.
+      summary: Continue running a callbackPayload from a previous API call
       description: 'Various endoints may return a 202 status response with
 
         `callbackPayload` property in the body. Simply pass that
@@ -28,9 +28,7 @@ paths:
 
         4. This endpoint may return a 202 with another `callbackPayload`
 
-        5. Repeat until task is complete.
-
-        '
+        5. Repeat until task is complete.'
       tags:
       - Calls
       requestBody:
@@ -62,44 +60,10 @@ paths:
         '408':
           $ref: '#/components/responses/LongRunnerResponse'
       x-addon: dashboard
+      operationId: postCallsRun
+      x-operation-id-source: derived
 components:
-  responses:
-    LongRunnerResponse:
-      description: 'Endpoints that may time out and require the client to
-
-        progress them with the `/api/v2/calls` endpoints may return this.
-
-        '
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/LongRunnerResult'
-      x-addon: dashboard
   schemas:
-    LongRunnerResult:
-      description: 'Endpoints will return this if they may time out and require the client
-
-        to progress the task with additional requests.
-
-        '
-      type: object
-      required:
-      - progress
-      - callbackPayload
-      properties:
-        callbackPayload:
-          description: 'A signed JWT payload to pass to the /api/v2/calls endpoint in order to continue
-
-            progression of the task.
-
-            '
-          type: string
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-
-            '
-        progress:
-          $ref: '#/components/schemas/LongRunnerProgress'
-      x-addon: dashboard
     LongRunnerProgress:
       description: Progress of the task.
       type: object
@@ -148,6 +112,42 @@ components:
         countTotalIDs:
           description: Total count of records that can be progressed.
           type: integer
+      x-addon: dashboard
+    LongRunnerResult:
+      description: 'Endpoints will return this if they may time out and require the client
+
+        to progress the task with additional requests.
+
+        '
+      type: object
+      required:
+      - progress
+      - callbackPayload
+      properties:
+        callbackPayload:
+          description: 'A signed JWT payload to pass to the /api/v2/calls endpoint in order to continue
+
+            progression of the task.
+
+            '
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+            '
+        progress:
+          $ref: '#/components/schemas/LongRunnerProgress'
+      x-addon: dashboard
+  responses:
+    LongRunnerResponse:
+      description: 'Endpoints that may time out and require the client to
+
+        progress them with the `/api/v2/calls` endpoints may return this.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LongRunnerResult'
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -255,8 +255,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

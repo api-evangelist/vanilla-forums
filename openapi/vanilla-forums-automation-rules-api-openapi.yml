@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Automation Rules API
+  title: Vanilla Automation Rules API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -11,7 +11,7 @@ paths:
   /automation-rules/dispatches:
     x-hidden: false
     get:
-      summary: Get automation rule execution history.
+      summary: Get automation rule execution history
       tags:
       - Automation Rules
       parameters:
@@ -121,10 +121,12 @@ paths:
         '403':
           $ref: '#/components/responses/PermissionError'
       x-addon: dashboard
+      operationId: getAutomationRulesDispatches
+      x-operation-id-source: derived
   /automation-rules/{automationRuleID}/dispatches:
     x-hidden: false
     get:
-      summary: Get automation rule execution history.
+      summary: Get automation rule execution history
       tags:
       - Automation Rules
       parameters:
@@ -228,6 +230,8 @@ paths:
         '403':
           $ref: '#/components/responses/PermissionError'
       x-addon: dashboard
+      operationId: getAutomationRulesByAutomationRuleIDDispatches
+      x-operation-id-source: derived
   /automation-rules/{automationRuleID}/dispatches/{ruleDispatchID}:
     get:
       parameters:
@@ -258,52 +262,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AutomationDispatch'
-      summary: Get a specific dispatch execution record.
+      summary: Get a specific dispatch execution record
       tags:
       - Automation Rules
       x-addon: dashboard
+      operationId: getAutomationRulesByAutomationRuleIDDispatchesByRuleDispatchID
+      x-operation-id-source: derived
 components:
-  responses:
-    PermissionError:
-      description: Permission denied.
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-            - message
-            - status
-            - permissions
-            properties:
-              message:
-                type: string
-                description: A message that tells you the permissions you need.
-                example: Permission denied.
-              status:
-                type: integer
-                description: The HTTP status code for the error.
-                format: int32
-                example: 403
-              permissions:
-                description: The permissions the requesting user is missing.
-                type: array
-                items:
-                  type: string
-              recordIDs:
-                description: The recordIDs the user didn't have permission on.
-                type: array
-                items:
-                  type: integer
-          example:
-            status: 403
-            message: Permission Problem
-            permissions:
-            - Vanilla.Discussions.Edit
-            - Vanilla.Community.Manage
-            recordIDs:
-            - 2425
-            - 1342
-      x-addon: dashboard
   schemas:
     AutomationDispatch:
       description: 'provides the list of automation recipes that has been created by the user
@@ -393,6 +358,47 @@ components:
         type: integer
         default: 1
         minimum: 1
+      x-addon: dashboard
+  responses:
+    PermissionError:
+      description: Permission denied.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - message
+            - status
+            - permissions
+            properties:
+              message:
+                type: string
+                description: A message that tells you the permissions you need.
+                example: Permission denied.
+              status:
+                type: integer
+                description: The HTTP status code for the error.
+                format: int32
+                example: 403
+              permissions:
+                description: The permissions the requesting user is missing.
+                type: array
+                items:
+                  type: string
+              recordIDs:
+                description: The recordIDs the user didn't have permission on.
+                type: array
+                items:
+                  type: integer
+          example:
+            status: 403
+            message: Permission Problem
+            permissions:
+            - Vanilla.Discussions.Edit
+            - Vanilla.Community.Manage
+            recordIDs:
+            - 2425
+            - 1342
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -500,8 +506,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

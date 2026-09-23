@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Job Queue API
+  title: Vanilla Job Queue API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /job-queue-feedback:
     patch:
-      summary: Track job feedback.
+      summary: Track job feedback
       requestBody:
         content:
           application/json:
@@ -33,9 +33,11 @@ paths:
       tags:
       - Job Queue
       x-addon: vanilla-queue
+      operationId: patchJobQueueFeedback
+      x-operation-id-source: derived
   /job-queue/health-check:
     post:
-      summary: Trigger a health check job.
+      summary: Trigger a health check job
       responses:
         '202':
           content:
@@ -51,6 +53,8 @@ paths:
       tags:
       - Job Queue
       x-addon: vanilla-queue
+      operationId: postJobQueueHealthCheck
+      x-operation-id-source: derived
 components:
   schemas:
     JobFeedbackResponse:
@@ -201,8 +205,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

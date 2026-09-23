@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Widgets API
+  title: Vanilla Widgets API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -32,6 +32,8 @@ paths:
           type: array
           items:
             type: string
+      operationId: getWidgets
+      x-operation-id-source: derived
   /widgets/{name}:
     get:
       parameters:
@@ -58,8 +60,10 @@ paths:
           description: Success
       tags:
       - Widgets
-      summary: Get widget by name.
+      summary: Get widget by name
       x-addon: vanilla
+      operationId: getWidgetsByName
+      x-operation-id-source: derived
 components:
   schemas:
     Widget:
@@ -187,8 +191,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

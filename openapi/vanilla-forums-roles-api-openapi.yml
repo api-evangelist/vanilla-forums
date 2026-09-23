@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Roles API
+  title: Vanilla Roles API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -53,8 +53,10 @@ paths:
           description: Success
       tags:
       - Roles
-      summary: List roles.
+      summary: List roles
       x-addon: dashboard
+      operationId: getRoles
+      x-operation-id-source: derived
     post:
       responses:
         '201':
@@ -67,8 +69,10 @@ paths:
       - Roles
       requestBody:
         $ref: '#/components/requestBodies/RolePost'
-      summary: Add a role.
+      summary: Add a role
       x-addon: dashboard
+      operationId: postRoles
+      x-operation-id-source: derived
   /roles/{id}:
     delete:
       parameters:
@@ -85,8 +89,10 @@ paths:
           description: Success
       tags:
       - Roles
-      summary: Delete a role.
+      summary: Delete a role
       x-addon: dashboard
+      operationId: deleteRolesById
+      x-operation-id-source: derived
     get:
       parameters:
       - description: 'The role ID.
@@ -127,8 +133,10 @@ paths:
           description: Success
       tags:
       - Roles
-      summary: Get a role.
+      summary: Get a role
       x-addon: dashboard
+      operationId: getRolesById
+      x-operation-id-source: derived
     patch:
       parameters:
       - description: The role ID.
@@ -152,8 +160,10 @@ paths:
             schema:
               $ref: '#/components/schemas/RolePost'
         required: true
-      summary: Update a role.
+      summary: Update a role
       x-addon: dashboard
+      operationId: patchRolesById
+      x-operation-id-source: derived
   /roles/{id}/edit:
     get:
       parameters:
@@ -188,8 +198,9 @@ paths:
                   description:
                     description: Description of the role.
                     minLength: 0
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   name:
                     description: Name of the role.
                     minLength: 1
@@ -203,13 +214,15 @@ paths:
                   type:
                     description: Default type of this role.
                     minLength: 0
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   domains:
                     description: Email domains of roles.
                     minLength: 0
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                 required:
                 - roleID
                 - name
@@ -222,8 +235,10 @@ paths:
           description: Success
       tags:
       - Roles
-      summary: Get a role for editing.
+      summary: Get a role for editing
       x-addon: dashboard
+      operationId: getRolesByIdEdit
+      x-operation-id-source: derived
   /roles/{id}/permissions:
     patch:
       parameters:
@@ -253,6 +268,8 @@ paths:
         required: true
       summary: Update permissions on a role
       x-addon: dashboard
+      operationId: patchRolesByIdPermissions
+      x-operation-id-source: derived
     put:
       parameters:
       - in: path
@@ -279,18 +296,53 @@ paths:
                 $ref: '#/components/schemas/PermissionFragment'
               type: array
         required: true
-      summary: Overwrite all permissions for a role.
+      summary: Overwrite all permissions for a role
       x-addon: dashboard
+      operationId: putRolesByIdPermissions
+      x-operation-id-source: derived
 components:
-  requestBodies:
-    RolePost:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RolePost'
-      required: true
-      x-addon: dashboard
   schemas:
+    RolePost:
+      properties:
+        canSession:
+          description: Can users in this role start a session?
+          type: boolean
+        deletable:
+          description: Is the role deletable?
+          type: boolean
+        description:
+          description: Description of the role.
+          minLength: 0
+          type:
+          - string
+          - 'null'
+        name:
+          description: Name of the role.
+          minLength: 1
+          type: string
+        permissions:
+          items:
+            $ref: '#/components/schemas/PermissionFragment'
+          type: array
+        personalInfo:
+          description: Is membership in this role personal information?
+          type: boolean
+        type:
+          description: Default type of this role.
+          minLength: 0
+          type:
+          - string
+          - 'null'
+        domains:
+          description: Email domains of roles.
+          minLength: 0
+          type:
+          - string
+          - 'null'
+      required:
+      - name
+      type: object
+      x-addon: dashboard
     PermissionFragment:
       properties:
         id:
@@ -319,8 +371,9 @@ components:
         description:
           description: Description of the role.
           minLength: 0
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         name:
           description: Name of the role.
           minLength: 1
@@ -338,13 +391,15 @@ components:
         type:
           description: Default type of this role.
           minLength: 0
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         domains:
           description: Email domains of roles.
           minLength: 0
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
       required:
       - roleID
       - name
@@ -355,43 +410,13 @@ components:
       - personalInfo
       type: object
       x-addon: dashboard
+  requestBodies:
     RolePost:
-      properties:
-        canSession:
-          description: Can users in this role start a session?
-          type: boolean
-        deletable:
-          description: Is the role deletable?
-          type: boolean
-        description:
-          description: Description of the role.
-          minLength: 0
-          nullable: true
-          type: string
-        name:
-          description: Name of the role.
-          minLength: 1
-          type: string
-        permissions:
-          items:
-            $ref: '#/components/schemas/PermissionFragment'
-          type: array
-        personalInfo:
-          description: Is membership in this role personal information?
-          type: boolean
-        type:
-          description: Default type of this role.
-          minLength: 0
-          nullable: true
-          type: string
-        domains:
-          description: Email domains of roles.
-          minLength: 0
-          nullable: true
-          type: string
-      required:
-      - name
-      type: object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RolePost'
+      required: true
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -499,8 +524,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons User Mentions API
+  title: Vanilla User Mentions API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -83,14 +83,16 @@ paths:
           description: Success
       tags:
       - User Mentions
-      summary: List the user mentions of a user.
+      summary: List the user mentions of a user
       x-addon: dashboard
+      operationId: getUserMentionsUsersByUserID
+      x-operation-id-source: derived
   /user-mentions/{id}/anonymize:
     x-hidden: false
     post:
       tags:
       - User Mentions
-      summary: Anonymize a user's mentions.
+      summary: Anonymize a user's mentions
       parameters:
       - name: id
         description: The userID of the user to anonymize.
@@ -129,6 +131,8 @@ paths:
                 type: array
           description: Success
       x-addon: dashboard
+      operationId: postUserMentionsByIdAnonymize
+      x-operation-id-source: derived
 x-resourceEvents:
   emailTemplates:
     x-feature: Feature.emailTemplates.Enabled
@@ -235,8 +239,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

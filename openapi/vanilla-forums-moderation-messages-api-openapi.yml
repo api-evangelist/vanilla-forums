@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Moderation Messages API
+  title: Vanilla Moderation Messages API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /moderation-messages:
     post:
-      summary: Post a moderation message.
+      summary: Post a moderation message
       tags:
       - Moderation Messages
       requestBody:
@@ -28,8 +28,10 @@ paths:
                 type: array
           description: Success
       x-addon: dashboard
+      operationId: postModerationMessages
+      x-operation-id-source: derived
     get:
-      summary: Get a list of moderation messages.
+      summary: Get a list of moderation messages
       tags:
       - Moderation Messages
       parameters:
@@ -76,6 +78,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/ModerationMessage'
       x-addon: dashboard
+      operationId: getModerationMessages
+      x-operation-id-source: derived
   /moderation-messages/{id}:
     parameters:
     - name: id
@@ -85,7 +89,7 @@ paths:
         type: integer
       x-addon: dashboard
     get:
-      summary: Get a moderation message by its ID.
+      summary: Get a moderation message by its ID
       tags:
       - Moderation Messages
       responses:
@@ -109,8 +113,10 @@ paths:
           type: array
           items:
             type: string
+      operationId: getModerationMessagesById
+      x-operation-id-source: derived
     patch:
-      summary: Edit a moderation message.
+      summary: Edit a moderation message
       tags:
       - Moderation Messages
       requestBody:
@@ -130,8 +136,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: dashboard
+      operationId: patchModerationMessagesById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a moderation message.
+      summary: Delete a moderation message
       tags:
       - Moderation Messages
       responses:
@@ -142,6 +150,8 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: dashboard
+      operationId: deleteModerationMessagesById
+      x-operation-id-source: derived
   /moderation-messages/{id}/dismiss:
     parameters:
     - name: id
@@ -151,7 +161,7 @@ paths:
         type: integer
       x-addon: dashboard
     put:
-      summary: Dismiss a moderation message for the session user.
+      summary: Dismiss a moderation message for the session user
       tags:
       - Moderation Messages
       responses:
@@ -165,7 +175,209 @@ paths:
                   dismissed:
                     type: boolean
       x-addon: dashboard
+      operationId: putModerationMessagesByIdDismiss
+      x-operation-id-source: derived
 components:
+  schemas:
+    Format:
+      description: The format of the body used to convert it to HTML.
+      type: string
+      enum:
+      - rich
+      - markdown
+      - text
+      - textex
+      - wysiwyg
+      - bbcode
+      example: markdown
+      x-addon: dashboard
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+      x-addon: dashboard
+    ModerationMessagePatch:
+      type: object
+      properties:
+        body:
+          type: string
+          description: The content of the message.
+        format:
+          $ref: '#/components/schemas/Format'
+        isDismissible:
+          type: boolean
+          description: Whether the moderation message can be dismissed by a user.
+          default: false
+        isEnabled:
+          type: boolean
+          description: Whether the message is enabled.
+          default: false
+        recordType:
+          type:
+          - string
+          - 'null'
+          enum:
+          - category
+          description: The record type (i.e., category) associated with the message, if any.
+          default: null
+        recordID:
+          type:
+          - integer
+          - 'null'
+          description: The recordID associated with the message, if any.
+          default: null
+        includeDescendants:
+          type: boolean
+          description: Whether to display the message for descendants of the record it's associated with (i.e., subcategories).
+        type:
+          type: string
+          description: The type of moderation message.
+          enum:
+          - casual
+          - info
+          - alert
+          - warning
+        viewLocation:
+          type: string
+          description: Where on the page the message should appear.
+          enum:
+          - content
+          - panel
+        layoutViewType:
+          $ref: '#/components/schemas/LayoutViewType'
+      x-addon: dashboard
+    ModerationMessage:
+      type: object
+      properties:
+        moderationMessageID:
+          type: integer
+          description: The id of the message.
+        body:
+          type: string
+          description: The content of the message.
+        format:
+          $ref: '#/components/schemas/Format'
+        isDismissible:
+          type: boolean
+          description: Whether the moderation message can be dismissed by a user.
+        isEnabled:
+          type: boolean
+          description: Whether the message is enabled.
+        recordType:
+          type:
+          - string
+          - 'null'
+          enum:
+          - category
+          description: The record type (i.e., category) associated with the message, if any.
+        recordID:
+          type:
+          - integer
+          - 'null'
+          description: The recordID associated with the message, if any.
+        includeDescendants:
+          type: boolean
+          description: Whether to display the message for descendants of the record it's associated with (i.e., subcategories).
+        type:
+          type: string
+          description: The type of moderation message.
+          enum:
+          - casual
+          - info
+          - alert
+          - warning
+        viewLocation:
+          type: string
+          description: Where on the page the message should appear.
+          enum:
+          - content
+          - panel
+        layoutViewType:
+          $ref: '#/components/schemas/LayoutViewType'
+      required:
+      - body
+      - format
+      - viewLocation
+      - moderationMessageID
+      - isEnabled
+      - isDismissible
+      x-addon: dashboard
+    LayoutViewType:
+      description: Type of resource to which this layout applies
+      type: string
+      enum:
+      - all
+      - newQuestion
+      - question
+      - newIdea
+      - idea
+      - poll
+      - categoryList
+      - discussionList
+      - categoryList
+      - nestedCategoryList
+      - discussionCategoryPage
+      - discussion
+      - newDiscussion
+      - home
+      - profile
+      - registration
+      - signin
+      - inbox
+      x-addon: dashboard
+    ModerationMessagePost:
+      type: object
+      properties:
+        body:
+          type: string
+          description: The content of the message.
+        format:
+          $ref: '#/components/schemas/Format'
+        isDismissible:
+          type: boolean
+          description: Whether the moderation message can be dismissed by a user.
+        isEnabled:
+          type: boolean
+          description: Whether the message is enabled.
+        recordType:
+          type:
+          - string
+          - 'null'
+          enum:
+          - category
+          description: The record type (i.e., category) associated with the message, if any.
+        recordID:
+          type:
+          - integer
+          - 'null'
+          description: The recordID associated with the message, if any.
+        includeDescendants:
+          type: boolean
+          description: Whether to display the message for descendants of the record it's associated with (i.e., subcategories).
+        type:
+          type: string
+          description: The type of moderation message.
+          enum:
+          - casual
+          - info
+          - alert
+          - warning
+        viewLocation:
+          type: string
+          description: Where on the page the message should appear.
+          enum:
+          - content
+          - panel
+        layoutViewType:
+          $ref: '#/components/schemas/LayoutViewType'
+      required:
+      - body
+      - format
+      - layoutViewType
+      - viewLocation
+      x-addon: dashboard
   responses:
     NotFound:
       description: The record does not exist or was not found.
@@ -226,200 +438,6 @@ components:
             recordIDs:
             - 2425
             - 1342
-      x-addon: dashboard
-  schemas:
-    ModerationMessage:
-      type: object
-      properties:
-        moderationMessageID:
-          type: integer
-          description: The id of the message.
-        body:
-          type: string
-          description: The content of the message.
-        format:
-          $ref: '#/components/schemas/Format'
-        isDismissible:
-          type: boolean
-          description: Whether the moderation message can be dismissed by a user.
-        isEnabled:
-          type: boolean
-          description: Whether the message is enabled.
-        recordType:
-          type: string
-          nullable: true
-          enum:
-          - category
-          description: The record type (i.e., category) associated with the message, if any.
-        recordID:
-          type: integer
-          nullable: true
-          description: The recordID associated with the message, if any.
-        includeDescendants:
-          type: boolean
-          description: Whether to display the message for descendants of the record it's associated with (i.e., subcategories).
-        type:
-          type: string
-          description: The type of moderation message.
-          enum:
-          - casual
-          - info
-          - alert
-          - warning
-        viewLocation:
-          type: string
-          description: Where on the page the message should appear.
-          enum:
-          - content
-          - panel
-        layoutViewType:
-          $ref: '#/components/schemas/LayoutViewType'
-      required:
-      - body
-      - format
-      - viewLocation
-      - moderationMessageID
-      - isEnabled
-      - isDismissible
-      x-addon: dashboard
-    ModerationMessagePost:
-      type: object
-      properties:
-        body:
-          type: string
-          description: The content of the message.
-        format:
-          $ref: '#/components/schemas/Format'
-        isDismissible:
-          type: boolean
-          description: Whether the moderation message can be dismissed by a user.
-        isEnabled:
-          type: boolean
-          description: Whether the message is enabled.
-        recordType:
-          type: string
-          nullable: true
-          enum:
-          - category
-          description: The record type (i.e., category) associated with the message, if any.
-        recordID:
-          type: integer
-          nullable: true
-          description: The recordID associated with the message, if any.
-        includeDescendants:
-          type: boolean
-          description: Whether to display the message for descendants of the record it's associated with (i.e., subcategories).
-        type:
-          type: string
-          description: The type of moderation message.
-          enum:
-          - casual
-          - info
-          - alert
-          - warning
-        viewLocation:
-          type: string
-          description: Where on the page the message should appear.
-          enum:
-          - content
-          - panel
-        layoutViewType:
-          $ref: '#/components/schemas/LayoutViewType'
-      required:
-      - body
-      - format
-      - layoutViewType
-      - viewLocation
-      x-addon: dashboard
-    ModerationMessagePatch:
-      type: object
-      properties:
-        body:
-          type: string
-          description: The content of the message.
-        format:
-          $ref: '#/components/schemas/Format'
-        isDismissible:
-          type: boolean
-          description: Whether the moderation message can be dismissed by a user.
-          default: false
-        isEnabled:
-          type: boolean
-          description: Whether the message is enabled.
-          default: false
-        recordType:
-          type: string
-          nullable: true
-          enum:
-          - category
-          description: The record type (i.e., category) associated with the message, if any.
-          default: null
-        recordID:
-          type: integer
-          nullable: true
-          description: The recordID associated with the message, if any.
-          default: null
-        includeDescendants:
-          type: boolean
-          description: Whether to display the message for descendants of the record it's associated with (i.e., subcategories).
-        type:
-          type: string
-          description: The type of moderation message.
-          enum:
-          - casual
-          - info
-          - alert
-          - warning
-        viewLocation:
-          type: string
-          description: Where on the page the message should appear.
-          enum:
-          - content
-          - panel
-        layoutViewType:
-          $ref: '#/components/schemas/LayoutViewType'
-      x-addon: dashboard
-    Format:
-      description: The format of the body used to convert it to HTML.
-      type: string
-      enum:
-      - rich
-      - markdown
-      - text
-      - textex
-      - wysiwyg
-      - bbcode
-      example: markdown
-      x-addon: dashboard
-    LayoutViewType:
-      description: Type of resource to which this layout applies
-      type: string
-      enum:
-      - all
-      - newQuestion
-      - question
-      - newIdea
-      - idea
-      - poll
-      - categoryList
-      - discussionList
-      - categoryList
-      - nestedCategoryList
-      - discussionCategoryPage
-      - discussion
-      - newDiscussion
-      - home
-      - profile
-      - registration
-      - signin
-      - inbox
-      x-addon: dashboard
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -527,8 +545,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

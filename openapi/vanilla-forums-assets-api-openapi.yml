@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Assets API
+  title: Vanilla Assets API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -15,7 +15,7 @@ paths:
           description: Redirects to the current embed script.
       tags:
       - Assets
-      summary: Redirect to the latest version of vanilla's embed script.
+      summary: Redirect to the latest version of vanilla's embed script
       x-addon: dashboard
       parameters:
       - name: fields
@@ -26,6 +26,8 @@ paths:
           type: array
           items:
             type: string
+      operationId: getAssetsEmbedScript
+      x-operation-id-source: derived
 x-resourceEvents:
   emailTemplates:
     x-feature: Feature.emailTemplates.Enabled
@@ -132,8 +134,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

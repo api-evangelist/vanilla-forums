@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Appeals API
+  title: Vanilla Appeals API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,10 +10,8 @@ tags:
 paths:
   /appeals:
     post:
-      summary: Create an appeal.
-      description: 'Create a new appeal for a ban or content removal decision.
-
-        '
+      summary: Create an appeal
+      description: Create a new appeal for a ban or content removal decision.
       tags:
       - Appeals
       requestBody:
@@ -36,8 +34,10 @@ paths:
         '404':
           description: Not Found - Referenced record does not exist
       x-addon: dashboard
+      operationId: postAppeals
+      x-operation-id-source: derived
     get:
-      summary: List appeals.
+      summary: List appeals
       description: Get a list of appeals with optional filtering. Requires community.manage permission.
       tags:
       - Appeals
@@ -120,9 +120,11 @@ paths:
         '403':
           description: Forbidden
       x-addon: dashboard
+      operationId: getAppeals
+      x-operation-id-source: derived
   /appeals/{id}:
     get:
-      summary: Get a single appeal.
+      summary: Get a single appeal
       description: Get an appeal by ID. Users can view their own appeals, or moderators with community.manage can view all appeals.
       tags:
       - Appeals
@@ -148,11 +150,11 @@ paths:
         '404':
           description: Not Found
       x-addon: dashboard
+      operationId: getAppealsById
+      x-operation-id-source: derived
     patch:
-      summary: Update an appeal.
-      description: 'Update an appeal''s status or assignment. Requires community.manage permission.
-
-        '
+      summary: Update an appeal
+      description: Update an appeal's status or assignment. Requires community.manage permission.
       tags:
       - Appeals
       parameters:
@@ -177,45 +179,40 @@ paths:
         '404':
           description: Not Found
       x-addon: dashboard
+      operationId: patchAppealsById
+      x-operation-id-source: derived
 components:
-  schemas:
-    AppealPatch:
-      type: object
-      description: 'Schema for updating an appeal. Requires community.manage permission.
+  parameters:
+    DateInserted:
+      name: dateInserted
+      in: query
+      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
 
         '
-      properties:
-        status:
-          type: string
-          description: 'Update the appeal status. Can only be set by the assigned user.
-
-            '
-          enum:
-          - pending
-          - approved
-          - rejected
-          - in-review
-        assignedUserID:
-          type: integer
-          description: 'Update the moderator assigned to the appeal.
-
-            Cannot assign to the same moderator who created the original ban/removal.
-
-            '
-          nullable: true
-        appealEventInfo:
-          type: object
-          description: Additional information about the appeal decision.
-          properties:
-            decisionMessage:
-              type: string
-              description: 'Message explaining the decision on the appeal.
-
-                Can only be set by the assigned user.
-
-                '
-              nullable: true
+      schema:
+        format: date-filter
+        type: string
       x-addon: dashboard
+    AppealID:
+      name: id
+      in: path
+      description: The ID of the appeal.
+      required: true
+      schema:
+        type: integer
+      x-addon: dashboard
+    Page:
+      name: page
+      in: query
+      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
+
+        '
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      x-addon: dashboard
+  schemas:
     Appeal:
       type: object
       properties:
@@ -240,29 +237,33 @@ components:
           type: integer
           description: The ID of the user who created the appeal record.
         assignedUserID:
-          type: integer
+          type:
+          - integer
+          - 'null'
           description: The ID of the moderator assigned to review the appeal.
-          nullable: true
         appealingUserID:
           type: integer
           description: The ID of the user making the appeal.
         escalationID:
-          type: integer
+          type:
+          - integer
+          - 'null'
           description: The escalation ID for content-removal appeals.
-          nullable: true
         escalationLogID:
-          type: integer
+          type:
+          - integer
+          - 'null'
           description: The escalation log ID for content-removal appeals.
-          nullable: true
         dateInserted:
           type: string
           format: date-time
           description: When the appeal was created.
         dateUpdated:
-          type: string
+          type:
+          - string
+          - 'null'
           format: date-time
           description: When the appeal was last updated.
-          nullable: true
         appealText:
           type: string
           description: The user's appeal message.
@@ -277,9 +278,10 @@ components:
               type: string
               description: The username.
             email:
-              type: string
+              type:
+              - string
+              - 'null'
               description: The user's email address.
-              nullable: true
           required:
           - userID
           - name
@@ -292,47 +294,56 @@ components:
             '
           properties:
             userNoteID:
-              type: integer
+              type:
+              - integer
+              - 'null'
               description: The ID of the user note (for ban appeals).
-              nullable: true
             moderatorUserID:
-              type: integer
+              type:
+              - integer
+              - 'null'
               description: The ID of the moderator who made the decision.
-              nullable: true
             moderatorName:
-              type: string
+              type:
+              - string
+              - 'null'
               description: The name of the moderator who made the decision.
-              nullable: true
             reasons:
-              type: array
+              type:
+              - array
+              - 'null'
               description: The reasons given for the ban or content removal.
               items:
                 type: string
-              nullable: true
             moderatorMessage:
-              type: string
+              type:
+              - string
+              - 'null'
               description: The message from the moderator at time of ban/removal.
-              nullable: true
             dateOfEvent:
-              type: string
+              type:
+              - string
+              - 'null'
               format: date-time
               description: When the ban or content removal occurred.
-              nullable: true
             recordType:
-              type: string
+              type:
+              - string
+              - 'null'
               description: The type of record (for content-removal appeals).
               enum:
               - discussion
               - comment
-              nullable: true
             recordID:
-              type: integer
+              type:
+              - integer
+              - 'null'
               description: The ID of the record that was removed (for content-removal appeals).
-              nullable: true
             decisionMessage:
-              type: string
+              type:
+              - string
+              - 'null'
               description: The decision message added when resolving the appeal.
-              nullable: true
       required:
       - appealID
       - type
@@ -362,35 +373,44 @@ components:
         jwt: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
         appealText: I believe this ban was unjust because I was following community guidelines.
       x-addon: dashboard
-  parameters:
-    DateInserted:
-      name: dateInserted
-      in: query
-      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
+    AppealPatch:
+      type: object
+      description: 'Schema for updating an appeal. Requires community.manage permission.
 
         '
-      schema:
-        format: date-filter
-        type: string
-      x-addon: dashboard
-    Page:
-      name: page
-      in: query
-      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
+      properties:
+        status:
+          type: string
+          description: 'Update the appeal status. Can only be set by the assigned user.
 
-        '
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
-      x-addon: dashboard
-    AppealID:
-      name: id
-      in: path
-      description: The ID of the appeal.
-      required: true
-      schema:
-        type: integer
+            '
+          enum:
+          - pending
+          - approved
+          - rejected
+          - in-review
+        assignedUserID:
+          type:
+          - integer
+          - 'null'
+          description: 'Update the moderator assigned to the appeal.
+
+            Cannot assign to the same moderator who created the original ban/removal.
+
+            '
+        appealEventInfo:
+          type: object
+          description: Additional information about the appeal decision.
+          properties:
+            decisionMessage:
+              type:
+              - string
+              - 'null'
+              description: 'Message explaining the decision on the appeal.
+
+                Can only be set by the assigned user.
+
+                '
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -498,8 +518,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

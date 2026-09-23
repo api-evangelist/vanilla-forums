@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Categories API
+  title: Vanilla Categories API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -219,8 +219,9 @@ paths:
                           description:
                             description: The description of the category.
                             minLength: 0
-                            nullable: true
-                            type: string
+                            type:
+                            - string
+                            - 'null'
                           displayAs:
                             type: string
                             default: discussions
@@ -243,8 +244,9 @@ paths:
                             type: string
                           parentCategoryID:
                             description: Parent category ID.
-                            nullable: true
-                            type: integer
+                            type:
+                            - integer
+                            - 'null'
                           url:
                             description: The URL to the category.
                             minLength: 1
@@ -304,8 +306,9 @@ paths:
                     description:
                       description: The description of the category.
                       minLength: 0
-                      nullable: true
-                      type: string
+                      type:
+                      - string
+                      - 'null'
                     displayAs:
                       type: string
                       default: discussions
@@ -321,8 +324,9 @@ paths:
                       type: boolean
                     iconUrl:
                       description: The URL of the category's icon.
-                      nullable: true
-                      type: string
+                      type:
+                      - string
+                      - 'null'
                     iconUrlSrcSet:
                       $ref: '#/components/schemas/SrcSet'
                     isArchived:
@@ -334,8 +338,9 @@ paths:
                       type: string
                     parentCategoryID:
                       description: Parent category ID.
-                      nullable: true
-                      type: integer
+                      type:
+                      - integer
+                      - 'null'
                     url:
                       description: The URL to the category.
                       minLength: 1
@@ -375,8 +380,10 @@ paths:
           description: Success
       tags:
       - Categories
-      summary: List categories.
+      summary: List categories
       x-addon: vanilla
+      operationId: getCategories
+      x-operation-id-source: derived
     post:
       responses:
         '201':
@@ -411,8 +418,9 @@ paths:
                   description:
                     description: The description of the category.
                     minLength: 0
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   displayAs:
                     type: string
                     default: discussions
@@ -435,8 +443,9 @@ paths:
                     type: string
                   parentCategoryID:
                     description: Parent category ID.
-                    nullable: true
-                    type: integer
+                    type:
+                    - integer
+                    - 'null'
                   url:
                     description: The URL to the category.
                     minLength: 1
@@ -474,8 +483,10 @@ paths:
       - Categories
       requestBody:
         $ref: '#/components/requestBodies/CategoryPost'
-      summary: Add a category.
+      summary: Add a category
       x-addon: vanilla
+      operationId: postCategories
+      x-operation-id-source: derived
   /categories/search:
     get:
       parameters:
@@ -598,8 +609,9 @@ paths:
                     description:
                       description: The description of the category.
                       minLength: 0
-                      nullable: true
-                      type: string
+                      type:
+                      - string
+                      - 'null'
                     displayAs:
                       type: string
                       default: discussions
@@ -622,8 +634,9 @@ paths:
                       type: string
                     parentCategoryID:
                       description: Parent category ID.
-                      nullable: true
-                      type: integer
+                      type:
+                      - integer
+                      - 'null'
                     url:
                       description: The URL to the category.
                       minLength: 1
@@ -669,8 +682,10 @@ paths:
           description: Success
       tags:
       - Categories
-      summary: Search categories.
+      summary: Search categories
       x-addon: vanilla
+      operationId: getCategoriesSearch
+      x-operation-id-source: derived
   /categories/{id}:
     delete:
       parameters:
@@ -687,8 +702,10 @@ paths:
           description: Success
       tags:
       - Categories
-      summary: Delete a category.
+      summary: Delete a category
       x-addon: vanilla
+      operationId: deleteCategoriesById
+      x-operation-id-source: derived
     get:
       parameters:
       - description: 'The category ID.
@@ -736,8 +753,10 @@ paths:
           description: Success
       tags:
       - Categories
-      summary: Get a category.
+      summary: Get a category
       x-addon: vanilla
+      operationId: getCategoriesById
+      x-operation-id-source: derived
     patch:
       parameters:
       - description: The category ID.
@@ -779,8 +798,9 @@ paths:
                   description:
                     description: The description of the category.
                     minLength: 0
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   displayAs:
                     type: string
                     default: discussions
@@ -803,8 +823,9 @@ paths:
                     type: string
                   parentCategoryID:
                     description: Parent category ID.
-                    nullable: true
-                    type: integer
+                    type:
+                    - integer
+                    - 'null'
                   url:
                     description: The URL to the category.
                     minLength: 1
@@ -839,8 +860,10 @@ paths:
             schema:
               $ref: '#/components/schemas/CategoryPost'
         required: true
-      summary: Update a category.
+      summary: Update a category
       x-addon: vanilla
+      operationId: patchCategoriesById
+      x-operation-id-source: derived
   /categories/{id}/edit:
     get:
       parameters:
@@ -872,8 +895,9 @@ paths:
                   description:
                     description: The description of the category.
                     minLength: 0
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   displayAs:
                     type: string
                     default: discussions
@@ -890,8 +914,9 @@ paths:
                     type: string
                   parentCategoryID:
                     description: Parent category ID.
-                    nullable: true
-                    type: integer
+                    type:
+                    - integer
+                    - 'null'
                   urlcode:
                     description: The URL code of the category.
                     minLength: 1
@@ -907,8 +932,10 @@ paths:
           description: Success
       tags:
       - Categories
-      summary: Get a category for editing.
+      summary: Get a category for editing
       x-addon: vanilla
+      operationId: getCategoriesByIdEdit
+      x-operation-id-source: derived
   /categories/{id}/follow:
     put:
       parameters:
@@ -945,6 +972,10 @@ paths:
               type: object
         required: true
       x-addon: vanilla
+      summary: Replace categories by id follow
+      x-summary-source: derived
+      operationId: putCategoriesByIdFollow
+      x-operation-id-source: derived
   /categories/{id}/preferences/{userID}:
     parameters:
     - in: path
@@ -963,7 +994,7 @@ paths:
     get:
       tags:
       - Categories
-      summary: List a user's category preferences.
+      summary: List a user's category preferences
       responses:
         '200':
           content:
@@ -981,10 +1012,12 @@ paths:
           type: array
           items:
             type: string
+      operationId: getCategoriesByIdPreferencesByUserID
+      x-operation-id-source: derived
     patch:
       tags:
       - Categories
-      summary: Set a user's category preferences.
+      summary: Set a user's category preferences
       requestBody:
         content:
           application/json:
@@ -998,32 +1031,10 @@ paths:
                 $ref: '#/components/schemas/CategoryPreferences'
           description: Success
       x-addon: vanilla
+      operationId: patchCategoriesByIdPreferencesByUserID
+      x-operation-id-source: derived
 components:
   schemas:
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
-      x-addon: dashboard
-    CategoryPreferences:
-      type: object
-      properties:
-        preferences.followed:
-          type: boolean
-        preferences.popup.posts:
-          type: boolean
-        preferences.email.posts:
-          type: boolean
-        preferences.popup.comments:
-          type: boolean
-        preferences.email.comments:
-          type: boolean
-        preferences.email.digest:
-          type: boolean
-          x-feature: Digest
-      x-addon: vanilla
     UserFragment:
       oneOf:
       - type: object
@@ -1046,8 +1057,9 @@ components:
           dateLastActive:
             description: Time the user was last active.
             format: date-time
-            nullable: true
-            type: string
+            type:
+            - string
+            - 'null'
           ssoID:
             description: The unique ID of the user from the source site, if using SSO.
             type: string
@@ -1074,6 +1086,19 @@ components:
         required:
         - ssoID
       x-addon: dashboard
+    DiscussionPermissions:
+      type: object
+      description: Permissions for the current user related to discussions. Applied when expanded..
+      example:
+        discussions.view: true
+        discussions.add: true
+        discussions.edit: false
+        discussions.delete: false
+        discussions.sink: false
+        comments.add: true
+        comments.edit: false
+        comments.delete: false
+      x-addon: vanilla
     CategoryPost:
       properties:
         customPermissions:
@@ -1095,8 +1120,9 @@ components:
           type: string
         parentCategoryID:
           description: Parent category ID.
-          nullable: true
-          type: integer
+          type:
+          - integer
+          - 'null'
         urlcode:
           description: The URL code of the category.
           minLength: 1
@@ -1134,6 +1160,47 @@ components:
       - urlcode
       type: object
       x-addon: vanilla
+    CategoryPreferences:
+      type: object
+      properties:
+        preferences.followed:
+          type: boolean
+        preferences.popup.posts:
+          type: boolean
+        preferences.email.posts:
+          type: boolean
+        preferences.popup.comments:
+          type: boolean
+        preferences.email.comments:
+          type: boolean
+        preferences.email.digest:
+          type: boolean
+          x-feature: Digest
+      x-addon: vanilla
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+      x-addon: dashboard
+    SrcSet:
+      description: An image's srcset for various sizes.
+      type: object
+      properties:
+        '10':
+          description: 10px large Image url.
+          type: string
+        '300':
+          description: 300px large Image url.
+          type: string
+        '800':
+          description: 800px large Image url.
+          type: string
+        '1200':
+          description: 1200px large Image url.
+          type: string
+      x-addon: dashboard
     PostFragment:
       properties:
         discussionID:
@@ -1169,19 +1236,6 @@ components:
       - insertUserID
       type: object
       x-addon: vanilla
-    DiscussionPermissions:
-      type: object
-      description: Permissions for the current user related to discussions. Applied when expanded..
-      example:
-        discussions.view: true
-        discussions.add: true
-        discussions.edit: false
-        discussions.delete: false
-        discussions.sink: false
-        comments.add: true
-        comments.edit: false
-        comments.delete: false
-      x-addon: vanilla
     CategorySchema:
       properties:
         categoryID:
@@ -1211,8 +1265,9 @@ components:
         description:
           description: The description of the category.
           minLength: 0
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         displayAs:
           type: string
           default: discussions
@@ -1235,8 +1290,9 @@ components:
           type: string
         parentCategoryID:
           description: Parent category ID.
-          nullable: true
-          type: integer
+          type:
+          - integer
+          - 'null'
         url:
           description: The URL to the category.
           minLength: 1
@@ -1275,23 +1331,6 @@ components:
       - countAllComments
       type: object
       x-addon: vanilla
-    SrcSet:
-      description: An image's srcset for various sizes.
-      type: object
-      properties:
-        '10':
-          description: 10px large Image url.
-          type: string
-        '300':
-          description: 300px large Image url.
-          type: string
-        '800':
-          description: 800px large Image url.
-          type: string
-        '1200':
-          description: 1200px large Image url.
-          type: string
-      x-addon: dashboard
   requestBodies:
     CategoryPost:
       content:
@@ -1406,8 +1445,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons User Notes API
+  title: Vanilla User Notes API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /user-notes:
     get:
-      summary: Get a list of user notes and warnings.
+      summary: Get a list of user notes and warnings
       tags:
       - User Notes
       parameters:
@@ -52,9 +52,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/UserNote'
       x-addon: warnings2
+      operationId: getUserNotes
+      x-operation-id-source: derived
   /user-notes/notes:
     get:
-      summary: Get a list of user notes.
+      summary: Get a list of user notes
       tags:
       - User Notes
       parameters:
@@ -92,8 +94,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: warnings2
+      operationId: getUserNotesNotes
+      x-operation-id-source: derived
     post:
-      summary: Post a user note.
+      summary: Post a user note
       tags:
       - User Notes
       requestBody:
@@ -108,6 +112,8 @@ paths:
         '401':
           $ref: '#/components/responses/PermissionError'
       x-addon: warnings2
+      operationId: postUserNotesNotes
+      x-operation-id-source: derived
   /user-notes/notes/{id}:
     get:
       summary: Get a single user note by ID
@@ -141,8 +147,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/BasicError'
       x-addon: warnings2
+      operationId: getUserNotesNotesById
+      x-operation-id-source: derived
     patch:
-      summary: Patch a user note.
+      summary: Patch a user note
       tags:
       - User Notes
       parameters:
@@ -170,8 +178,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/BasicError'
       x-addon: warnings2
+      operationId: patchUserNotesNotesById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a user note.
+      summary: Delete a user note
       tags:
       - User Notes
       parameters:
@@ -194,9 +204,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/BasicError'
       x-addon: warnings2
+      operationId: deleteUserNotesNotesById
+      x-operation-id-source: derived
   /user-notes/warningform:
     get:
-      summary: Get the warning form Schema.
+      summary: Get the warning form Schema
       tags:
       - User Notes
       parameters:
@@ -245,9 +257,11 @@ paths:
                 - warningTypeID
                 - body
       x-addon: warnings2
+      operationId: getUserNotesWarningform
+      x-operation-id-source: derived
   /user-notes/warnings:
     get:
-      summary: Get a list of warnings.
+      summary: Get a list of warnings
       tags:
       - User Notes
       parameters:
@@ -285,8 +299,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: warnings2
+      operationId: getUserNotesWarnings
+      x-operation-id-source: derived
     post:
-      summary: Warn a user.
+      summary: Warn a user
       tags:
       - User Notes
       requestBody:
@@ -307,6 +323,8 @@ paths:
         '401':
           $ref: '#/components/responses/PermissionError'
       x-addon: warnings2
+      operationId: postUserNotesWarnings
+      x-operation-id-source: derived
   /user-notes/warnings/{id}:
     get:
       summary: Get a single warning by ID
@@ -340,8 +358,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/BasicError'
       x-addon: warnings2
+      operationId: getUserNotesWarningsById
+      x-operation-id-source: derived
     patch:
-      summary: Reverse a warning.
+      summary: Reverse a warning
       tags:
       - User Notes
       parameters:
@@ -374,6 +394,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/BasicError'
       x-addon: warnings2
+      operationId: patchUserNotesWarningsById
+      x-operation-id-source: derived
   /user-notes/{id}:
     get:
       summary: Get a single user note or warning by ID,
@@ -401,37 +423,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: warnings2
+      operationId: getUserNotesById
+      x-operation-id-source: derived
 components:
   schemas:
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
-      x-addon: dashboard
-    InsertInfo:
-      type: object
-      properties:
-        dateInserted:
-          type: string
-          format: date-time
-          description: The date the record was inserted.
-          readOnly: true
-        insertUserID:
-          type: integer
-          description: The user that inserted the record.
-          readOnly: true
-        insertIPAddress:
-          type: string
-          format: ipv4
-          description: The IP address the record was inserted from.
-          readOnly: true
-      required:
-      - dateInserted
-      - insertUserID
-      - insertIPAddress
-      x-addon: dashboard
     UserWarning:
       allOf:
       - $ref: '#/components/schemas/BasicUserNote'
@@ -456,8 +451,9 @@ components:
           reversed:
             type: boolean
           recordID:
-            type: integer
-            nullable: true
+            type:
+            - integer
+            - 'null'
           recordType:
             type: string
             enum:
@@ -466,22 +462,6 @@ components:
         required:
         - warningTypeID
         - points
-      x-addon: warnings2
-    UserNote:
-      oneOf:
-      - $ref: '#/components/schemas/BasicUserNote'
-      - $ref: '#/components/schemas/UserWarning'
-      x-addon: warnings2
-    UserNotePatch:
-      type: object
-      description: Post a user note.
-      properties:
-        userID:
-          type: integer
-        body:
-          type: string
-        format:
-          type: string
       x-addon: warnings2
     BasicUserNote:
       allOf:
@@ -521,40 +501,18 @@ components:
       - bbcode
       example: markdown
       x-addon: dashboard
-    UpdateInfo:
-      type: object
-      properties:
-        dateUpdated:
-          type: string
-          format: date-time
-          description: The date the record was updateed.
-          nullable: true
-          readOnly: true
-        updateUserID:
-          type: integer
-          description: The user that updateed the record.
-          nullable: true
-          readOnly: true
-        updateIPAddress:
-          type: string
-          format: ipv4
-          description: The IP address the record was updateed from.
-          nullable: true
-          readOnly: true
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
       x-addon: dashboard
-    BasicError:
-      type: object
-      properties:
-        message:
-          description: Verbose description of the error.
-          type: string
-        status:
-          description: Response status code.
-          type: integer
-      required:
-      - message
-      - status
-      x-addon: dashboard
+    UserNote:
+      oneOf:
+      - $ref: '#/components/schemas/BasicUserNote'
+      - $ref: '#/components/schemas/UserWarning'
+      x-addon: warnings2
     UserNotePost:
       type: object
       description: Post a user note.
@@ -570,6 +528,41 @@ components:
       - body
       - format
       x-addon: warnings2
+    UserNotePatch:
+      type: object
+      description: Post a user note.
+      properties:
+        userID:
+          type: integer
+        body:
+          type: string
+        format:
+          type: string
+      x-addon: warnings2
+    UpdateInfo:
+      type: object
+      properties:
+        dateUpdated:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date the record was updateed.
+          readOnly: true
+        updateUserID:
+          type:
+          - integer
+          - 'null'
+          description: The user that updateed the record.
+          readOnly: true
+        updateIPAddress:
+          type:
+          - string
+          - 'null'
+          format: ipv4
+          description: The IP address the record was updateed from.
+          readOnly: true
+      x-addon: dashboard
     WarningPost:
       type: object
       description: Warn a user.
@@ -603,6 +596,41 @@ components:
       - userID
       - warningTypeID
       x-addon: warnings2
+    BasicError:
+      type: object
+      properties:
+        message:
+          description: Verbose description of the error.
+          type: string
+        status:
+          description: Response status code.
+          type: integer
+      required:
+      - message
+      - status
+      x-addon: dashboard
+    InsertInfo:
+      type: object
+      properties:
+        dateInserted:
+          type: string
+          format: date-time
+          description: The date the record was inserted.
+          readOnly: true
+        insertUserID:
+          type: integer
+          description: The user that inserted the record.
+          readOnly: true
+        insertIPAddress:
+          type: string
+          format: ipv4
+          description: The IP address the record was inserted from.
+          readOnly: true
+      required:
+      - dateInserted
+      - insertUserID
+      - insertIPAddress
+      x-addon: dashboard
   responses:
     NotFound:
       description: The record does not exist or was not found.
@@ -624,13 +652,6 @@ components:
             status: 404
             message: Page Not Found
       x-addon: dashboard
-    UserNoteResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UserNote'
-      description: Success
-      x-addon: warnings2
     PermissionError:
       description: Permission denied.
       content:
@@ -671,6 +692,13 @@ components:
             - 2425
             - 1342
       x-addon: dashboard
+    UserNoteResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserNote'
+      description: Success
+      x-addon: warnings2
 x-resourceEvents:
   emailTemplates:
     x-feature: Feature.emailTemplates.Enabled
@@ -777,8 +805,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

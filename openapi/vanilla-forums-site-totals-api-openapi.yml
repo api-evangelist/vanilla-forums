@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Site Totals API
+  title: Vanilla Site Totals API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /site-totals:
     get:
-      summary: Get a list of site-total counts.
+      summary: Get a list of site-total counts
       tags:
       - Site Totals
       parameters:
@@ -36,20 +36,10 @@ paths:
                 $ref: '#/components/schemas/SiteTotalsCountsResponseFields'
           description: Success
       x-addon: dashboard
+      operationId: getSiteTotals
+      x-operation-id-source: derived
 components:
   schemas:
-    Count:
-      type: object
-      properties:
-        count:
-          type: integer
-        isCalculating:
-          type: boolean
-          description: Whether the value is currently being calculated.
-        isFiltered:
-          type: boolean
-          description: Indicates whether the count value has been filtered by siteSection
-      x-addon: dashboard
     SiteTotalsCountsResponseFields:
       type: object
       properties:
@@ -74,6 +64,18 @@ components:
               $ref: '#/components/schemas/Count'
             user:
               $ref: '#/components/schemas/Count'
+      x-addon: dashboard
+    Count:
+      type: object
+      properties:
+        count:
+          type: integer
+        isCalculating:
+          type: boolean
+          description: Whether the value is currently being calculated.
+        isFiltered:
+          type: boolean
+          description: Indicates whether the count value has been filtered by siteSection
       x-addon: dashboard
   parameters:
     SiteTotalsCounts:
@@ -202,8 +204,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

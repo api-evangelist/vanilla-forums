@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Icons API
+  title: Vanilla Icons API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -25,9 +25,11 @@ paths:
         '204':
           description: Success
       x-addon: dashboard
+      operationId: deleteIcons:iconUUID
+      x-operation-id-source: derived
   /icons/active:
     get:
-      summary: List the active version of each icon.
+      summary: List the active version of each icon
       tags:
       - Icons
       responses:
@@ -49,9 +51,11 @@ paths:
           type: array
           items:
             type: string
+      operationId: getIconsActive
+      x-operation-id-source: derived
   /icons/by-name:
     get:
-      summary: List icon variants by name.
+      summary: List icon variants by name
       tags:
       - Icons
       parameters:
@@ -85,6 +89,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/Icon'
       x-addon: dashboard
+      operationId: getIconsByName
+      x-operation-id-source: derived
   /icons/override:
     post:
       summary: Override icons
@@ -116,6 +122,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Icon'
       x-addon: dashboard
+      operationId: postIconsOverride
+      x-operation-id-source: derived
   /icons/restore:
     post:
       summary: Restore existing icon revisions
@@ -148,9 +156,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Icon'
       x-addon: dashboard
+      operationId: postIconsRestore
+      x-operation-id-source: derived
   /icons/system:
     get:
-      summary: List all system icons.
+      summary: List all system icons
       tags:
       - Icons
       responses:
@@ -172,6 +182,8 @@ paths:
           type: array
           items:
             type: string
+      operationId: getIconsSystem
+      x-operation-id-source: derived
 components:
   parameters:
     Page:
@@ -325,8 +337,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Exports API
+  title: Vanilla Exports API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /exports:
     get:
-      summary: List Exports.
+      summary: List Exports
       tags:
       - Exports
       parameters:
@@ -59,9 +59,11 @@ paths:
                 type: array
           description: Success
       x-addon: dashboard
+      operationId: getExports
+      x-operation-id-source: derived
   /exports/{exportUUID}:
     get:
-      summary: Get a export.
+      summary: Get a export
       tags:
       - Exports
       parameters:
@@ -89,8 +91,10 @@ paths:
         '404':
           description: export not found
       x-addon: dashboard
+      operationId: getExportsByExportUUID
+      x-operation-id-source: derived
     delete:
-      summary: Delete a export.
+      summary: Delete a export
       tags:
       - Exports
       parameters:
@@ -106,9 +110,11 @@ paths:
         '404':
           description: export not found
       x-addon: dashboard
+      operationId: deleteExportsByExportUUID
+      x-operation-id-source: derived
   /exports/{exportUUID}/download:
     get:
-      summary: Download a export.
+      summary: Download a export
       tags:
       - Exports
       parameters:
@@ -132,6 +138,8 @@ paths:
         '404':
           description: export not found
       x-addon: dashboard
+      operationId: getExportsByExportUUIDDownload
+      x-operation-id-source: derived
 components:
   schemas:
     ExportStatus:
@@ -334,8 +342,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

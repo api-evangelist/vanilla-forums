@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons AI Settings API
+  title: Vanilla AI Settings API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -38,6 +38,8 @@ paths:
           type: array
           items:
             type: string
+      operationId: getAiSettingsBotShield
+      x-operation-id-source: derived
     post:
       summary: Update Bot Shield Settings
       tags:
@@ -58,6 +60,8 @@ paths:
         '201':
           description: Bot Shield
       x-addon: dashboard
+      operationId: postAiSettingsBotShield
+      x-operation-id-source: derived
   /ai-settings/feature-notification-status:
     get:
       summary: Get AI feature notification status
@@ -90,15 +94,18 @@ paths:
                         notifiedInCurrentPeriod:
                           type: boolean
                         dateLastNotified:
-                          type: string
+                          type:
+                          - string
+                          - 'null'
                           format: date-time
-                          nullable: true
                         featureNotificationDispatchID:
-                          type: integer
-                          nullable: true
+                          type:
+                          - integer
+                          - 'null'
                         lastDispatchStatus:
-                          type: string
-                          nullable: true
+                          type:
+                          - string
+                          - 'null'
                           enum:
                           - pending
                           - complete
@@ -113,6 +120,8 @@ paths:
           type: array
           items:
             type: string
+      operationId: getAiSettingsFeatureNotificationStatus
+      x-operation-id-source: derived
   /ai-settings/feature-notifications:
     post:
       summary: Send AI feature disclosure notifications
@@ -156,6 +165,8 @@ paths:
                   featureNotificationDispatchID:
                     type: integer
       x-addon: dashboard
+      operationId: postAiSettingsFeatureNotifications
+      x-operation-id-source: derived
 x-resourceEvents:
   emailTemplates:
     x-feature: Feature.emailTemplates.Enabled
@@ -262,8 +273,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

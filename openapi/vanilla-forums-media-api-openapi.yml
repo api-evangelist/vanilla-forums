@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Media API
+  title: Vanilla Media API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -68,8 +68,10 @@ paths:
         '403':
           $ref: '#/components/responses/PermissionError'
       x-addon: dashboard
+      operationId: getMedia
+      x-operation-id-source: derived
     post:
-      summary: Upload a media file.
+      summary: Upload a media file
       tags:
       - Media
       requestBody:
@@ -91,6 +93,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/MediaItem'
       x-addon: dashboard
+      operationId: postMedia
+      x-operation-id-source: derived
   /media/by-url:
     delete:
       parameters:
@@ -116,8 +120,10 @@ paths:
           description: Success
       tags:
       - Media
-      summary: Delete a media item, using its URL.
+      summary: Delete a media item, using its URL
       x-addon: dashboard
+      operationId: deleteMediaByUrl
+      x-operation-id-source: derived
     get:
       parameters:
       - description: 'Full URL to the item.
@@ -146,8 +152,10 @@ paths:
           description: Success
       tags:
       - Media
-      summary: Get a media item, using its URL.
+      summary: Get a media item, using its URL
       x-addon: dashboard
+      operationId: getMediaByUrl
+      x-operation-id-source: derived
   /media/list:
     delete:
       parameters:
@@ -185,8 +193,10 @@ paths:
           $ref: '#/components/responses/LongRunnerResponse'
       tags:
       - Media
-      summary: Delete a list of media by their ID's.
+      summary: Delete a list of media by their ID's
       x-addon: dashboard
+      operationId: deleteMediaList
+      x-operation-id-source: derived
   /media/list-by-url:
     delete:
       parameters:
@@ -220,8 +230,10 @@ paths:
           $ref: '#/components/responses/LongRunnerResponse'
       tags:
       - Media
-      summary: Delete a list of media by their URL's.
+      summary: Delete a list of media by their URL's
       x-addon: dashboard
+      operationId: deleteMediaListByUrl
+      x-operation-id-source: derived
   /media/scrape:
     post:
       responses:
@@ -232,27 +244,32 @@ paths:
                 properties:
                   attributes:
                     description: Any additional attributes required by the the specific embed.
-                    nullable: true
-                    type: object
+                    type:
+                    - object
+                    - 'null'
                   body:
                     description: A paragraph summarizing the content, if any. This is not what is what gets rendered to the page.
                     minLength: 1
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   height:
                     description: The height of the image/video/etc. if applicable. This may be the photoUrl, but might exist even when there is no photoUrl in the case of a video without preview image.
-                    nullable: true
-                    type: integer
+                    type:
+                    - integer
+                    - 'null'
                   name:
                     description: The title of the page/item/etc. if any.
                     minLength: 1
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   photoUrl:
                     description: A photo that goes with the content.
                     minLength: 1
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   type:
                     description: The type of site. This determines how the embed is rendered.
                     enum:
@@ -278,8 +295,9 @@ paths:
                     type: string
                   width:
                     description: The width of the image/video/etc. if applicable.
-                    nullable: true
-                    type: integer
+                    type:
+                    - integer
+                    - 'null'
                 required:
                 - url
                 - type
@@ -310,11 +328,13 @@ paths:
               - url
               type: object
         required: true
-      summary: Scrape information from a URL.
+      summary: Scrape information from a URL
       x-addon: dashboard
+      operationId: postMediaScrape
+      x-operation-id-source: derived
   /media/upload-session-complete/{uploadSessionID}:
     post:
-      summary: Complete a chunked media upload session.
+      summary: Complete a chunked media upload session
       tags:
       - Media
       parameters:
@@ -343,9 +363,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/MediaItem'
       x-addon: dashboard
+      operationId: postMediaUploadSessionCompleteByUploadSessionID
+      x-operation-id-source: derived
   /media/upload-session-part/{uploadSessionID}/{partNumber}:
     get:
-      summary: Get a presigned URL for a chunked upload part.
+      summary: Get a presigned URL for a chunked upload part
       description: Legacy presigned URL flow. Clients should prefer PUT on this path to avoid S3 CORS requirements.
       tags:
       - Media
@@ -372,8 +394,10 @@ paths:
         '200':
           description: Success
       x-addon: dashboard
+      operationId: getMediaUploadSessionPartByUploadSessionIDByPartNumber
+      x-operation-id-source: derived
     put:
-      summary: Upload a chunked media part through the API.
+      summary: Upload a chunked media part through the API
       description: Uploads part bytes server-side to S3. Same-origin; no browser S3 CORS configuration required.
       tags:
       - Media
@@ -407,9 +431,11 @@ paths:
                   eTag:
                     type: string
       x-addon: dashboard
+      operationId: putMediaUploadSessionPartByUploadSessionIDByPartNumber
+      x-operation-id-source: derived
   /media/upload-session/{uploadSessionID}:
     delete:
-      summary: Abort a chunked media upload session.
+      summary: Abort a chunked media upload session
       tags:
       - Media
       parameters:
@@ -422,9 +448,11 @@ paths:
         '200':
           description: Success
       x-addon: dashboard
+      operationId: deleteMediaUploadSessionByUploadSessionID
+      x-operation-id-source: derived
   /media/upload-sessions:
     post:
-      summary: Start a chunked media upload session.
+      summary: Start a chunked media upload session
       tags:
       - Media
       requestBody:
@@ -451,6 +479,8 @@ paths:
         '200':
           description: Success
       x-addon: dashboard
+      operationId: postMediaUploadSessions
+      x-operation-id-source: derived
   /media/{id}:
     delete:
       parameters:
@@ -475,8 +505,10 @@ paths:
           description: Success
       tags:
       - Media
-      summary: Delete a media item.
+      summary: Delete a media item
       x-addon: dashboard
+      operationId: deleteMediaById
+      x-operation-id-source: derived
     get:
       parameters:
       - description: 'The media ID.
@@ -504,8 +536,10 @@ paths:
                 $ref: '#/components/schemas/MediaItem'
       tags:
       - Media
-      summary: Get a media item.
+      summary: Get a media item
       x-addon: dashboard
+      operationId: getMediaById
+      x-operation-id-source: derived
   /media/{id}/attachment:
     patch:
       parameters:
@@ -527,17 +561,20 @@ paths:
                     type: string
                   foreignID:
                     description: The ID of the table.
-                    nullable: true
-                    type: integer
+                    type:
+                    - integer
+                    - 'null'
                   foreignType:
                     description: Table the media is linked to.
                     minLength: 1
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   height:
                     description: Image height
-                    nullable: true
-                    type: integer
+                    type:
+                    - integer
+                    - 'null'
                   insertUserID:
                     description: The user that created the media item.
                     type: integer
@@ -561,8 +598,9 @@ paths:
                     type: string
                   width:
                     description: Image width
-                    nullable: true
-                    type: integer
+                    type:
+                    - integer
+                    - 'null'
                 required:
                 - mediaID
                 - url
@@ -583,16 +621,78 @@ paths:
             schema:
               $ref: '#/components/schemas/MediaItemPatch'
         required: true
-      summary: Update a media item's attachment to another record.
+      summary: Update a media item's attachment to another record
       x-addon: dashboard
+      operationId: patchMediaByIdAttachment
+      x-operation-id-source: derived
 components:
   schemas:
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+    MediaItem:
+      properties:
+        mediaID:
+          description: The incrementing ID of the record. Prefer using mediaUUID instead as the mediaID requires admin permissions to use.
+          type: integer
+        mediaUUID:
+          description: The unique identifier for the media item.
+          type: string
+        dateInserted:
+          description: When the media item was created.
+          format: date-time
+          type: string
+        foreignID:
+          description: The ID of the table.
+          type:
+          - integer
+          - 'null'
+        foreignType:
+          description: Table the media is linked to.
+          minLength: 1
+          type:
+          - string
+          - 'null'
+        insertUserID:
+          description: The user that created the media item.
+          type: integer
+        name:
+          description: The original filename of the upload.
+          minLength: 1
+          type: string
+        size:
+          description: File size in bytes
+          type: integer
+        type:
+          description: MIME type of the uploaded media.
+          minLength: 1
+          type: string
+        url:
+          description: The URL of the file.
+          minLength: 1
+          type: string
+        width:
+          description: Image width
+          type:
+          - integer
+          - 'null'
+        height:
+          description: Image height
+          type:
+          - integer
+          - 'null'
+        active:
+          description: Is the file visible.
+          type: boolean
+      required:
+      - mediaID
+      - mediaUUID
+      - url
+      - name
+      - type
+      - size
+      - dateInserted
+      - insertUserID
+      - foreignType
+      - foreignID
+      type: object
       x-addon: dashboard
     LongRunnerProgress:
       description: Progress of the task.
@@ -643,72 +743,40 @@ components:
           description: Total count of records that can be progressed.
           type: integer
       x-addon: dashboard
-    MediaItem:
-      properties:
-        mediaID:
-          description: The incrementing ID of the record. Prefer using mediaUUID instead as the mediaID requires admin permissions to use.
-          type: integer
-        mediaUUID:
-          description: The unique identifier for the media item.
-          type: string
-        dateInserted:
-          description: When the media item was created.
-          format: date-time
-          type: string
-        foreignID:
-          description: The ID of the table.
-          nullable: true
-          type: integer
-        foreignType:
-          description: Table the media is linked to.
-          minLength: 1
-          nullable: true
-          type: string
-        insertUserID:
-          description: The user that created the media item.
-          type: integer
-        name:
-          description: The original filename of the upload.
-          minLength: 1
-          type: string
-        size:
-          description: File size in bytes
-          type: integer
-        type:
-          description: MIME type of the uploaded media.
-          minLength: 1
-          type: string
-        url:
-          description: The URL of the file.
-          minLength: 1
-          type: string
-        width:
-          description: Image width
-          nullable: true
-          type: integer
-        height:
-          description: Image height
-          nullable: true
-          type: integer
-        active:
-          description: Is the file visible.
-          type: boolean
-      required:
-      - mediaID
-      - mediaUUID
-      - url
-      - name
-      - type
-      - size
-      - dateInserted
-      - insertUserID
-      - foreignType
-      - foreignID
-      type: object
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
       x-addon: dashboard
     UploadedFile:
       type: string
       format: binary
+      x-addon: dashboard
+    LongRunnerResult:
+      description: 'Endpoints will return this if they may time out and require the client
+
+        to progress the task with additional requests.
+
+        '
+      type: object
+      required:
+      - progress
+      - callbackPayload
+      properties:
+        callbackPayload:
+          description: 'A signed JWT payload to pass to the /api/v2/calls endpoint in order to continue
+
+            progression of the task.
+
+            '
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+            '
+        progress:
+          $ref: '#/components/schemas/LongRunnerProgress'
       x-addon: dashboard
     MediaItemPatch:
       properties:
@@ -762,39 +830,17 @@ components:
           - unknown
           example: received
       x-addon: dashboard
-    LongRunnerResult:
-      description: 'Endpoints will return this if they may time out and require the client
-
-        to progress the task with additional requests.
-
-        '
-      type: object
-      required:
-      - progress
-      - callbackPayload
-      properties:
-        callbackPayload:
-          description: 'A signed JWT payload to pass to the /api/v2/calls endpoint in order to continue
-
-            progression of the task.
-
-            '
-          type: string
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-
-            '
-        progress:
-          $ref: '#/components/schemas/LongRunnerProgress'
-      x-addon: dashboard
   responses:
-    TrackingSlipResponse:
-      description: 'Endpoints may queue a job to perform a task in the background.
+    LongRunnerResponse:
+      description: 'Endpoints that may time out and require the client to
+
+        progress them with the `/api/v2/calls` endpoints may return this.
 
         '
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/TrackingSlipData'
+            $ref: '#/components/schemas/LongRunnerResult'
       x-addon: dashboard
     PermissionError:
       description: Permission denied.
@@ -836,16 +882,14 @@ components:
             - 2425
             - 1342
       x-addon: dashboard
-    LongRunnerResponse:
-      description: 'Endpoints that may time out and require the client to
-
-        progress them with the `/api/v2/calls` endpoints may return this.
+    TrackingSlipResponse:
+      description: 'Endpoints may queue a job to perform a task in the background.
 
         '
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/LongRunnerResult'
+            $ref: '#/components/schemas/TrackingSlipData'
       x-addon: dashboard
   parameters:
     Page:
@@ -965,8 +1009,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

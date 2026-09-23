@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Conversations API
+  title: Vanilla Conversations API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -77,8 +77,10 @@ paths:
           description: Success
       tags:
       - Conversations
-      summary: List user conversations.
+      summary: List user conversations
       x-addon: conversations
+      operationId: getConversations
+      x-operation-id-source: derived
     post:
       responses:
         '201':
@@ -91,8 +93,10 @@ paths:
       - Conversations
       requestBody:
         $ref: '#/components/requestBodies/ConversationPost'
-      summary: Add a conversation.
+      summary: Add a conversation
       x-addon: conversations
+      operationId: postConversations
+      x-operation-id-source: derived
   /conversations/{id}:
     get:
       parameters:
@@ -121,8 +125,10 @@ paths:
           description: Success
       tags:
       - Conversations
-      summary: Get a conversation.
+      summary: Get a conversation
       x-addon: conversations
+      operationId: getConversationsById
+      x-operation-id-source: derived
   /conversations/{id}/leave:
     delete:
       parameters:
@@ -139,8 +145,10 @@ paths:
           description: Success
       tags:
       - Conversations
-      summary: Leave a conversation.
+      summary: Leave a conversation
       x-addon: conversations
+      operationId: deleteConversationsByIdLeave
+      x-operation-id-source: derived
   /conversations/{id}/participants:
     get:
       parameters:
@@ -206,8 +214,10 @@ paths:
           description: List of participants.
       tags:
       - Conversations
-      summary: Get participants of a conversation.
+      summary: Get participants of a conversation
       x-addon: conversations
+      operationId: getConversationsByIdParticipants
+      x-operation-id-source: derived
     post:
       parameters:
       - description: The conversation ID.
@@ -231,8 +241,10 @@ paths:
             schema:
               $ref: '#/components/schemas/ConversationPost'
         required: true
-      summary: Add participants to a conversation.
+      summary: Add participants to a conversation
       x-addon: conversations
+      operationId: postConversationsByIdParticipants
+      x-operation-id-source: derived
   /messages:
     get:
       parameters:
@@ -297,8 +309,10 @@ paths:
           description: Success
       tags:
       - Conversations
-      summary: List user messages.
+      summary: List user messages
       x-addon: conversations
+      operationId: getMessages
+      x-operation-id-source: derived
     post:
       responses:
         '201':
@@ -315,8 +329,10 @@ paths:
             schema:
               $ref: '#/components/schemas/MessagePost'
         required: true
-      summary: Add a message.
+      summary: Add a message
       x-addon: conversations
+      operationId: postMessages
+      x-operation-id-source: derived
   /messages/{id}:
     get:
       parameters:
@@ -345,10 +361,159 @@ paths:
           description: Success
       tags:
       - Conversations
-      summary: Get a message.
+      summary: Get a message
       x-addon: conversations
+      operationId: getMessagesById
+      x-operation-id-source: derived
 components:
   schemas:
+    UserFragment:
+      oneOf:
+      - type: object
+        properties:
+          userID:
+            description: The ID of the user.
+            type: integer
+          name:
+            description: The username of the user.
+            minLength: 1
+            type: string
+          url:
+            description: The URL of the user's profile.
+            type: string
+            format: uri
+          photoUrl:
+            description: The URL of the user's avatar picture.
+            type: string
+            format: uri
+          dateLastActive:
+            description: Time the user was last active.
+            format: date-time
+            type:
+            - string
+            - 'null'
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+          label:
+            description: The label of the user as plaintext.
+            type: string
+          labelHtml:
+            description: The label of the user in HTML format.
+            type: string
+          private:
+            description: Whether the user profile is private or not.
+            type: boolean
+        required:
+        - userID
+        - name
+        - photoUrl
+        - dateLastActive
+      - type: object
+        description: A user fragment when only expanding by ssoID.
+        properties:
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+        required:
+        - ssoID
+      x-addon: dashboard
+    Format:
+      description: The format of the body used to convert it to HTML.
+      type: string
+      enum:
+      - rich
+      - markdown
+      - text
+      - textex
+      - wysiwyg
+      - bbcode
+      example: markdown
+      x-addon: dashboard
+    MessagePost:
+      properties:
+        body:
+          description: The body of the message.
+          maxLength: 2000
+          minLength: 1
+          type: string
+        conversationID:
+          description: The ID of the conversation.
+          type: integer
+        format:
+          $ref: '#/components/schemas/Format'
+      required:
+      - conversationID
+      - body
+      type: object
+      x-addon: conversations
+    ConversationParticipants:
+      description: List of participants.
+      items:
+        properties:
+          userID:
+            description: The userID of the participant.
+            type: integer
+          status:
+            description: Participation status of the user.
+            enum:
+            - participating
+            - deleted
+            type: string
+          user:
+            $ref: '#/components/schemas/UserFragment'
+        required:
+        - userID
+        - status
+        type: object
+      type: array
+      x-addon: conversations
+    ConversationPost:
+      properties:
+        participantUserIDs:
+          description: List of userID of the participants.
+          items:
+            type: integer
+          type: array
+        initialBody:
+          description: Initial conversation message body.
+          type: string
+        initialFormat:
+          $ref: '#/components/schemas/Format'
+      required:
+      - participantUserIDs
+      type: object
+      x-addon: conversations
+    Message:
+      properties:
+        body:
+          description: The body of the message.
+          maxLength: 2000
+          minLength: 1
+          type: string
+        conversationID:
+          description: The ID of the conversation.
+          type: integer
+        dateInserted:
+          description: When the message was created.
+          format: date-time
+          type: string
+        insertUser:
+          $ref: '#/components/schemas/UserFragment'
+        insertUserID:
+          description: The user that created the message.
+          type: integer
+        messageID:
+          description: The ID of the message.
+          type: integer
+      required:
+      - messageID
+      - conversationID
+      - body
+      - insertUserID
+      - dateInserted
+      type: object
+      x-addon: conversations
     Conversation:
       properties:
         body:
@@ -416,152 +581,14 @@ components:
       - countMessages
       type: object
       x-addon: conversations
-    UserFragment:
-      oneOf:
-      - type: object
-        properties:
-          userID:
-            description: The ID of the user.
-            type: integer
-          name:
-            description: The username of the user.
-            minLength: 1
-            type: string
-          url:
-            description: The URL of the user's profile.
-            type: string
-            format: uri
-          photoUrl:
-            description: The URL of the user's avatar picture.
-            type: string
-            format: uri
-          dateLastActive:
-            description: Time the user was last active.
-            format: date-time
-            nullable: true
-            type: string
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-          label:
-            description: The label of the user as plaintext.
-            type: string
-          labelHtml:
-            description: The label of the user in HTML format.
-            type: string
-          private:
-            description: Whether the user profile is private or not.
-            type: boolean
-        required:
-        - userID
-        - name
-        - photoUrl
-        - dateLastActive
-      - type: object
-        description: A user fragment when only expanding by ssoID.
-        properties:
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-        required:
-        - ssoID
-      x-addon: dashboard
-    ConversationParticipants:
-      description: List of participants.
-      items:
-        properties:
-          userID:
-            description: The userID of the participant.
-            type: integer
-          status:
-            description: Participation status of the user.
-            enum:
-            - participating
-            - deleted
-            type: string
-          user:
-            $ref: '#/components/schemas/UserFragment'
-        required:
-        - userID
-        - status
-        type: object
-      type: array
-      x-addon: conversations
-    MessagePost:
-      properties:
-        body:
-          description: The body of the message.
-          maxLength: 2000
-          minLength: 1
-          type: string
-        conversationID:
-          description: The ID of the conversation.
-          type: integer
-        format:
-          $ref: '#/components/schemas/Format'
-      required:
-      - conversationID
-      - body
-      type: object
-      x-addon: conversations
-    Message:
-      properties:
-        body:
-          description: The body of the message.
-          maxLength: 2000
-          minLength: 1
-          type: string
-        conversationID:
-          description: The ID of the conversation.
-          type: integer
-        dateInserted:
-          description: When the message was created.
-          format: date-time
-          type: string
-        insertUser:
-          $ref: '#/components/schemas/UserFragment'
-        insertUserID:
-          description: The user that created the message.
-          type: integer
-        messageID:
-          description: The ID of the message.
-          type: integer
-      required:
-      - messageID
-      - conversationID
-      - body
-      - insertUserID
-      - dateInserted
-      type: object
-      x-addon: conversations
+  requestBodies:
     ConversationPost:
-      properties:
-        participantUserIDs:
-          description: List of userID of the participants.
-          items:
-            type: integer
-          type: array
-        initialBody:
-          description: Initial conversation message body.
-          type: string
-        initialFormat:
-          $ref: '#/components/schemas/Format'
-      required:
-      - participantUserIDs
-      type: object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConversationPost'
+      required: true
       x-addon: conversations
-    Format:
-      description: The format of the body used to convert it to HTML.
-      type: string
-      enum:
-      - rich
-      - markdown
-      - text
-      - textex
-      - wysiwyg
-      - bbcode
-      example: markdown
-      x-addon: dashboard
   parameters:
     Page:
       name: page
@@ -574,14 +601,6 @@ components:
         default: 1
         minimum: 1
       x-addon: dashboard
-  requestBodies:
-    ConversationPost:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ConversationPost'
-      required: true
-      x-addon: conversations
 x-resourceEvents:
   emailTemplates:
     x-feature: Feature.emailTemplates.Enabled
@@ -688,8 +707,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

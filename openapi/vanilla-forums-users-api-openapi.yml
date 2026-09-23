@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Users API
+  title: Vanilla Users API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -164,8 +164,10 @@ paths:
           description: Success
       tags:
       - Users
-      summary: List users.
+      summary: List users
       x-addon: dashboard
+      operationId: getUsers
+      x-operation-id-source: derived
     post:
       responses:
         '201':
@@ -182,8 +184,10 @@ paths:
             schema:
               $ref: '#/components/schemas/UserPost'
         required: true
-      summary: Add a user.
+      summary: Add a user
       x-addon: dashboard
+      operationId: postUsers
+      x-operation-id-source: derived
   /users/by-names:
     get:
       parameters:
@@ -280,11 +284,13 @@ paths:
           description: Success
       tags:
       - Users
-      summary: Search for users by full or partial name matching.
+      summary: Search for users by full or partial name matching
       x-addon: dashboard
+      operationId: getUsersByNames
+      x-operation-id-source: derived
   /users/leaders:
     get:
-      summary: Get user's leaderboard.
+      summary: Get user's leaderboard
       tags:
       - Users
       parameters:
@@ -382,13 +388,16 @@ paths:
                     photo:
                       description: URL to the user photo.
                       minLength: 0
-                      nullable: true
-                      type: string
+                      type:
+                      - string
+                      - 'null'
                   required:
                   - categoryID
                   - userID
           description: Success
       x-addon: dashboard
+      operationId: getUsersLeaders
+      x-operation-id-source: derived
   /users/me:
     get:
       responses:
@@ -434,7 +443,7 @@ paths:
           description: Success
       tags:
       - Users
-      summary: Get information about the current user.
+      summary: Get information about the current user
       x-addon: dashboard
       parameters:
       - name: fields
@@ -445,6 +454,8 @@ paths:
           type: array
           items:
             type: string
+      operationId: getUsersMe
+      x-operation-id-source: derived
   /users/me-counts:
     get:
       responses:
@@ -474,7 +485,7 @@ paths:
           description: Success
       tags:
       - Users
-      summary: Get information about menu counts for current user.
+      summary: Get information about menu counts for current user
       x-addon: dashboard
       parameters:
       - name: fields
@@ -485,6 +496,8 @@ paths:
           type: array
           items:
             type: string
+      operationId: getUsersMeCounts
+      x-operation-id-source: derived
   /users/register:
     post:
       responses:
@@ -538,8 +551,10 @@ paths:
               - password
               type: object
         required: true
-      summary: Submit a new user registration.
+      summary: Submit a new user registration
       x-addon: dashboard
+      operationId: postUsersRegister
+      x-operation-id-source: derived
   /users/request-password:
     post:
       responses:
@@ -561,6 +576,10 @@ paths:
               type: object
         required: true
       x-addon: dashboard
+      summary: Create users request password
+      x-summary-source: derived
+      operationId: postUsersRequestPassword
+      x-operation-id-source: derived
   /users/{id}:
     delete:
       parameters:
@@ -590,8 +609,10 @@ paths:
                   - delete
               type: object
         required: true
-      summary: Delete a user.
+      summary: Delete a user
       x-addon: dashboard
+      operationId: deleteUsersById
+      x-operation-id-source: derived
     get:
       parameters:
       - description: 'The user ID.
@@ -654,8 +675,10 @@ paths:
           $ref: '#/components/responses/NotFound'
       tags:
       - Users
-      summary: Get a user.
+      summary: Get a user
       x-addon: dashboard
+      operationId: getUsersById
+      x-operation-id-source: derived
     patch:
       parameters:
       - description: The user ID.
@@ -679,8 +702,10 @@ paths:
             schema:
               $ref: '#/components/schemas/UserPatch'
         required: true
-      summary: Update a user.
+      summary: Update a user
       x-addon: dashboard
+      operationId: patchUsersById
+      x-operation-id-source: derived
   /users/{id}/ban:
     put:
       parameters:
@@ -717,8 +742,10 @@ paths:
               - banned
               type: object
         required: true
-      summary: Ban a user.
+      summary: Ban a user
       x-addon: dashboard
+      operationId: putUsersByIdBan
+      x-operation-id-source: derived
   /users/{id}/confirm-email:
     post:
       parameters:
@@ -764,6 +791,8 @@ paths:
         required: true
       summary: Confirm a users current email address by using a confirmation code
       x-addon: dashboard
+      operationId: postUsersByIdConfirmEmail
+      x-operation-id-source: derived
   /users/{id}/edit:
     get:
       parameters:
@@ -819,8 +848,9 @@ paths:
                   photo:
                     description: Raw photo field value from the user record.
                     minLength: 0
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   userID:
                     description: ID of the user.
                     type: integer
@@ -835,11 +865,13 @@ paths:
           description: Success
       tags:
       - Users
-      summary: Get a user for editing.
+      summary: Get a user for editing
       x-addon: dashboard
+      operationId: getUsersByIdEdit
+      x-operation-id-source: derived
   /users/{id}/follow:
     patch:
-      summary: Follow or unfollow a user.
+      summary: Follow or unfollow a user
       tags:
       - Users
       parameters:
@@ -863,8 +895,10 @@ paths:
                 $ref: '#/components/schemas/UserFollowingPreferences'
           description: Success
       x-addon: dashboard
+      operationId: patchUsersByIdFollow
+      x-operation-id-source: derived
     get:
-      summary: Get a user's following preferences.
+      summary: Get a user's following preferences
       tags:
       - Users
       parameters:
@@ -890,6 +924,8 @@ paths:
                 $ref: '#/components/schemas/UserFollowingPreferences'
           description: Success
       x-addon: dashboard
+      operationId: getUsersByIdFollow
+      x-operation-id-source: derived
   /users/{id}/hidden:
     put:
       parameters:
@@ -926,8 +962,10 @@ paths:
               - hidden
               type: object
         required: true
-      summary: Adjust a user’s Online privacy.
+      summary: Adjust a user’s Online privacy
       x-addon: dashboard
+      operationId: putUsersByIdHidden
+      x-operation-id-source: derived
   /users/{id}/photo:
     delete:
       parameters:
@@ -957,8 +995,10 @@ paths:
           description: Success
       tags:
       - Users
-      summary: Delete a user photo.
+      summary: Delete a user photo
       x-addon: dashboard
+      operationId: deleteUsersByIdPhoto
+      x-operation-id-source: derived
     post:
       parameters:
       - in: path
@@ -975,8 +1015,9 @@ paths:
                   photoUrl:
                     description: URL to the user photo.
                     minLength: 0
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                 required:
                 - photoUrl
                 type: object
@@ -996,10 +1037,14 @@ paths:
               type: object
         required: true
       x-addon: dashboard
+      summary: Create users by id photo
+      x-summary-source: derived
+      operationId: postUsersByIdPhoto
+      x-operation-id-source: derived
   /users/{id}/rank:
     x-addon: ranks
     put:
-      summary: Update the rank of a user.
+      summary: Update the rank of a user
       tags:
       - Users
       parameters:
@@ -1015,8 +1060,9 @@ paths:
               properties:
                 rankID:
                   description: ID of the user rank.
-                  nullable: true
-                  type: integer
+                  type:
+                  - integer
+                  - 'null'
               required:
               - rankID
               type: object
@@ -1029,16 +1075,19 @@ paths:
                 properties:
                   rankID:
                     description: ID of the user rank.
-                    nullable: true
-                    type: integer
+                    type:
+                    - integer
+                    - 'null'
                 required:
                 - rankID
                 type: object
           description: Success
       x-addon: dashboard
+      operationId: putUsersByIdRank
+      x-operation-id-source: derived
   /users/{id}/reacted:
     get:
-      summary: Get a user's posts that have received a certain reaction.
+      summary: Get a user's posts that have received a certain reaction
       tags:
       - Users
       parameters:
@@ -1093,8 +1142,114 @@ paths:
                   $ref: '#/components/schemas/ReactedRecord'
           description: Success
       x-addon: dashboard
+      operationId: getUsersByIdReacted
+      x-operation-id-source: derived
 components:
+  parameters:
+    UserExpand:
+      description: 'Expand associated records using one or more valid field names. A value of "all" will expand all expandable fields.
+
+        '
+      in: query
+      name: expand
+      schema:
+        items:
+          enum:
+          - rank
+          - all
+          - profileFields
+          - discoveryText
+          - reactionsReceived
+          - followed
+          - isSsoUser
+          - reactionsReceived
+          type: string
+        type: array
+      style: form
+      x-addon: dashboard
+    DateInserted:
+      name: dateInserted
+      in: query
+      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
+
+        '
+      schema:
+        format: date-filter
+        type: string
+      x-addon: dashboard
+    DateUpdated:
+      name: dateUpdated
+      in: query
+      description: 'Filter by update date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
+
+        '
+      schema:
+        format: date-filter
+        type: string
+      x-addon: dashboard
+    Page:
+      name: page
+      in: query
+      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
+
+        '
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      x-addon: dashboard
   schemas:
+    UserFragment:
+      oneOf:
+      - type: object
+        properties:
+          userID:
+            description: The ID of the user.
+            type: integer
+          name:
+            description: The username of the user.
+            minLength: 1
+            type: string
+          url:
+            description: The URL of the user's profile.
+            type: string
+            format: uri
+          photoUrl:
+            description: The URL of the user's avatar picture.
+            type: string
+            format: uri
+          dateLastActive:
+            description: Time the user was last active.
+            format: date-time
+            type:
+            - string
+            - 'null'
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+          label:
+            description: The label of the user as plaintext.
+            type: string
+          labelHtml:
+            description: The label of the user in HTML format.
+            type: string
+          private:
+            description: Whether the user profile is private or not.
+            type: boolean
+        required:
+        - userID
+        - name
+        - photoUrl
+        - dateLastActive
+      - type: object
+        description: A user fragment when only expanding by ssoID.
+        properties:
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+        required:
+        - ssoID
+      x-addon: dashboard
     User:
       properties:
         userID:
@@ -1107,8 +1262,9 @@ components:
         photoUrl:
           description: URL to the user photo.
           minLength: 0
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         email:
           description: Email address of the user.
           minLength: 0
@@ -1127,13 +1283,15 @@ components:
         dateLastActive:
           description: Time the user was last active.
           format: date-time
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         dateUpdated:
           description: When the user was last updated.
           format: date-time
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         points:
           description: The total number of points the user has accumulated.
           type: integer
@@ -1172,8 +1330,9 @@ components:
         rankID:
           x-addon: ranks
           description: ID of the user rank.
-          nullable: true
-          type: integer
+          type:
+          - integer
+          - 'null'
         showEmail:
           description: Is the email address visible to other users?
           type: boolean
@@ -1192,8 +1351,9 @@ components:
           type: integer
         inviteUserID:
           description: UserID of the user that invited this user if applicable.
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
         label:
           description: The label of the user as plaintext.
           type: string
@@ -1225,14 +1385,16 @@ components:
               type: boolean
         dateFollowed:
           description: When the current user started following this user (only present when expanded).
-          type: string
+          type:
+          - string
+          - 'null'
           format: date-time
-          nullable: true
         preferredLocale:
           description: The preferred locale key of the user.
-          type: string
+          type:
+          - string
+          - 'null'
           example: en
-          nullable: true
       required:
       - userID
       - name
@@ -1255,6 +1417,110 @@ components:
       externalDocs:
         url: https://success.vanillaforums.com/kb/articles/308-range-expressions
       x-addon: dashboard
+    UserFollowingPreferences:
+      type: object
+      properties:
+        preferences.followed:
+          description: Whether the current user is following this user.
+          type: boolean
+        preferences.popup.userFollowingNewDiscussion:
+          description: Receive popup notifications when the followed user creates a new discussion.
+          type: boolean
+        preferences.email.userFollowingNewDiscussion:
+          description: Receive email notifications when the followed user creates a new discussion.
+          type: boolean
+        preferences.popup.userFollowingNewComment:
+          description: Receive popup notifications when the followed user creates a new comment.
+          type: boolean
+        preferences.email.userFollowingNewComment:
+          description: Receive email notifications when the followed user creates a new comment.
+          type: boolean
+        preferences.popup.userFollowingNewEvent:
+          description: Receive popup notifications when the followed user creates a new event.
+          type: boolean
+        preferences.email.userFollowingNewEvent:
+          description: Receive email notifications when the followed user creates a new event.
+          type: boolean
+      x-addon: dashboard
+    UserPatch:
+      type: object
+      properties:
+        bypassSpam:
+          description: Should submissions from this user bypass SPAM checks?
+          type: boolean
+        email:
+          description: Email address of the user.
+          minLength: 0
+          type: string
+        emailConfirmed:
+          description: Has the email address for this user been confirmed?
+          type: boolean
+        showEmail:
+          description: Is the email address visible to other users?
+          type: boolean
+        suggestAnswers:
+          description: Should we automatically suggest answers for this user?
+          type: boolean
+          x-feature: Feature.AISuggestions.Enabled
+        name:
+          description: Name of the user.
+          minLength: 1
+          type: string
+        password:
+          description: Password of the user.
+          minLength: 1
+          type: string
+        resetPassword:
+          description: Set to true to reset the user's password and send them a notification email.
+          type: boolean
+        passwordConfirmation:
+          description: Required when editing your own profile and when a password is associated with the account.
+          type: string
+        photo:
+          description: Raw photo field value from the user record.
+          minLength: 0
+          type:
+          - string
+          - 'null'
+        roleID:
+          description: Roles to set on the user.
+          items:
+            type: integer
+          type: array
+        profileFields:
+          $ref: '#/components/schemas/UserProfileFields'
+        private:
+          description: Is the profile visible to other users?
+          type: boolean
+          default: false
+        banned:
+          description: Set the banned status of the user.
+          type: boolean
+        rankID:
+          type:
+          - integer
+          - 'null'
+          description: ID of the user rank. Setting to null will remove manually applied rank.
+      x-addon: dashboard
+    UserProfileFields:
+      type: object
+      properties:
+        Country:
+          type:
+          - string
+          - 'null'
+        GitHub:
+          type:
+          - string
+          - 'null'
+        Location:
+          type:
+          - string
+          - 'null'
+        Twitter:
+          type:
+          - string
+          - 'null'
     ReactedRecord:
       type: object
       properties:
@@ -1300,128 +1566,71 @@ components:
       - discussionID
       - url
       x-addon: dashboard
-    UserProfileFields:
+    ReactionFragment:
       type: object
       properties:
-        Country:
+        tagID:
+          type: integer
+        urlcode:
           type: string
-          nullable: true
-        GitHub:
-          type: string
-          nullable: true
-        Location:
-          type: string
-          nullable: true
-        Twitter:
-          type: string
-          nullable: true
-    UserFragment:
-      oneOf:
-      - type: object
-        properties:
-          userID:
-            description: The ID of the user.
-            type: integer
-          name:
-            description: The username of the user.
-            minLength: 1
-            type: string
-          url:
-            description: The URL of the user's profile.
-            type: string
-            format: uri
-          photoUrl:
-            description: The URL of the user's avatar picture.
-            type: string
-            format: uri
-          dateLastActive:
-            description: Time the user was last active.
-            format: date-time
-            nullable: true
-            type: string
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-          label:
-            description: The label of the user as plaintext.
-            type: string
-          labelHtml:
-            description: The label of the user in HTML format.
-            type: string
-          private:
-            description: Whether the user profile is private or not.
-            type: boolean
-        required:
-        - userID
-        - name
-        - photoUrl
-        - dateLastActive
-      - type: object
-        description: A user fragment when only expanding by ssoID.
-        properties:
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-        required:
-        - ssoID
-      x-addon: dashboard
-    UserPatch:
-      type: object
-      properties:
-        bypassSpam:
-          description: Should submissions from this user bypass SPAM checks?
-          type: boolean
-        email:
-          description: Email address of the user.
-          minLength: 0
-          type: string
-        emailConfirmed:
-          description: Has the email address for this user been confirmed?
-          type: boolean
-        showEmail:
-          description: Is the email address visible to other users?
-          type: boolean
-        suggestAnswers:
-          description: Should we automatically suggest answers for this user?
-          type: boolean
-          x-feature: Feature.AISuggestions.Enabled
         name:
-          description: Name of the user.
+          type: string
+        class:
+          type: string
+        count:
+          type: integer
+      x-addon: dashboard
+    RoleFragment:
+      type: object
+      properties:
+        name:
+          description: Name of the role.
           minLength: 1
-          type: string
-        password:
-          description: Password of the user.
-          minLength: 1
-          type: string
-        resetPassword:
-          description: Set to true to reset the user's password and send them a notification email.
-          type: boolean
-        passwordConfirmation:
-          description: Required when editing your own profile and when a password is associated with the account.
-          type: string
-        photo:
-          description: Raw photo field value from the user record.
-          minLength: 0
-          nullable: true
           type: string
         roleID:
-          description: Roles to set on the user.
-          items:
-            type: integer
-          type: array
-        profileFields:
-          $ref: '#/components/schemas/UserProfileFields'
-        private:
-          description: Is the profile visible to other users?
-          type: boolean
-          default: false
-        banned:
-          description: Set the banned status of the user.
-          type: boolean
-        rankID:
+          description: ID of the role.
           type: integer
-          description: ID of the user rank. Setting to null will remove manually applied rank.
-          nullable: true
+      required:
+      - roleID
+      - name
+      x-addon: dashboard
+    UserFollow:
+      type: object
+      properties:
+        preferences.followed:
+          description: Set to true to follow the user, false to unfollow.
+          type: boolean
+        preferences.popup.userFollowingNewDiscussion:
+          description: Receive popup notifications when the followed user creates a new discussion.
+          type: boolean
+        preferences.email.userFollowingNewDiscussion:
+          description: Receive email notifications when the followed user creates a new discussion.
+          type: boolean
+        preferences.popup.userFollowingNewComment:
+          description: Receive popup notifications when the followed user creates a new comment.
+          type: boolean
+        preferences.email.userFollowingNewComment:
+          description: Receive email notifications when the followed user creates a new comment.
+          type: boolean
+        preferences.popup.userFollowingNewEvent:
+          description: Receive popup notifications when the followed user creates a new event.
+          type: boolean
+        preferences.email.userFollowingNewEvent:
+          description: Receive email notifications when the followed user creates a new event.
+          type: boolean
+      x-addon: dashboard
+    BasicError:
+      type: object
+      properties:
+        message:
+          description: Verbose description of the error.
+          type: string
+        status:
+          description: Response status code.
+          type: integer
+      required:
+      - message
+      - status
       x-addon: dashboard
     UserPost:
       type: object
@@ -1456,8 +1665,9 @@ components:
         photo:
           description: Raw photo field value from the user record.
           minLength: 0
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         roleID:
           description: Roles to set on the user.
           items:
@@ -1475,97 +1685,6 @@ components:
       - password
       - emailConfirmed
       - bypassSpam
-      x-addon: dashboard
-    ReactionFragment:
-      type: object
-      properties:
-        tagID:
-          type: integer
-        urlcode:
-          type: string
-        name:
-          type: string
-        class:
-          type: string
-        count:
-          type: integer
-      x-addon: dashboard
-    UserFollow:
-      type: object
-      properties:
-        preferences.followed:
-          description: Set to true to follow the user, false to unfollow.
-          type: boolean
-        preferences.popup.userFollowingNewDiscussion:
-          description: Receive popup notifications when the followed user creates a new discussion.
-          type: boolean
-        preferences.email.userFollowingNewDiscussion:
-          description: Receive email notifications when the followed user creates a new discussion.
-          type: boolean
-        preferences.popup.userFollowingNewComment:
-          description: Receive popup notifications when the followed user creates a new comment.
-          type: boolean
-        preferences.email.userFollowingNewComment:
-          description: Receive email notifications when the followed user creates a new comment.
-          type: boolean
-        preferences.popup.userFollowingNewEvent:
-          description: Receive popup notifications when the followed user creates a new event.
-          type: boolean
-        preferences.email.userFollowingNewEvent:
-          description: Receive email notifications when the followed user creates a new event.
-          type: boolean
-      x-addon: dashboard
-    RoleFragment:
-      type: object
-      properties:
-        name:
-          description: Name of the role.
-          minLength: 1
-          type: string
-        roleID:
-          description: ID of the role.
-          type: integer
-      required:
-      - roleID
-      - name
-      x-addon: dashboard
-    UserFollowingPreferences:
-      type: object
-      properties:
-        preferences.followed:
-          description: Whether the current user is following this user.
-          type: boolean
-        preferences.popup.userFollowingNewDiscussion:
-          description: Receive popup notifications when the followed user creates a new discussion.
-          type: boolean
-        preferences.email.userFollowingNewDiscussion:
-          description: Receive email notifications when the followed user creates a new discussion.
-          type: boolean
-        preferences.popup.userFollowingNewComment:
-          description: Receive popup notifications when the followed user creates a new comment.
-          type: boolean
-        preferences.email.userFollowingNewComment:
-          description: Receive email notifications when the followed user creates a new comment.
-          type: boolean
-        preferences.popup.userFollowingNewEvent:
-          description: Receive popup notifications when the followed user creates a new event.
-          type: boolean
-        preferences.email.userFollowingNewEvent:
-          description: Receive email notifications when the followed user creates a new event.
-          type: boolean
-      x-addon: dashboard
-    BasicError:
-      type: object
-      properties:
-        message:
-          description: Verbose description of the error.
-          type: string
-        status:
-          description: Response status code.
-          type: integer
-      required:
-      - message
-      - status
       x-addon: dashboard
   responses:
     NotFound:
@@ -1587,59 +1706,6 @@ components:
           example:
             status: 404
             message: Page Not Found
-      x-addon: dashboard
-  parameters:
-    DateInserted:
-      name: dateInserted
-      in: query
-      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
-
-        '
-      schema:
-        format: date-filter
-        type: string
-      x-addon: dashboard
-    DateUpdated:
-      name: dateUpdated
-      in: query
-      description: 'Filter by update date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
-
-        '
-      schema:
-        format: date-filter
-        type: string
-      x-addon: dashboard
-    UserExpand:
-      description: 'Expand associated records using one or more valid field names. A value of "all" will expand all expandable fields.
-
-        '
-      in: query
-      name: expand
-      schema:
-        items:
-          enum:
-          - rank
-          - all
-          - profileFields
-          - discoveryText
-          - reactionsReceived
-          - followed
-          - isSsoUser
-          - reactionsReceived
-          type: string
-        type: array
-      style: form
-      x-addon: dashboard
-    Page:
-      name: page
-      in: query
-      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
-
-        '
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -1747,8 +1813,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

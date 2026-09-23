@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Theme Assets API
+  title: Vanilla Theme Assets API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -41,8 +41,9 @@ paths:
                 properties:
                   description:
                     description: Verbose description of the error.
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   message:
                     description: Short description of the error.
                     type: string
@@ -55,8 +56,10 @@ paths:
                 - status
       tags:
       - Theme Assets
-      summary: Get the footer HTML of a theme.
+      summary: Get the footer HTML of a theme
       x-addon: dashboard
+      operationId: getThemesByThemeIDAssetsFooter
+      x-operation-id-source: derived
     put:
       parameters:
       - description: Unique themeID.
@@ -116,8 +119,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Set theme asset or replace if already exists.
+      summary: Set theme asset or replace if already exists
       x-addon: themingapi
+      operationId: putThemesByThemeIDAssetsFooter
+      x-operation-id-source: derived
     delete:
       parameters:
       - description: Unique themeID.
@@ -131,8 +136,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Delete theme asset.
+      summary: Delete theme asset
       x-addon: themingapi
+      operationId: deleteThemesByThemeIDAssetsFooter
+      x-operation-id-source: derived
   /themes/{themeID}/assets/footer.html:
     get:
       parameters:
@@ -166,8 +173,9 @@ paths:
                 properties:
                   description:
                     description: Verbose description of the error.
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   message:
                     description: Short description of the error.
                     type: string
@@ -180,8 +188,10 @@ paths:
                 - status
       tags:
       - Theme Assets
-      summary: Get the footer HTML of a theme.
+      summary: Get the footer HTML of a theme
       x-addon: dashboard
+      operationId: getThemesByThemeIDAssetsFooterHtml
+      x-operation-id-source: derived
     put:
       parameters:
       - description: Unique themeID.
@@ -209,8 +219,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Set theme asset or replace if already exists.
+      summary: Set theme asset or replace if already exists
       x-addon: themingapi
+      operationId: putThemesByThemeIDAssetsFooterHtml
+      x-operation-id-source: derived
   /themes/{themeID}/assets/header:
     get:
       parameters:
@@ -244,8 +256,9 @@ paths:
                 properties:
                   description:
                     description: Verbose description of the error.
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   message:
                     description: Short description of the error.
                     type: string
@@ -258,8 +271,10 @@ paths:
                 - status
       tags:
       - Theme Assets
-      summary: Get the header HTML of a theme.
+      summary: Get the header HTML of a theme
       x-addon: dashboard
+      operationId: getThemesByThemeIDAssetsHeader
+      x-operation-id-source: derived
     put:
       parameters:
       - description: Unique themeID.
@@ -319,8 +334,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Set theme asset or replace if already exists.
+      summary: Set theme asset or replace if already exists
       x-addon: themingapi
+      operationId: putThemesByThemeIDAssetsHeader
+      x-operation-id-source: derived
     delete:
       parameters:
       - description: Unique themeID.
@@ -334,8 +351,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Delete theme asset.
+      summary: Delete theme asset
       x-addon: themingapi
+      operationId: deleteThemesByThemeIDAssetsHeader
+      x-operation-id-source: derived
   /themes/{themeID}/assets/header.html:
     get:
       parameters:
@@ -369,8 +388,9 @@ paths:
                 properties:
                   description:
                     description: Verbose description of the error.
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   message:
                     description: Short description of the error.
                     type: string
@@ -383,8 +403,10 @@ paths:
                 - status
       tags:
       - Theme Assets
-      summary: Get the header HTML of a theme.
+      summary: Get the header HTML of a theme
       x-addon: dashboard
+      operationId: getThemesByThemeIDAssetsHeaderHtml
+      x-operation-id-source: derived
     put:
       parameters:
       - description: Unique themeID.
@@ -412,8 +434,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Set theme asset or replace if already exists.
+      summary: Set theme asset or replace if already exists
       x-addon: themingapi
+      operationId: putThemesByThemeIDAssetsHeaderHtml
+      x-operation-id-source: derived
   /themes/{themeID}/assets/javascript:
     get:
       parameters:
@@ -447,8 +471,9 @@ paths:
                 properties:
                   description:
                     description: Verbose description of the error.
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   message:
                     description: Short description of the error.
                     type: string
@@ -461,8 +486,10 @@ paths:
                 - status
       tags:
       - Theme Assets
-      summary: Get JavaScript to be used as part of a theme.
+      summary: Get JavaScript to be used as part of a theme
       x-addon: dashboard
+      operationId: getThemesByThemeIDAssetsJavascript
+      x-operation-id-source: derived
     put:
       parameters:
       - description: Unique themeID.
@@ -522,8 +549,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Set theme asset or replace if already exists.
+      summary: Set theme asset or replace if already exists
       x-addon: themingapi
+      operationId: putThemesByThemeIDAssetsJavascript
+      x-operation-id-source: derived
     delete:
       parameters:
       - description: Unique themeID.
@@ -537,8 +566,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Delete theme asset.
+      summary: Delete theme asset
       x-addon: themingapi
+      operationId: deleteThemesByThemeIDAssetsJavascript
+      x-operation-id-source: derived
   /themes/{themeID}/assets/javascript.js:
     get:
       parameters:
@@ -572,8 +603,9 @@ paths:
                 properties:
                   description:
                     description: Verbose description of the error.
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   message:
                     description: Short description of the error.
                     type: string
@@ -586,8 +618,10 @@ paths:
                 - status
       tags:
       - Theme Assets
-      summary: Get JavaScript to be used as part of a theme.
+      summary: Get JavaScript to be used as part of a theme
       x-addon: dashboard
+      operationId: getThemesByThemeIDAssetsJavascriptJs
+      x-operation-id-source: derived
     put:
       parameters:
       - description: Unique themeID.
@@ -615,8 +649,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Set theme asset or replace if already exists.
+      summary: Set theme asset or replace if already exists
       x-addon: themingapi
+      operationId: putThemesByThemeIDAssetsJavascriptJs
+      x-operation-id-source: derived
   /themes/{themeID}/assets/scripts:
     get:
       parameters:
@@ -650,8 +686,9 @@ paths:
                 properties:
                   description:
                     description: Verbose description of the error.
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   message:
                     description: Short description of the error.
                     type: string
@@ -664,8 +701,10 @@ paths:
                 - status
       tags:
       - Theme Assets
-      summary: Get additional script files of a theme.
+      summary: Get additional script files of a theme
       x-addon: dashboard
+      operationId: getThemesByThemeIDAssetsScripts
+      x-operation-id-source: derived
     put:
       parameters:
       - description: Unique themeID.
@@ -720,8 +759,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Set theme asset or replace if already exists.
+      summary: Set theme asset or replace if already exists
       x-addon: themingapi
+      operationId: putThemesByThemeIDAssetsScripts
+      x-operation-id-source: derived
     delete:
       parameters:
       - description: Unique themeID.
@@ -735,8 +776,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Delete theme asset.
+      summary: Delete theme asset
       x-addon: themingapi
+      operationId: deleteThemesByThemeIDAssetsScripts
+      x-operation-id-source: derived
   /themes/{themeID}/assets/scripts.json:
     get:
       parameters:
@@ -772,8 +815,9 @@ paths:
                 properties:
                   description:
                     description: Verbose description of the error.
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   message:
                     description: Short description of the error.
                     type: string
@@ -786,8 +830,10 @@ paths:
                 - status
       tags:
       - Theme Assets
-      summary: Get additional script files of a theme.
+      summary: Get additional script files of a theme
       x-addon: dashboard
+      operationId: getThemesByThemeIDAssetsScriptsJson
+      x-operation-id-source: derived
     put:
       parameters:
       - description: Unique themeID.
@@ -821,8 +867,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Set theme asset or replace if already exists.
+      summary: Set theme asset or replace if already exists
       x-addon: themingapi
+      operationId: putThemesByThemeIDAssetsScriptsJson
+      x-operation-id-source: derived
   /themes/{themeID}/assets/styles:
     get:
       parameters:
@@ -856,8 +904,9 @@ paths:
                 properties:
                   description:
                     description: Verbose description of the error.
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   message:
                     description: Short description of the error.
                     type: string
@@ -870,8 +919,10 @@ paths:
                 - status
       tags:
       - Theme Assets
-      summary: Get theme styles.
+      summary: Get theme styles
       x-addon: dashboard
+      operationId: getThemesByThemeIDAssetsStyles
+      x-operation-id-source: derived
     put:
       parameters:
       - description: Unique themeID.
@@ -931,8 +982,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Set theme asset or replace if already exists.
+      summary: Set theme asset or replace if already exists
       x-addon: themingapi
+      operationId: putThemesByThemeIDAssetsStyles
+      x-operation-id-source: derived
     delete:
       parameters:
       - description: Unique themeID.
@@ -946,8 +999,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Delete theme asset.
+      summary: Delete theme asset
       x-addon: themingapi
+      operationId: deleteThemesByThemeIDAssetsStyles
+      x-operation-id-source: derived
   /themes/{themeID}/assets/styles.css:
     get:
       parameters:
@@ -981,8 +1036,9 @@ paths:
                 properties:
                   description:
                     description: Verbose description of the error.
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   message:
                     description: Short description of the error.
                     type: string
@@ -995,8 +1051,10 @@ paths:
                 - status
       tags:
       - Theme Assets
-      summary: Get theme styles.
+      summary: Get theme styles
       x-addon: dashboard
+      operationId: getThemesByThemeIDAssetsStylesCss
+      x-operation-id-source: derived
     put:
       parameters:
       - description: Unique themeID.
@@ -1024,8 +1082,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Set theme asset or replace if already exists.
+      summary: Set theme asset or replace if already exists
       x-addon: themingapi
+      operationId: putThemesByThemeIDAssetsStylesCss
+      x-operation-id-source: derived
   /themes/{themeID}/assets/variables:
     get:
       parameters:
@@ -1059,8 +1119,9 @@ paths:
                 properties:
                   description:
                     description: Verbose description of the error.
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   message:
                     description: Short description of the error.
                     type: string
@@ -1073,8 +1134,10 @@ paths:
                 - status
       tags:
       - Theme Assets
-      summary: Get theme variables.
+      summary: Get theme variables
       x-addon: dashboard
+      operationId: getThemesByThemeIDAssetsVariables
+      x-operation-id-source: derived
     put:
       parameters:
       - description: Unique themeID.
@@ -1129,8 +1192,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Set theme asset or replace if already exists.
+      summary: Set theme asset or replace if already exists
       x-addon: themingapi
+      operationId: putThemesByThemeIDAssetsVariables
+      x-operation-id-source: derived
     patch:
       parameters:
       - description: Unique themeID.
@@ -1185,8 +1250,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Merge some new variables into existing ones.
+      summary: Merge some new variables into existing ones
       x-addon: themingapi
+      operationId: patchThemesByThemeIDAssetsVariables
+      x-operation-id-source: derived
     delete:
       parameters:
       - description: Unique themeID.
@@ -1200,8 +1267,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Delete theme asset.
+      summary: Delete theme asset
       x-addon: themingapi
+      operationId: deleteThemesByThemeIDAssetsVariables
+      x-operation-id-source: derived
   /themes/{themeID}/assets/variables.json:
     get:
       parameters:
@@ -1235,8 +1304,9 @@ paths:
                 properties:
                   description:
                     description: Verbose description of the error.
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   message:
                     description: Short description of the error.
                     type: string
@@ -1249,8 +1319,10 @@ paths:
                 - status
       tags:
       - Theme Assets
-      summary: Get theme variables.
+      summary: Get theme variables
       x-addon: dashboard
+      operationId: getThemesByThemeIDAssetsVariablesJson
+      x-operation-id-source: derived
     put:
       parameters:
       - description: Unique themeID.
@@ -1284,8 +1356,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Set theme asset or replace if already exists.
+      summary: Set theme asset or replace if already exists
       x-addon: themingapi
+      operationId: putThemesByThemeIDAssetsVariablesJson
+      x-operation-id-source: derived
     patch:
       parameters:
       - description: Unique themeID.
@@ -1319,8 +1393,10 @@ paths:
           description: Success
       tags:
       - Theme Assets
-      summary: Merge some new variables into existing ones.
+      summary: Merge some new variables into existing ones
       x-addon: themingapi
+      operationId: patchThemesByThemeIDAssetsVariablesJson
+      x-operation-id-source: derived
 components:
   schemas:
     ThemeScript:
@@ -1333,6 +1409,70 @@ components:
       x-addon: dashboard
     ThemeFooterAsset:
       description: Custom footer HTML.
+      properties:
+        type:
+          description: The type of the asset.
+          type: string
+        url:
+          type: string
+          description: Absolute URL of the asset.
+        content-type:
+          description: The content-type of the asset.
+          type: string
+          example: application/json
+        data:
+          type: string
+          description: Contents of the asset. May require an expand parameter to retreive.
+      required:
+      - url
+      - type
+      type: object
+      x-addon: dashboard
+    ThemeScriptsAsset:
+      description: External script files to be included.
+      properties:
+        type:
+          description: The type of the asset.
+          type: string
+        url:
+          type: string
+          description: Absolute URL of the asset.
+        content-type:
+          description: The content-type of the asset.
+          type: string
+          example: application/json
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThemeScript'
+      required:
+      - url
+      - type
+      type: object
+      x-addon: dashboard
+    ThemeVariablesAsset:
+      description: A collection of variables intended to be used by theme.
+      properties:
+        type:
+          description: The type of the asset.
+          type: string
+        url:
+          type: string
+          description: Absolute URL of the asset.
+        content-type:
+          description: The content-type of the asset.
+          type: string
+          example: application/json
+        data:
+          type: object
+          description: JSON contents of the asset.
+      required:
+      - url
+      - type
+      type: object
+      x-addon: dashboard
+    ThemeJavascriptAsset:
+      description: Javascript for the theme.
       properties:
         type:
           description: The type of the asset.
@@ -1391,70 +1531,6 @@ components:
           description: Contents of the asset. May require an expand parameter to retreive.
       required:
       - data
-      - type
-      type: object
-      x-addon: dashboard
-    ThemeJavascriptAsset:
-      description: Javascript for the theme.
-      properties:
-        type:
-          description: The type of the asset.
-          type: string
-        url:
-          type: string
-          description: Absolute URL of the asset.
-        content-type:
-          description: The content-type of the asset.
-          type: string
-          example: application/json
-        data:
-          type: string
-          description: Contents of the asset. May require an expand parameter to retreive.
-      required:
-      - url
-      - type
-      type: object
-      x-addon: dashboard
-    ThemeVariablesAsset:
-      description: A collection of variables intended to be used by theme.
-      properties:
-        type:
-          description: The type of the asset.
-          type: string
-        url:
-          type: string
-          description: Absolute URL of the asset.
-        content-type:
-          description: The content-type of the asset.
-          type: string
-          example: application/json
-        data:
-          type: object
-          description: JSON contents of the asset.
-      required:
-      - url
-      - type
-      type: object
-      x-addon: dashboard
-    ThemeScriptsAsset:
-      description: External script files to be included.
-      properties:
-        type:
-          description: The type of the asset.
-          type: string
-        url:
-          type: string
-          description: Absolute URL of the asset.
-        content-type:
-          description: The content-type of the asset.
-          type: string
-          example: application/json
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/ThemeScript'
-      required:
-      - url
       - type
       type: object
       x-addon: dashboard
@@ -1564,8 +1640,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Authenticators API
+  title: Vanilla Authenticators API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /authenticator-types:
     get:
-      summary: List every available authenticator types.
+      summary: List every available authenticator types
       tags:
       - Authenticators
       responses:
@@ -32,9 +32,11 @@ paths:
           type: array
           items:
             type: string
+      operationId: getAuthenticatorTypes
+      x-operation-id-source: derived
   /authenticators:
     get:
-      summary: List the authenticators.
+      summary: List the authenticators
       tags:
       - Authenticators
       parameters:
@@ -74,20 +76,24 @@ paths:
                 items:
                   $ref: '#/components/schemas/AuthenticatorFragment'
       x-addon: dashboard
+      operationId: getAuthenticators
+      x-operation-id-source: derived
   /authenticators/{id}:
     parameters:
     - $ref: '#/components/parameters/AuthenticationKeyOrID'
       x-addon: dashboard
     delete:
-      summary: Delete an authenticator.
+      summary: Delete an authenticator
       tags:
       - Authenticators
       responses:
         '204':
           description: Success
       x-addon: dashboard
+      operationId: deleteAuthenticatorsById
+      x-operation-id-source: derived
     get:
-      summary: Get a single authenticator.
+      summary: Get a single authenticator
       tags:
       - Authenticators
       responses:
@@ -107,8 +113,10 @@ paths:
           type: array
           items:
             type: string
+      operationId: getAuthenticatorsById
+      x-operation-id-source: derived
     patch:
-      summary: Update an authenticator.
+      summary: Update an authenticator
       tags:
       - Authenticators
       requestBody:
@@ -128,12 +136,14 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: dashboard
+      operationId: patchAuthenticatorsById
+      x-operation-id-source: derived
   /authenticators/{id}/debug:
     parameters:
     - $ref: '#/components/parameters/AuthenticationKeyOrID'
       x-addon: dashboard
     put:
-      summary: Enable or disable debug logging for an authenticator.
+      summary: Enable or disable debug logging for an authenticator
       description: 'Enable or disable debug logging for the specified authenticator.
 
         When enabled, debug logs will be recorded for 24 hours.
@@ -141,9 +151,7 @@ paths:
         When disabled, all existing debug logs for the authenticator are deleted.
 
 
-        **Requires sysAdmin permission in addition to Garden.Settings.Manage.**
-
-        '
+        **Requires sysAdmin permission in addition to Garden.Settings.Manage.**'
       tags:
       - Authenticators
       requestBody:
@@ -163,12 +171,14 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: dashboard
+      operationId: putAuthenticatorsByIdDebug
+      x-operation-id-source: derived
   /authenticators/{id}/debug-logs:
     parameters:
     - $ref: '#/components/parameters/AuthenticationKeyOrID'
       x-addon: dashboard
     get:
-      summary: Get debug log attempts for an authenticator.
+      summary: Get debug log attempts for an authenticator
       description: 'Retrieve debug log attempts for the specified authenticator with pagination.
 
 
@@ -179,9 +189,7 @@ paths:
         whether any message in the attempt has type "connect_success" or "logout_success".
 
 
-        **Requires sysAdmin permission in addition to Garden.Settings.Manage.**
-
-        '
+        **Requires sysAdmin permission in addition to Garden.Settings.Manage.**'
       tags:
       - Authenticators
       parameters:
@@ -221,54 +229,32 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: dashboard
+      operationId: getAuthenticatorsByIdDebugLogs
+      x-operation-id-source: derived
 components:
+  parameters:
+    AuthenticationKeyOrID:
+      name: id
+      in: path
+      description: An authenticatorID or an authenticationKey.
+      required: true
+      schema:
+        oneOf:
+        - type: integer
+        - type: string
+      x-addon: dashboard
+    Page:
+      name: page
+      in: query
+      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
+
+        '
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      x-addon: dashboard
   schemas:
-    AuthenticationTypeService:
-      description: Authentication types configuration attributes.
-      x-addon: dashboard
-    AuthenticatorUrlSchema:
-      type: object
-      properties:
-        signInUrl:
-          nullable: true
-          format: uri
-          type: string
-        signOutUrl:
-          nullable: true
-          format: uri
-          type: string
-        authenticateUrl:
-          nullable: true
-          format: uri
-          type: string
-        registerUrl:
-          nullable: true
-          format: uri
-          type: string
-        passwordUrl:
-          nullable: true
-          format: uri
-          type: string
-        profileUrl:
-          nullable: true
-          format: uri
-          type: string
-      x-addon: dashboard
-    AuthenticatorMetaDataUrl:
-      type: object
-      description: A URL for a metadata file for the authenticator.
-      properties:
-        labelCode:
-          type: string
-          description: The translation code for the label of the metadata URL.
-        url:
-          type: string
-          description: The URL.
-          format: uri
-      required:
-      - labelCode
-      - url
-      x-addon: dashboard
     UserFragment:
       oneOf:
       - type: object
@@ -291,8 +277,9 @@ components:
           dateLastActive:
             description: Time the user was last active.
             format: date-time
-            nullable: true
-            type: string
+            type:
+            - string
+            - 'null'
           ssoID:
             description: The unique ID of the user from the source site, if using SSO.
             type: string
@@ -350,8 +337,9 @@ components:
           format: date-time
           description: When the most recent log in this attempt was created.
         insertUserID:
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
           description: User ID associated with this attempt (if any).
         insertUser:
           $ref: '#/components/schemas/UserFragment'
@@ -369,6 +357,67 @@ components:
       - attemptFlow
       - dateInserted
       - messages
+      x-addon: dashboard
+    AuthenticatorTypeInfo:
+      type: object
+      description: Information about an authenticator type.
+      properties:
+        authenticatorType:
+          type: string
+          description: The unique key for the authenticator.
+        nameCode:
+          type: string
+          description: User readable name for the authenticator.
+        descriptionCode:
+          type: string
+          description: Description of the authenticator. Markdown supported.
+        entityClass:
+          type: string
+          description: The entity class for the authenticator.
+        schema:
+          type: object
+          description: JSON schema for the authenticator configuration.
+        metadataUrls:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthenticatorMetaDataUrl'
+      required:
+      - authenticatorType
+      - nameCode
+      - descriptionCode
+      - entityClass
+      - schema
+      - metadataUrls
+      x-addon: dashboard
+    AuthenticatorMetaDataUrl:
+      type: object
+      description: A URL for a metadata file for the authenticator.
+      properties:
+        labelCode:
+          type: string
+          description: The translation code for the label of the metadata URL.
+        url:
+          type: string
+          description: The URL.
+          format: uri
+      required:
+      - labelCode
+      - url
+      x-addon: dashboard
+    AuthenticatorDebugStatus:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Whether debug logging is enabled.
+        dateDebugExpires:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When debug logging will be automatically disabled.
+      required:
+      - enabled
       x-addon: dashboard
     AuthenticatorDebugInput:
       type: object
@@ -457,36 +506,42 @@ components:
         authenticatorConfig:
           $ref: '#/components/schemas/AuthenticationTypeService'
       x-addon: dashboard
-    AuthenticatorTypeInfo:
+    AuthenticationTypeService:
+      description: Authentication types configuration attributes.
+      x-addon: dashboard
+    AuthenticatorUrlSchema:
       type: object
-      description: Information about an authenticator type.
       properties:
-        authenticatorType:
-          type: string
-          description: The unique key for the authenticator.
-        nameCode:
-          type: string
-          description: User readable name for the authenticator.
-        descriptionCode:
-          type: string
-          description: Description of the authenticator. Markdown supported.
-        entityClass:
-          type: string
-          description: The entity class for the authenticator.
-        schema:
-          type: object
-          description: JSON schema for the authenticator configuration.
-        metadataUrls:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthenticatorMetaDataUrl'
-      required:
-      - authenticatorType
-      - nameCode
-      - descriptionCode
-      - entityClass
-      - schema
-      - metadataUrls
+        signInUrl:
+          format: uri
+          type:
+          - string
+          - 'null'
+        signOutUrl:
+          format: uri
+          type:
+          - string
+          - 'null'
+        authenticateUrl:
+          format: uri
+          type:
+          - string
+          - 'null'
+        registerUrl:
+          format: uri
+          type:
+          - string
+          - 'null'
+        passwordUrl:
+          format: uri
+          type:
+          - string
+          - 'null'
+        profileUrl:
+          format: uri
+          type:
+          - string
+          - 'null'
       x-addon: dashboard
     AuthenticatorFragment:
       type: object
@@ -526,9 +581,10 @@ components:
           description: Whether debug logging is enabled for this authenticator.
           default: false
         dateDebugExpires:
-          type: string
+          type:
+          - string
+          - 'null'
           format: date-time
-          nullable: true
           description: When debug logging will be automatically disabled.
         metadataUrls:
           type: array
@@ -544,20 +600,6 @@ components:
       - active
       - visible
       - metadataUrls
-      x-addon: dashboard
-    AuthenticatorDebugStatus:
-      type: object
-      properties:
-        enabled:
-          type: boolean
-          description: Whether debug logging is enabled.
-        dateDebugExpires:
-          type: string
-          format: date-time
-          nullable: true
-          description: When debug logging will be automatically disabled.
-      required:
-      - enabled
       x-addon: dashboard
   responses:
     NotFound:
@@ -619,28 +661,6 @@ components:
             recordIDs:
             - 2425
             - 1342
-      x-addon: dashboard
-  parameters:
-    Page:
-      name: page
-      in: query
-      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
-
-        '
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
-      x-addon: dashboard
-    AuthenticationKeyOrID:
-      name: id
-      in: path
-      description: An authenticatorID or an authenticationKey.
-      required: true
-      schema:
-        oneOf:
-        - type: integer
-        - type: string
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -748,8 +768,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

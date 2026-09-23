@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Locales API
+  title: Vanilla Locales API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /locales:
     get:
-      summary: Get all enabled locales on the site.
+      summary: Get all enabled locales on the site
       tags:
       - Locales
       responses:
@@ -32,6 +32,8 @@ paths:
           type: array
           items:
             type: string
+      operationId: getLocales
+      x-operation-id-source: derived
     post:
       tags:
       - Locales
@@ -46,6 +48,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/LocaleConfig'
       x-addon: dashboard
+      summary: Create locales
+      x-summary-source: derived
+      operationId: postLocales
+      x-operation-id-source: derived
   /locales/{locale}:
     get:
       summary: Get single locale
@@ -69,6 +75,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/LocaleConfig'
       x-addon: dashboard
+      operationId: getLocalesByLocale
+      x-operation-id-source: derived
     patch:
       tags:
       - Locales
@@ -87,13 +95,30 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TranslationServiceType'
+      summary: Update locales by locale
+      x-summary-source: derived
+      operationId: patchLocalesByLocale
+      x-operation-id-source: derived
 components:
-  schemas:
-    LocaleConfig:
-      allOf:
-      - $ref: '#/components/schemas/Locale'
-      - $ref: '#/components/schemas/TranslationServiceType'
+  parameters:
+    TranslatableParameter:
+      name: translatable
+      in: query
+      description: Whether or not to mark this locale as translatable by machine translations.
+      required: false
+      schema:
+        type: boolean
       x-addon: dashboard
+    LocaleCodeParameter:
+      name: locale
+      in: path
+      description: The locale code requested.
+      required: true
+      schema:
+        type: string
+        pattern: '[a-zA-Z0-9-]+'
+      x-addon: dashboard
+  schemas:
     Locale:
       properties:
         localeID:
@@ -118,23 +143,10 @@ components:
             de: Französisch
       type: object
       x-addon: dashboard
-  parameters:
-    LocaleCodeParameter:
-      name: locale
-      in: path
-      description: The locale code requested.
-      required: true
-      schema:
-        type: string
-        pattern: '[a-zA-Z0-9-]+'
-      x-addon: dashboard
-    TranslatableParameter:
-      name: translatable
-      in: query
-      description: Whether or not to mark this locale as translatable by machine translations.
-      required: false
-      schema:
-        type: boolean
+    LocaleConfig:
+      allOf:
+      - $ref: '#/components/schemas/Locale'
+      - $ref: '#/components/schemas/TranslationServiceType'
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -242,8 +254,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

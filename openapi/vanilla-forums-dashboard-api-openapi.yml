@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Dashboard API
+  title: Vanilla Dashboard API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /dashboard/menus:
     get:
-      summary: List the dashboard menus.
+      summary: List the dashboard menus
       description: 'This endpoint returns the entire navigation structure of the dashboard. It has three levels:
 
 
@@ -18,9 +18,7 @@ paths:
 
         2. Each section can have children, seperated into groups.
 
-        3. Groups contain the actual menu links.
-
-        '
+        3. Groups contain the actual menu links.'
       tags:
       - Dashboard
       responses:
@@ -127,6 +125,8 @@ paths:
           type: array
           items:
             type: string
+      operationId: getDashboardMenus
+      x-operation-id-source: derived
 x-resourceEvents:
   emailTemplates:
     x-feature: Feature.emailTemplates.Enabled
@@ -233,8 +233,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

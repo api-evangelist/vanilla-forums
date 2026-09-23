@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Tags API
+  title: Vanilla Tags API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -123,10 +123,12 @@ paths:
           description: Success
       tags:
       - Tags
-      summary: List tags.
+      summary: List tags
       x-addon: vanilla
+      operationId: getTags
+      x-operation-id-source: derived
     post:
-      summary: Add a tag.
+      summary: Add a tag
       tags:
       - Tags
       requestBody:
@@ -146,6 +148,8 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: vanilla
+      operationId: postTags
+      x-operation-id-source: derived
   /tags/{id}:
     parameters:
     - name: id
@@ -179,7 +183,7 @@ paths:
           type: array
           items:
             type: string
-      summary: Get a single tag.
+      summary: Get a single tag
       tags:
       - Tags
       responses:
@@ -194,8 +198,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: vanilla
+      operationId: getTagsById
+      x-operation-id-source: derived
     patch:
-      summary: Update a tag.
+      summary: Update a tag
       tags:
       - Tags
       requestBody:
@@ -215,15 +221,15 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: vanilla
+      operationId: patchTagsById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a tag.
+      summary: Delete a tag
       description: 'Delete a tag. Optionally provide a replacementTagID to reassign all discussions
 
         to another tag before deletion. If no replacement is provided, the tag associations
 
-        are simply removed from all discussions.
-
-        '
+        are simply removed from all discussions.'
       tags:
       - Tags
       parameters:
@@ -246,6 +252,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/BasicError'
       x-addon: vanilla
+      operationId: deleteTagsById
+      x-operation-id-source: derived
   /tags/{id}/delete-info:
     parameters:
     - name: id
@@ -256,14 +264,12 @@ paths:
         type: integer
       x-addon: vanilla
     get:
-      summary: Get information about the impact of deleting a tag.
+      summary: Get information about the impact of deleting a tag
       description: 'Returns information about what would happen if this tag is deleted,
 
         including the number of discussions using this tag and any categories
 
-        that would fall below minimum tag requirements.
-
-        '
+        that would fall below minimum tag requirements.'
       tags:
       - Tags
       responses:
@@ -287,6 +293,8 @@ paths:
           type: array
           items:
             type: string
+      operationId: getTagsByIdDeleteInfo
+      x-operation-id-source: derived
   /tags/{id}/preferences/{userID}:
     parameters:
     - in: path
@@ -305,7 +313,7 @@ paths:
     get:
       tags:
       - Tags
-      summary: List a user's tag preferences.
+      summary: List a user's tag preferences
       responses:
         '200':
           content:
@@ -323,10 +331,12 @@ paths:
           type: array
           items:
             type: string
+      operationId: getTagsByIdPreferencesByUserID
+      x-operation-id-source: derived
     patch:
       tags:
       - Tags
-      summary: Set a user's tag preferences.
+      summary: Set a user's tag preferences
       requestBody:
         content:
           application/json:
@@ -340,69 +350,10 @@ paths:
                 $ref: '#/components/schemas/TagPreferences'
           description: Success
       x-addon: vanilla
+      operationId: patchTagsByIdPreferencesByUserID
+      x-operation-id-source: derived
 components:
   schemas:
-    TagScopeType:
-      type: string
-      description: Scope type for a tag.
-      enum:
-      - global
-      - scoped
-      x-addon: vanilla
-    LegacyTag:
-      description: A backwards compatible tag.
-      allOf:
-      - $ref: '#/components/schemas/TagFragment'
-      - type: object
-        properties:
-          id:
-            type: integer
-            description: The ID of the tag.
-            deprecated: true
-          urlCode:
-            description: The url-code of the tag.
-            type: string
-            deprecated: true
-          parentTagID:
-            type: integer
-            description: The parent ID of the tag.
-            nullable: true
-          url:
-            type: string
-            description: URL to view items tagged with this tag.
-          lastPost:
-            $ref: '#/components/schemas/PostFragment'
-          preferences:
-            $ref: '#/components/schemas/TagPreferences'
-          permissions:
-            $ref: '#/components/schemas/DiscussionPermissions'
-        required:
-        - id
-        - urlCode
-        - parentTagID
-      x-addon: vanilla
-    InsertInfo:
-      type: object
-      properties:
-        dateInserted:
-          type: string
-          format: date-time
-          description: The date the record was inserted.
-          readOnly: true
-        insertUserID:
-          type: integer
-          description: The user that inserted the record.
-          readOnly: true
-        insertIPAddress:
-          type: string
-          format: ipv4
-          description: The IP address the record was inserted from.
-          readOnly: true
-      required:
-      - dateInserted
-      - insertUserID
-      - insertIPAddress
-      x-addon: dashboard
     UserFragment:
       oneOf:
       - type: object
@@ -425,8 +376,9 @@ components:
           dateLastActive:
             description: Time the user was last active.
             format: date-time
-            nullable: true
-            type: string
+            type:
+            - string
+            - 'null'
           ssoID:
             description: The unique ID of the user from the source site, if using SSO.
             type: string
@@ -453,6 +405,127 @@ components:
         required:
         - ssoID
       x-addon: dashboard
+    DiscussionPermissions:
+      type: object
+      description: Permissions for the current user related to discussions. Applied when expanded..
+      example:
+        discussions.view: true
+        discussions.add: true
+        discussions.edit: false
+        discussions.delete: false
+        discussions.sink: false
+        comments.add: true
+        comments.edit: false
+        comments.delete: false
+      x-addon: vanilla
+    TagFragment:
+      description: A tag that can be applied to content.
+      type: object
+      properties:
+        tagID:
+          type: integer
+          description: The ID of the tag.
+          readOnly: true
+        urlcode:
+          type: string
+          description: The URL slug of the tag.
+        name:
+          type:
+          - string
+          - 'null'
+          description: The full name of the tag.
+        description:
+          type: string
+          description: The description of the tag.
+      required:
+      - tagID
+      - urlcode
+      - name
+      x-addon: vanilla
+    TagScopeType:
+      type: string
+      description: Scope type for a tag.
+      enum:
+      - global
+      - scoped
+      x-addon: vanilla
+    DeleteTagInfo:
+      type: object
+      description: Information about the impact of deleting a tag.
+      properties:
+        countDiscussions:
+          type: integer
+          description: Number of discussions using this tag.
+        categoriesBelowMinimum:
+          type: array
+          description: Categories that would fall below minimum tag requirements if this tag is deleted.
+          items:
+            type: string
+      required:
+      - countDiscussions
+      - categoriesBelowMinimum
+      x-addon: vanilla
+    TagPreferences:
+      type: object
+      properties:
+        preferences.followed:
+          type: boolean
+        preferences.popup.postTag:
+          type: boolean
+        preferences.email.postTag:
+          type: boolean
+      x-addon: vanilla
+    Tag:
+      description: A full tag.
+      allOf:
+      - $ref: '#/components/schemas/TagFragment'
+      - type: object
+        properties:
+          parentTagID:
+            type:
+            - integer
+            - 'null'
+            description: The parent ID of the tag.
+          type:
+            type:
+            - string
+            - 'null'
+            default: null
+            description: The tag type.
+          scope:
+            $ref: '#/components/schemas/TagScope'
+      - $ref: '#/components/schemas/InsertInfo'
+      x-addon: vanilla
+    TagPost:
+      properties:
+        name:
+          type: string
+          description: The full name of the tag.
+        urlcode:
+          type: string
+          description: The URL slug of the tag.
+        parentTagID:
+          type:
+          - integer
+          - 'null'
+          description: The parent ID of the tag.
+        type:
+          type:
+          - string
+          - 'null'
+          default: null
+          description: The tag type.
+        description:
+          type: string
+          description: The description of the tag.
+        scopeType:
+          $ref: '#/components/schemas/TagScopeType'
+        scope:
+          $ref: '#/components/schemas/TagScope'
+      required:
+      - name
+      type: object
+      x-addon: vanilla
     PostFragment:
       properties:
         discussionID:
@@ -488,6 +561,39 @@ components:
       - insertUserID
       type: object
       x-addon: vanilla
+    LegacyTag:
+      description: A backwards compatible tag.
+      allOf:
+      - $ref: '#/components/schemas/TagFragment'
+      - type: object
+        properties:
+          id:
+            type: integer
+            description: The ID of the tag.
+            deprecated: true
+          urlCode:
+            description: The url-code of the tag.
+            type: string
+            deprecated: true
+          parentTagID:
+            type:
+            - integer
+            - 'null'
+            description: The parent ID of the tag.
+          url:
+            type: string
+            description: URL to view items tagged with this tag.
+          lastPost:
+            $ref: '#/components/schemas/PostFragment'
+          preferences:
+            $ref: '#/components/schemas/TagPreferences'
+          permissions:
+            $ref: '#/components/schemas/DiscussionPermissions'
+        required:
+        - id
+        - urlCode
+        - parentTagID
+      x-addon: vanilla
     BasicError:
       type: object
       properties:
@@ -501,58 +607,6 @@ components:
       - message
       - status
       x-addon: dashboard
-    TagPatch:
-      properties:
-        name:
-          type: string
-          description: The full name of the tag.
-        urlcode:
-          type: string
-          description: The URL slug of the tag.
-        description:
-          type: string
-          description: The description of the tag.
-        parentTagID:
-          type: integer
-          description: The parent ID of the tag.
-          nullable: true
-        type:
-          type: string
-          nullable: true
-          default: null
-          description: The tag type.
-        scopeType:
-          $ref: '#/components/schemas/TagScopeType'
-        scope:
-          $ref: '#/components/schemas/TagScope'
-      type: object
-      x-addon: vanilla
-    TagPreferences:
-      type: object
-      properties:
-        preferences.followed:
-          type: boolean
-        preferences.popup.postTag:
-          type: boolean
-        preferences.email.postTag:
-          type: boolean
-      x-addon: vanilla
-    DeleteTagInfo:
-      type: object
-      description: Information about the impact of deleting a tag.
-      properties:
-        countDiscussions:
-          type: integer
-          description: Number of discussions using this tag.
-        categoriesBelowMinimum:
-          type: array
-          description: Categories that would fall below minimum tag requirements if this tag is deleted.
-          items:
-            type: string
-      required:
-      - countDiscussions
-      - categoriesBelowMinimum
-      x-addon: vanilla
     TagScope:
       type: object
       description: Scoping information for a tag.
@@ -566,88 +620,55 @@ components:
           items:
             type: string
       x-addon: vanilla
-    DiscussionPermissions:
-      type: object
-      description: Permissions for the current user related to discussions. Applied when expanded..
-      example:
-        discussions.view: true
-        discussions.add: true
-        discussions.edit: false
-        discussions.delete: false
-        discussions.sink: false
-        comments.add: true
-        comments.edit: false
-        comments.delete: false
-      x-addon: vanilla
-    TagFragment:
-      description: A tag that can be applied to content.
+    InsertInfo:
       type: object
       properties:
-        tagID:
-          type: integer
-          description: The ID of the tag.
+        dateInserted:
+          type: string
+          format: date-time
+          description: The date the record was inserted.
           readOnly: true
+        insertUserID:
+          type: integer
+          description: The user that inserted the record.
+          readOnly: true
+        insertIPAddress:
+          type: string
+          format: ipv4
+          description: The IP address the record was inserted from.
+          readOnly: true
+      required:
+      - dateInserted
+      - insertUserID
+      - insertIPAddress
+      x-addon: dashboard
+    TagPatch:
+      properties:
+        name:
+          type: string
+          description: The full name of the tag.
         urlcode:
           type: string
           description: The URL slug of the tag.
-        name:
-          type: string
-          nullable: true
-          description: The full name of the tag.
         description:
           type: string
           description: The description of the tag.
-      required:
-      - tagID
-      - urlcode
-      - name
-      x-addon: vanilla
-    TagPost:
-      properties:
-        name:
-          type: string
-          description: The full name of the tag.
-        urlcode:
-          type: string
-          description: The URL slug of the tag.
         parentTagID:
-          type: integer
+          type:
+          - integer
+          - 'null'
           description: The parent ID of the tag.
-          nullable: true
         type:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           default: null
           description: The tag type.
-        description:
-          type: string
-          description: The description of the tag.
         scopeType:
           $ref: '#/components/schemas/TagScopeType'
         scope:
           $ref: '#/components/schemas/TagScope'
-      required:
-      - name
       type: object
-      x-addon: vanilla
-    Tag:
-      description: A full tag.
-      allOf:
-      - $ref: '#/components/schemas/TagFragment'
-      - type: object
-        properties:
-          parentTagID:
-            type: integer
-            description: The parent ID of the tag.
-            nullable: true
-          type:
-            type: string
-            nullable: true
-            default: null
-            description: The tag type.
-          scope:
-            $ref: '#/components/schemas/TagScope'
-      - $ref: '#/components/schemas/InsertInfo'
       x-addon: vanilla
   responses:
     NotFound:
@@ -828,8 +849,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

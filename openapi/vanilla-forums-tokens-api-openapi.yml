@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Tokens API
+  title: Vanilla Tokens API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -21,7 +21,7 @@ paths:
           description: Success
       tags:
       - Tokens
-      summary: Get a list of access token IDs for the current user.
+      summary: Get a list of access token IDs for the current user
       x-addon: dashboard
       parameters:
       - name: fields
@@ -32,6 +32,8 @@ paths:
           type: array
           items:
             type: string
+      operationId: getTokens
+      x-operation-id-source: derived
     post:
       responses:
         '201':
@@ -48,11 +50,13 @@ paths:
             schema:
               $ref: '#/components/schemas/Token'
         required: true
-      summary: Issue a new access token for the current user.
+      summary: Issue a new access token for the current user
       x-addon: dashboard
+      operationId: postTokens
+      x-operation-id-source: derived
   /tokens/oauth:
     post:
-      summary: Exchange an OAuth access token for a Vanilla access token.
+      summary: Exchange an OAuth access token for a Vanilla access token
       description: 'This endpoint takes an access token from your OAuth 2 provider and exchanges it for a Vanilla access token. If no matching user exists in Vanilla, one will be created and an access token will be issued for them.
 
 
@@ -113,6 +117,8 @@ paths:
         '500':
           description: OAuth is either not enabled or is not configured on Vanilla.
       x-addon: dashboard
+      operationId: postTokensOauth
+      x-operation-id-source: derived
   /tokens/roles:
     post:
       summary: Issue a JWT that includes the current user's roles as its claims
@@ -148,6 +154,8 @@ paths:
 
             '
       x-addon: dashboard
+      operationId: postTokensRoles
+      x-operation-id-source: derived
   /tokens/{id}:
     delete:
       parameters:
@@ -164,8 +172,10 @@ paths:
           description: Success
       tags:
       - Tokens
-      summary: Revoke an access token.
+      summary: Revoke an access token
       x-addon: dashboard
+      operationId: deleteTokensById
+      x-operation-id-source: derived
     get:
       parameters:
       - description: 'The numeric ID of a token.
@@ -202,8 +212,10 @@ paths:
           description: Success
       tags:
       - Tokens
-      summary: Reveal a usable access token.
+      summary: Reveal a usable access token
       x-addon: dashboard
+      operationId: getTokensById
+      x-operation-id-source: derived
 components:
   schemas:
     Token:
@@ -222,8 +234,9 @@ components:
         name:
           description: A user-specified label.
           minLength: 1
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         dateLastUsed:
           description: Last time a token was used.
           format: date-time
@@ -341,8 +354,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

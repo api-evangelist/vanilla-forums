@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons AI Processing Preferences API
+  title: Vanilla AI Processing Preferences API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -17,7 +17,7 @@ paths:
         type: integer
       x-addon: dashboard
     get:
-      summary: Get a user's AI processing preferences.
+      summary: Get a user's AI processing preferences
       tags:
       - AI Processing Preferences
       responses:
@@ -41,8 +41,10 @@ paths:
           type: array
           items:
             type: string
+      operationId: getAiProcessingPreferencesById
+      x-operation-id-source: derived
     patch:
-      summary: Update a user's AI processing preferences.
+      summary: Update a user's AI processing preferences
       tags:
       - AI Processing Preferences
       requestBody:
@@ -64,6 +66,8 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: dashboard
+      operationId: patchAiProcessingPreferencesById
+      x-operation-id-source: derived
 components:
   schemas:
     AiProcessingPreferences:
@@ -90,6 +94,26 @@ components:
           description: Allow AI translations of content.
       x-addon: dashboard
   responses:
+    NotFound:
+      description: The record does not exist or was not found.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: More information about the error.
+              status:
+                type: number
+                description: The HTTP status code for the error.
+                format: int32
+            required:
+            - message
+          example:
+            status: 404
+            message: Page Not Found
+      x-addon: dashboard
     PermissionError:
       description: Permission denied.
       content:
@@ -129,26 +153,6 @@ components:
             recordIDs:
             - 2425
             - 1342
-      x-addon: dashboard
-    NotFound:
-      description: The record does not exist or was not found.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                description: More information about the error.
-              status:
-                type: number
-                description: The HTTP status code for the error.
-                format: int32
-            required:
-            - message
-          example:
-            status: 404
-            message: Page Not Found
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -256,8 +260,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

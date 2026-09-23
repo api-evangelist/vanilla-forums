@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Rules API
+  title: Vanilla Rules API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -52,8 +52,10 @@ paths:
           description: Success
       tags:
       - Rules
-      summary: List rules.
+      summary: List rules
       x-addon: warnings2
+      operationId: getRules
+      x-operation-id-source: derived
     post:
       responses:
         '201':
@@ -66,8 +68,10 @@ paths:
       - Rules
       requestBody:
         $ref: '#/components/requestBodies/RulePost'
-      summary: Create a rule.
+      summary: Create a rule
       x-addon: warnings2
+      operationId: postRules
+      x-operation-id-source: derived
   /rules/{id}:
     delete:
       parameters:
@@ -84,8 +88,10 @@ paths:
           description: Success
       tags:
       - Rules
-      summary: Delete a rule.
+      summary: Delete a rule
       x-addon: warnings2
+      operationId: deleteRulesById
+      x-operation-id-source: derived
     get:
       parameters:
       - description: 'The rule ID.
@@ -113,8 +119,10 @@ paths:
           description: Success
       tags:
       - Rules
-      summary: Get a rule.
+      summary: Get a rule
       x-addon: warnings2
+      operationId: getRulesById
+      x-operation-id-source: derived
     patch:
       parameters:
       - description: The rule ID.
@@ -138,8 +146,10 @@ paths:
             schema:
               $ref: '#/components/schemas/RulePost'
         required: true
-      summary: Update a rule.
+      summary: Update a rule
       x-addon: warnings2
+      operationId: patchRulesById
+      x-operation-id-source: derived
 components:
   requestBodies:
     RulePost:
@@ -159,8 +169,9 @@ components:
         description:
           description: The description of the rule.
           minLength: 1
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
       required:
       - name
       - description
@@ -174,8 +185,9 @@ components:
           type: string
         description:
           description: Description of the rule.
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         ruleID:
           description: ID of the rule.
           type: integer
@@ -291,8 +303,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

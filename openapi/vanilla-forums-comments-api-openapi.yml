@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Comments API
+  title: Vanilla Comments API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -121,8 +121,10 @@ paths:
           description: Success
       tags:
       - Comments
-      summary: List comments.
+      summary: List comments
       x-addon: vanilla
+      operationId: getComments
+      x-operation-id-source: derived
     post:
       responses:
         '201':
@@ -141,8 +143,10 @@ paths:
       - Comments
       requestBody:
         $ref: '#/components/requestBodies/CommentPost'
-      summary: Add a comment.
+      summary: Add a comment
       x-addon: vanilla
+      operationId: postComments
+      x-operation-id-source: derived
   /comments/search:
     get:
       parameters:
@@ -200,8 +204,10 @@ paths:
           description: Success
       tags:
       - Comments
-      summary: Search comments.
+      summary: Search comments
       x-addon: vanilla
+      operationId: getCommentsSearch
+      x-operation-id-source: derived
   /comments/{id}:
     delete:
       parameters:
@@ -231,8 +237,10 @@ paths:
           description: Success
       tags:
       - Comments
-      summary: Delete a comment.
+      summary: Delete a comment
       x-addon: vanilla
+      operationId: deleteCommentsById
+      x-operation-id-source: derived
     get:
       parameters:
       - description: 'The comment ID.
@@ -278,8 +286,10 @@ paths:
           description: Success
       tags:
       - Comments
-      summary: Get a comment.
+      summary: Get a comment
       x-addon: vanilla
+      operationId: getCommentsById
+      x-operation-id-source: derived
     patch:
       parameters:
       - description: The comment ID.
@@ -309,8 +319,10 @@ paths:
             schema:
               $ref: '#/components/schemas/CommentPost'
         required: true
-      summary: Update a comment.
+      summary: Update a comment
       x-addon: vanilla
+      operationId: patchCommentsById
+      x-operation-id-source: derived
   /comments/{id}/answer:
     patch:
       parameters:
@@ -335,6 +347,10 @@ paths:
               $ref: '#/components/schemas/CommentGet'
         required: true
       x-addon: vanilla
+      summary: Update comments by id answer
+      x-summary-source: derived
+      operationId: patchCommentsByIdAnswer
+      x-operation-id-source: derived
   /comments/{id}/edit:
     get:
       parameters:
@@ -394,8 +410,10 @@ paths:
           description: Success
       tags:
       - Comments
-      summary: Get a comment for editing.
+      summary: Get a comment for editing
       x-addon: vanilla
+      operationId: getCommentsByIdEdit
+      x-operation-id-source: derived
   /comments/{id}/quote:
     get:
       parameters:
@@ -448,8 +466,9 @@ paths:
                   dateUpdated:
                     description: When the comment was last updated.
                     format: date-time
-                    nullable: true
-                    type: string
+                    type:
+                    - string
+                    - 'null'
                   format:
                     $ref: '#/components/schemas/Format'
                   insertUser:
@@ -471,71 +490,24 @@ paths:
       tags:
       - Comments
       x-addon: vanilla
+      summary: Get comments by id quote
+      x-summary-source: derived
+      operationId: getCommentsByIdQuote
+      x-operation-id-source: derived
 components:
-  requestBodies:
-    CommentPost:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/CommentPost'
-      required: true
-      x-addon: vanilla
   schemas:
-    RangeExpression:
-      description: Specify a range or CSV of values.
+    Format:
+      description: The format of the body used to convert it to HTML.
       type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+      enum:
+      - rich
+      - markdown
+      - text
+      - textex
+      - wysiwyg
+      - bbcode
+      example: markdown
       x-addon: dashboard
-    ReportReasonFragment:
-      type: object
-      properties:
-        reportReasonID:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        sort:
-          type: integer
-        reportID:
-          type: integer
-        deleted:
-          type: boolean
-      required:
-      - reportReasonID
-      - name
-      - description
-      - sort
-      - deleted
-      x-addon: vanilla
-    PostPremoderation:
-      properties:
-        description:
-          description: Body of the premoderation
-          type: string
-        message:
-          description: General Message of the premoderation
-          type: string
-        reportID:
-          description: Id of the Report of the premoderation
-          type: string
-        premoderatinReasons:
-          items:
-            properties:
-              premoderationType:
-                description: Premoderation Type
-                enum:
-                - premoderatedCategory
-                - premoderatedKeyword
-                - premoderatedRole
-                - premoderatedSpamStopForumSpam
-                - premoderatedSpamAkisment
-                type: string
-            type: object
-          type: array
-      x-addon: vanilla
     UserFragment:
       oneOf:
       - type: object
@@ -558,8 +530,9 @@ components:
           dateLastActive:
             description: Time the user was last active.
             format: date-time
-            nullable: true
-            type: string
+            type:
+            - string
+            - 'null'
           ssoID:
             description: The unique ID of the user from the source site, if using SSO.
             type: string
@@ -586,42 +559,13 @@ components:
         required:
         - ssoID
       x-addon: dashboard
-    Image:
-      description: An image, pulled from content.
-      type: object
-      properties:
-        url:
-          description: The original image URL.
-          type: string
-        urlSrcSet:
-          $ref: '#/components/schemas/SrcSet'
-        alt:
-          description: The image's alternative text.
-          type: string
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
       x-addon: dashboard
-    CommentPost:
-      properties:
-        body:
-          description: The body of the comment.
-          minLength: 1
-          type: string
-        discussionID:
-          description: The ID of the discussion.
-          type: integer
-        parentRecordType:
-          description: The type of the parent record.
-          type: string
-          enum:
-          - discussion
-          - escalation
-          - event
-        parentRecordID:
-          description: The ID of the parent record.
-          type: integer
-        format:
-          $ref: '#/components/schemas/Format'
-      type: object
-      x-addon: vanilla
     CommentGet:
       properties:
         expand:
@@ -640,18 +584,71 @@ components:
       - id
       type: object
       x-addon: vanilla
-    Format:
-      description: The format of the body used to convert it to HTML.
-      type: string
-      enum:
-      - rich
-      - markdown
-      - text
-      - textex
-      - wysiwyg
-      - bbcode
-      example: markdown
+    SrcSet:
+      description: An image's srcset for various sizes.
+      type: object
+      properties:
+        '10':
+          description: 10px large Image url.
+          type: string
+        '300':
+          description: 300px large Image url.
+          type: string
+        '800':
+          description: 800px large Image url.
+          type: string
+        '1200':
+          description: 1200px large Image url.
+          type: string
       x-addon: dashboard
+    PostPremoderation:
+      properties:
+        description:
+          description: Body of the premoderation
+          type: string
+        message:
+          description: General Message of the premoderation
+          type: string
+        reportID:
+          description: Id of the Report of the premoderation
+          type: string
+        premoderatinReasons:
+          items:
+            properties:
+              premoderationType:
+                description: Premoderation Type
+                enum:
+                - premoderatedCategory
+                - premoderatedKeyword
+                - premoderatedRole
+                - premoderatedSpamStopForumSpam
+                - premoderatedSpamAkisment
+                type: string
+            type: object
+          type: array
+      x-addon: vanilla
+    ReportReasonFragment:
+      type: object
+      properties:
+        reportReasonID:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        sort:
+          type: integer
+        reportID:
+          type: integer
+        deleted:
+          type: boolean
+      required:
+      - reportReasonID
+      - name
+      - description
+      - sort
+      - deleted
+      x-addon: vanilla
     ReportMeta:
       type: object
       properties:
@@ -696,28 +693,12 @@ components:
           default: 0
           description: The number of reports on the post.
       x-addon: vanilla
-    SrcSet:
-      description: An image's srcset for various sizes.
-      type: object
-      properties:
-        '10':
-          description: 10px large Image url.
-          type: string
-        '300':
-          description: 300px large Image url.
-          type: string
-        '800':
-          description: 800px large Image url.
-          type: string
-        '1200':
-          description: 1200px large Image url.
-          type: string
-      x-addon: dashboard
     Comment:
       properties:
         attributes:
-          nullable: true
-          type: object
+          type:
+          - object
+          - 'null'
         name:
           description: Name of the comment (based on the discussion).
           type: string
@@ -736,13 +717,15 @@ components:
           type: string
         groupID:
           description: GroupID of the comment if applicable.
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
         dateUpdated:
           description: When the comment was last updated.
           format: date-time
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         categoryID:
           description: The category of the comment.
           type: integer
@@ -772,8 +755,9 @@ components:
           type: integer
         score:
           description: Total points associated with this post.
-          nullable: true
-          type: integer
+          type:
+          - integer
+          - 'null'
         scoreChildComments:
           description: Total points associated with this post and its children.
           type: integer
@@ -828,21 +812,47 @@ components:
       - attributes
       type: object
       x-addon: vanilla
+    Image:
+      description: An image, pulled from content.
+      type: object
+      properties:
+        url:
+          description: The original image URL.
+          type: string
+        urlSrcSet:
+          $ref: '#/components/schemas/SrcSet'
+        alt:
+          description: The image's alternative text.
+          type: string
+      x-addon: dashboard
+    CommentPost:
+      properties:
+        body:
+          description: The body of the comment.
+          minLength: 1
+          type: string
+        discussionID:
+          description: The ID of the discussion.
+          type: integer
+        parentRecordType:
+          description: The type of the parent record.
+          type: string
+          enum:
+          - discussion
+          - escalation
+          - event
+        parentRecordID:
+          description: The ID of the parent record.
+          type: integer
+        format:
+          $ref: '#/components/schemas/Format'
+      type: object
+      x-addon: vanilla
   parameters:
     DateInserted:
       name: dateInserted
       in: query
       description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
-
-        '
-      schema:
-        format: date-filter
-        type: string
-      x-addon: dashboard
-    DateUpdated:
-      name: dateUpdated
-      in: query
-      description: 'Filter by update date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
 
         '
       schema:
@@ -860,6 +870,24 @@ components:
         default: 1
         minimum: 1
       x-addon: dashboard
+    DateUpdated:
+      name: dateUpdated
+      in: query
+      description: 'Filter by update date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
+
+        '
+      schema:
+        format: date-filter
+        type: string
+      x-addon: dashboard
+  requestBodies:
+    CommentPost:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CommentPost'
+      required: true
+      x-addon: vanilla
 x-resourceEvents:
   emailTemplates:
     x-feature: Feature.emailTemplates.Enabled
@@ -966,8 +994,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

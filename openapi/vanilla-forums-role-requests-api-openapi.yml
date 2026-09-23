@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Role Requests API
+  title: Vanilla Role Requests API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /role-requests/applications:
     post:
-      summary: Apply to a role.
+      summary: Apply to a role
       tags:
       - Role Requests
       requestBody:
@@ -33,8 +33,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RoleApplication'
       x-addon: dashboard
+      operationId: postRoleRequestsApplications
+      x-operation-id-source: derived
     get:
-      summary: List role applicants.
+      summary: List role applicants
       tags:
       - Role Requests
       parameters:
@@ -92,9 +94,11 @@ paths:
                   - $ref: '#/components/schemas/RoleApplication'
                   - $ref: '#/components/schemas/RoleRequestExpansions'
       x-addon: dashboard
+      operationId: getRoleRequestsApplications
+      x-operation-id-source: derived
   /role-requests/applications/{id}:
     get:
-      summary: Get a single application.
+      summary: Get a single application
       tags:
       - Role Requests
       parameters:
@@ -122,8 +126,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
       x-addon: dashboard
+      operationId: getRoleRequestsApplicationsById
+      x-operation-id-source: derived
     patch:
-      summary: Update a role application.
+      summary: Update a role application
       tags:
       - Role Requests
       parameters:
@@ -145,8 +151,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RoleApplication'
       x-addon: dashboard
+      operationId: patchRoleRequestsApplicationsById
+      x-operation-id-source: derived
     delete:
-      summary: Delete a role application.
+      summary: Delete a role application
       tags:
       - Role Requests
       parameters:
@@ -155,9 +163,11 @@ paths:
         '204':
           description: Success
       x-addon: dashboard
+      operationId: deleteRoleRequestsApplicationsById
+      x-operation-id-source: derived
   /role-requests/metas:
     put:
-      summary: Add or update a role request meta definition.
+      summary: Add or update a role request meta definition
       tags:
       - Role Requests
       requestBody:
@@ -197,6 +207,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/RoleRequestMeta'
       x-addon: dashboard
+      operationId: putRoleRequestsMetas
+      x-operation-id-source: derived
     get:
       summary: List role request meta information
       tags:
@@ -245,9 +257,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/RoleRequestMeta'
       x-addon: dashboard
+      operationId: getRoleRequestsMetas
+      x-operation-id-source: derived
   /role-requests/metas/{type}/{roleID}:
     get:
-      summary: Get a meta item.
+      summary: Get a meta item
       tags:
       - Role Requests
       parameters:
@@ -279,8 +293,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RoleRequestMeta'
       x-addon: dashboard
+      operationId: getRoleRequestsMetasByTypeByRoleID
+      x-operation-id-source: derived
     delete:
-      summary: Delete a meta item.
+      summary: Delete a meta item
       tags:
       - Role Requests
       parameters:
@@ -300,110 +316,10 @@ paths:
         '204':
           description: Success.
       x-addon: dashboard
+      operationId: deleteRoleRequestsMetasByTypeByRoleID
+      x-operation-id-source: derived
 components:
   schemas:
-    InsertInfo:
-      type: object
-      properties:
-        dateInserted:
-          type: string
-          format: date-time
-          description: The date the record was inserted.
-          readOnly: true
-        insertUserID:
-          type: integer
-          description: The user that inserted the record.
-          readOnly: true
-        insertIPAddress:
-          type: string
-          format: ipv4
-          description: The IP address the record was inserted from.
-          readOnly: true
-      required:
-      - dateInserted
-      - insertUserID
-      - insertIPAddress
-      x-addon: dashboard
-    RoleRequestMetaNotification:
-      type: object
-      properties:
-        name:
-          description: Override the notification subject.
-          type: string
-          minLength: 1
-        body:
-          description: Override the notification body.
-          type: string
-        format:
-          $ref: '#/components/schemas/Format'
-        url:
-          description: Overide the notification URL.
-          type: string
-          format: uri
-      x-addon: dashboard
-    RoleFragment:
-      type: object
-      properties:
-        name:
-          description: Name of the role.
-          minLength: 1
-          type: string
-        roleID:
-          description: ID of the role.
-          type: integer
-      required:
-      - roleID
-      - name
-      x-addon: dashboard
-    RoleRequestFragment:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/RoleRequestStatus'
-        dateInserted:
-          type: string
-          format: date-time
-      required:
-      - status
-      - dateInserted
-      x-addon: dashboard
-    RoleRequestItem:
-      type: object
-      properties:
-        roleRequestID:
-          type: integer
-          description: The unique ID of the entry.
-        type:
-          $ref: '#/components/schemas/RoleRequestType'
-        roleID:
-          type: integer
-          description: The role being applied/invited to.
-        userID:
-          type: integer
-          description: The user applying/being invited.
-        status:
-          $ref: '#/components/schemas/RoleRequestStatus'
-        dateOfStatus:
-          type: integer
-          description: The date the status was changed.  Only community managers see this.
-        statusUserID:
-          type: integer
-          description: The user that last set the status. Only community managers see this.
-        dateExpires:
-          type: string
-          format: date-time
-          nullable: true
-          description: The date the application/invitation expires.
-        attributes:
-          type: object
-      required:
-      - roleRequestID
-      - roleID
-      - userID
-      - status
-      - dateExpires
-      - attributes
-      x-addon: dashboard
     UserFragment:
       oneOf:
       - type: object
@@ -426,8 +342,9 @@ components:
           dateLastActive:
             description: Time the user was last active.
             format: date-time
-            nullable: true
-            type: string
+            type:
+            - string
+            - 'null'
           ssoID:
             description: The unique ID of the user from the source site, if using SSO.
             type: string
@@ -454,11 +371,142 @@ components:
         required:
         - ssoID
       x-addon: dashboard
-    RoleApplication:
-      allOf:
-      - $ref: '#/components/schemas/RoleRequestItem'
-      - $ref: '#/components/schemas/InsertInfo'
-      - $ref: '#/components/schemas/UpdateInfo'
+    RoleRequestType:
+      description: The type of role request.
+      type: string
+      enum:
+      - application
+      - invitation
+      x-addon: dashboard
+    RoleRequestMetaAttributes:
+      type: object
+      properties:
+        notification:
+          description: Customize the notification sent when a role is approved.
+          type: object
+          properties:
+            approved:
+              $ref: '#/components/schemas/RoleRequestMetaNotification'
+            denied:
+              $ref: '#/components/schemas/RoleRequestMetaNotification'
+            communityManager:
+              $ref: '#/components/schemas/RoleRequestMetaNotification'
+        link:
+          description: Customize the request link display.
+          type: object
+          properties:
+            name:
+              description: Override the link text.
+              type: string
+            description:
+              description: Give a link description.
+              type: string
+      x-addon: dashboard
+    RoleRequestFragment:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/RoleRequestStatus'
+        dateInserted:
+          type: string
+          format: date-time
+      required:
+      - status
+      - dateInserted
+      x-addon: dashboard
+    BasicSchema:
+      description: A basic OpenAPI schema validator so that schemas can be submitted as data.
+      type: object
+      properties:
+        type:
+          description: Must be an object.
+          type: string
+          enum:
+          - object
+        properties:
+          description: A map of property names to property definitions.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/BasicSchemaProperty'
+        required:
+          description: The names of required properties.
+          type: array
+          items:
+            type: string
+      example:
+        type: object
+        properties:
+          license:
+            type: string
+            description: Find your license number in the help menu.
+          notes:
+            type: string
+            x-control: textarea
+      x-addon: dashboard
+    RoleRequestItem:
+      type: object
+      properties:
+        roleRequestID:
+          type: integer
+          description: The unique ID of the entry.
+        type:
+          $ref: '#/components/schemas/RoleRequestType'
+        roleID:
+          type: integer
+          description: The role being applied/invited to.
+        userID:
+          type: integer
+          description: The user applying/being invited.
+        status:
+          $ref: '#/components/schemas/RoleRequestStatus'
+        dateOfStatus:
+          type: integer
+          description: The date the status was changed.  Only community managers see this.
+        statusUserID:
+          type: integer
+          description: The user that last set the status. Only community managers see this.
+        dateExpires:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date the application/invitation expires.
+        attributes:
+          type: object
+      required:
+      - roleRequestID
+      - roleID
+      - userID
+      - status
+      - dateExpires
+      - attributes
+      x-addon: dashboard
+    RoleRequestExpansions:
+      type: object
+      properties:
+        role:
+          $ref: '#/components/schemas/RoleFragment'
+        user:
+          $ref: '#/components/schemas/UserFragment'
+        statusUser:
+          $ref: '#/components/schemas/UserFragment'
+      x-addon: dashboard
+    RoleRequestMetaNotification:
+      type: object
+      properties:
+        name:
+          description: Override the notification subject.
+          type: string
+          minLength: 1
+        body:
+          description: Override the notification body.
+          type: string
+        format:
+          $ref: '#/components/schemas/Format'
+        url:
+          description: Overide the notification URL.
+          type: string
+          format: uri
       x-addon: dashboard
     RoleRequestMeta:
       type: object
@@ -527,77 +575,6 @@ components:
       - bbcode
       example: markdown
       x-addon: dashboard
-    RoleRequestMetaAttributes:
-      type: object
-      properties:
-        notification:
-          description: Customize the notification sent when a role is approved.
-          type: object
-          properties:
-            approved:
-              $ref: '#/components/schemas/RoleRequestMetaNotification'
-            denied:
-              $ref: '#/components/schemas/RoleRequestMetaNotification'
-            communityManager:
-              $ref: '#/components/schemas/RoleRequestMetaNotification'
-        link:
-          description: Customize the request link display.
-          type: object
-          properties:
-            name:
-              description: Override the link text.
-              type: string
-            description:
-              description: Give a link description.
-              type: string
-      x-addon: dashboard
-    RoleRequestStatus:
-      description: The current status of the request.
-      type: string
-      enum:
-      - pending
-      - approved
-      - denied
-      x-addon: dashboard
-    RoleRequestExpansions:
-      type: object
-      properties:
-        role:
-          $ref: '#/components/schemas/RoleFragment'
-        user:
-          $ref: '#/components/schemas/UserFragment'
-        statusUser:
-          $ref: '#/components/schemas/UserFragment'
-      x-addon: dashboard
-    BasicSchema:
-      description: A basic OpenAPI schema validator so that schemas can be submitted as data.
-      type: object
-      properties:
-        type:
-          description: Must be an object.
-          type: string
-          enum:
-          - object
-        properties:
-          description: A map of property names to property definitions.
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/BasicSchemaProperty'
-        required:
-          description: The names of required properties.
-          type: array
-          items:
-            type: string
-      example:
-        type: object
-        properties:
-          license:
-            type: string
-            description: Find your license number in the help menu.
-          notes:
-            type: string
-            x-control: textarea
-      x-addon: dashboard
     BasicSchemaProperty:
       type: object
       properties:
@@ -629,7 +606,6 @@ components:
           - type: number
           - type: integer
           - type: boolean
-          nullable: true
         enum:
           description: Limit input to a set of values.
           type: array
@@ -656,33 +632,128 @@ components:
       required:
       - type
       x-addon: dashboard
-    RoleRequestType:
-      description: The type of role request.
-      type: string
-      enum:
-      - application
-      - invitation
+    RoleFragment:
+      type: object
+      properties:
+        name:
+          description: Name of the role.
+          minLength: 1
+          type: string
+        roleID:
+          description: ID of the role.
+          type: integer
+      required:
+      - roleID
+      - name
       x-addon: dashboard
     UpdateInfo:
       type: object
       properties:
         dateUpdated:
-          type: string
+          type:
+          - string
+          - 'null'
           format: date-time
           description: The date the record was updateed.
-          nullable: true
           readOnly: true
         updateUserID:
-          type: integer
+          type:
+          - integer
+          - 'null'
           description: The user that updateed the record.
-          nullable: true
           readOnly: true
         updateIPAddress:
-          type: string
+          type:
+          - string
+          - 'null'
           format: ipv4
           description: The IP address the record was updateed from.
-          nullable: true
           readOnly: true
+      x-addon: dashboard
+    RoleApplication:
+      allOf:
+      - $ref: '#/components/schemas/RoleRequestItem'
+      - $ref: '#/components/schemas/InsertInfo'
+      - $ref: '#/components/schemas/UpdateInfo'
+      x-addon: dashboard
+    RoleRequestStatus:
+      description: The current status of the request.
+      type: string
+      enum:
+      - pending
+      - approved
+      - denied
+      x-addon: dashboard
+    InsertInfo:
+      type: object
+      properties:
+        dateInserted:
+          type: string
+          format: date-time
+          description: The date the record was inserted.
+          readOnly: true
+        insertUserID:
+          type: integer
+          description: The user that inserted the record.
+          readOnly: true
+        insertIPAddress:
+          type: string
+          format: ipv4
+          description: The IP address the record was inserted from.
+          readOnly: true
+      required:
+      - dateInserted
+      - insertUserID
+      - insertIPAddress
+      x-addon: dashboard
+  parameters:
+    RoleRequestID:
+      name: id
+      in: path
+      description: The ID of the request.
+      required: true
+      schema:
+        type: integer
+      x-addon: dashboard
+    Page:
+      name: page
+      in: query
+      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
+
+        '
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      x-addon: dashboard
+    Offset:
+      name: offset
+      in: query
+      description: 'Similar to a page parameter, but specifies a specific numeric record offset starting at zero.
+
+        '
+      schema:
+        type: integer
+        minimum: 0
+      x-addon: dashboard
+    RoleRequestExpand:
+      name: expand
+      description: 'Expand associated records using one or more valid field names. A value of "all" will expand all expandable fields.
+
+
+        Note that only community managers can view and expand the `statusUser`.'
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - all
+          - user
+          - role
+          - statusUser
+          - user.ssoID
+      style: form
       x-addon: dashboard
   responses:
     PermissionError:
@@ -744,55 +815,6 @@ components:
           example:
             status: 404
             message: Page Not Found
-      x-addon: dashboard
-  parameters:
-    RoleRequestID:
-      name: id
-      in: path
-      description: The ID of the request.
-      required: true
-      schema:
-        type: integer
-      x-addon: dashboard
-    Page:
-      name: page
-      in: query
-      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
-
-        '
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
-      x-addon: dashboard
-    Offset:
-      name: offset
-      in: query
-      description: 'Similar to a page parameter, but specifies a specific numeric record offset starting at zero.
-
-        '
-      schema:
-        type: integer
-        minimum: 0
-      x-addon: dashboard
-    RoleRequestExpand:
-      name: expand
-      description: 'Expand associated records using one or more valid field names. A value of "all" will expand all expandable fields.
-
-
-        Note that only community managers can view and expand the `statusUser`.'
-      in: query
-      schema:
-        type: array
-        items:
-          type: string
-          enum:
-          - all
-          - user
-          - role
-          - statusUser
-          - user.ssoID
-      style: form
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -900,8 +922,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

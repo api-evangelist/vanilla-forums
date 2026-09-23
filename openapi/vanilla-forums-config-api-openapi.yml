@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Config API
+  title: Vanilla Config API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /config:
     get:
-      summary: Get the site's config.
+      summary: Get the site's config
       tags:
       - Config
       parameters:
@@ -40,8 +40,10 @@ paths:
                 $ref: '#/components/schemas/Config'
           description: Success
       x-addon: dashboard
+      operationId: getConfig
+      x-operation-id-source: derived
     patch:
-      summary: Update one or more config settings.
+      summary: Update one or more config settings
       tags:
       - Config
       requestBody:
@@ -53,6 +55,8 @@ paths:
         '204':
           description: Success
       x-addon: dashboard
+      operationId: patchConfig
+      x-operation-id-source: derived
 components:
   schemas:
     Config:
@@ -1611,8 +1615,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Sessions API
+  title: Vanilla Sessions API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -54,14 +54,17 @@ paths:
                       type: string
                       format: date-time
                     dateExpires:
-                      type: string
+                      type:
+                      - string
+                      - 'null'
                       format: date-time
-                      nullable: true
           description: Success
       tags:
       - Sessions
-      summary: List sessions.
+      summary: List sessions
       x-addon: vanilla
+      operationId: getSessions
+      x-operation-id-source: derived
     delete:
       parameters:
       - name: userID
@@ -85,8 +88,10 @@ paths:
           description: Session couldn't be deleted.
       tags:
       - Sessions
-      summary: Delete a session.
+      summary: Delete a session
       x-addon: vanilla
+      operationId: deleteSessions
+      x-operation-id-source: derived
 x-resourceEvents:
   emailTemplates:
     x-feature: Feature.emailTemplates.Enabled
@@ -193,8 +198,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

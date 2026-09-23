@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Product Messages API
+  title: Vanilla Product Messages API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -20,7 +20,7 @@ paths:
     get:
       tags:
       - Product Messages
-      summary: Get a product message by ID.
+      summary: Get a product message by ID
       operationId: getProductMessage
       responses:
         '200':
@@ -96,14 +96,6 @@ paths:
       x-addon: dashboard
 components:
   schemas:
-    AnnouncementType:
-      type: string
-      description: Determine how the message pops up.
-      enum:
-      - None
-      - Inbox
-      - Direct
-      x-addon: dashboard
     ProductMessage:
       type: object
       properties:
@@ -188,6 +180,14 @@ components:
       - dateInserted
       - isDismissed
       - countViewers
+      x-addon: dashboard
+    AnnouncementType:
+      type: string
+      description: Determine how the message pops up.
+      enum:
+      - None
+      - Inbox
+      - Direct
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -295,8 +295,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

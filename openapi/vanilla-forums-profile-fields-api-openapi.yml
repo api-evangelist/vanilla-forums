@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Profile Fields API
+  title: Vanilla Profile Fields API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -10,7 +10,7 @@ tags:
 paths:
   /profile-fields:
     get:
-      summary: List profile fields.
+      summary: List profile fields
       parameters:
       - name: dataType
         description: Filter by the dataType.
@@ -100,8 +100,10 @@ paths:
       tags:
       - Profile Fields
       x-addon: dashboard
+      operationId: getProfileFields
+      x-operation-id-source: derived
     post:
-      summary: Create a profile field.
+      summary: Create a profile field
       requestBody:
         content:
           application/json:
@@ -123,6 +125,8 @@ paths:
         '500':
           description: Server Error
       x-addon: dashboard
+      operationId: postProfileFields
+      x-operation-id-source: derived
   /profile-fields/sorts:
     put:
       tags:
@@ -145,9 +149,11 @@ paths:
         '500':
           description: Server Error
       x-addon: dashboard
+      operationId: putProfileFieldsSorts
+      x-operation-id-source: derived
   /profile-fields/{apiName}:
     get:
-      summary: Get a profile field by its api name.
+      summary: Get a profile field by its api name
       tags:
       - Profile Fields
       parameters:
@@ -175,8 +181,10 @@ paths:
         '404':
           description: Not Found
       x-addon: dashboard
+      operationId: getProfileFieldsByApiName
+      x-operation-id-source: derived
     patch:
-      summary: Update a profile field.
+      summary: Update a profile field
       tags:
       - Profile Fields
       parameters:
@@ -208,8 +216,10 @@ paths:
         '500':
           description: Server Error
       x-addon: dashboard
+      operationId: patchProfileFieldsByApiName
+      x-operation-id-source: derived
     delete:
-      summary: Delete a profile field.
+      summary: Delete a profile field
       parameters:
       - description: The ID of the profile field
         in: path
@@ -231,8 +241,175 @@ paths:
       tags:
       - Profile Fields
       x-addon: dashboard
+      operationId: deleteProfileFieldsByApiName
+      x-operation-id-source: derived
 components:
   schemas:
+    ProfileField:
+      properties:
+        apiName:
+          description: The ID of the profile field.
+          type: string
+        label:
+          description: The name of the profile field.
+          type: string
+        description:
+          description: The description of the profile field.
+          type: string
+        dataType:
+          description: The data type of the profile field.
+          enum:
+          - text
+          - boolean
+          - date
+          - number
+          - string[]
+          - number[]
+          type: string
+        formType:
+          description: The form type of the profile field.
+          enum:
+          - text
+          - text-multiline
+          - dropdown
+          - tokens
+          - checkbox
+          - date
+          - number
+          type: string
+        visibility:
+          description: The visibility of the profile field.
+          enum:
+          - public
+          - private
+          - internal
+          type: string
+        mutability:
+          description: The mutability of the profile field.
+          enum:
+          - all
+          - restricted
+          - none
+          type: string
+        displayOptions:
+          description: The display options of the profile field.
+          properties:
+            userCards:
+              description: The field appears on user cards.
+              type: boolean
+            posts:
+              description: The field appears on user posts.
+              type: boolean
+            search:
+              description: The field appears in the member search directory.
+              type: boolean
+          type: object
+        dropdownOptions:
+          description: The list of availible options for a dropdown field. All dropdown options must be of the specified dataType.
+          type:
+          - array
+          - 'null'
+          items:
+            oneOf:
+            - type: string
+            - type: number
+        registrationOptions:
+          type: string
+          enum:
+          - required
+          - optional
+          - hidden
+        enabled:
+          description: Is the profile field enabled?
+          type: boolean
+        salesforceID:
+          type:
+          - string
+          - 'null'
+      required:
+      - apiName
+      - label
+      - description
+      - dataType
+      - formType
+      - visibility
+      - mutability
+      - displayOptions
+      - registrationOptions
+      type: object
+      x-addon: dashboard
+    ProfileFieldPatch:
+      properties:
+        label:
+          description: The name of the profile field.
+          minLength: 1
+          type: string
+        description:
+          description: The description of the profile field.
+          type: string
+        formType:
+          description: The form type of the profile field.
+          enum:
+          - text
+          - text-multiline
+          - dropdown
+          - tokens
+          - checkbox
+          - date
+          - number
+          type: string
+        visibility:
+          description: The visibility of the profile field.
+          enum:
+          - public
+          - private
+          - internal
+          type: string
+        mutability:
+          description: The mutability of the profile field.
+          enum:
+          - all
+          - restricted
+          - none
+          type: string
+        displayOptions:
+          description: The display options of the profile field.
+          properties:
+            userCards:
+              description: The field appears on user cards.
+              type: boolean
+            posts:
+              description: The field appears on user posts.
+              type: boolean
+            search:
+              description: The field appears in the member search directory.
+              type: boolean
+          type: object
+        dropdownOptions:
+          description: The list of availible options for a dropdown field.
+          type:
+          - array
+          - 'null'
+          items:
+            oneOf:
+            - type: string
+            - type: number
+            - type: integer
+        registrationOptions:
+          type: string
+          enum:
+          - required
+          - optional
+          - hidden
+        enabled:
+          description: Is the profile field enabled?
+          type: boolean
+        salesforceID:
+          type:
+          - string
+          - 'null'
+      type: object
+      x-addon: dashboard
     ProfileFieldPost:
       properties:
         apiName:
@@ -296,13 +473,14 @@ components:
           type: object
         dropdownOptions:
           description: The list of availible options for a dropdown field.
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             oneOf:
             - type: string
             - type: number
             - type: integer
-          nullable: true
         registrationOptions:
           type: string
           enum:
@@ -313,8 +491,9 @@ components:
           description: Is the profile field enabled?
           type: boolean
         salesforceID:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
       required:
       - apiName
       - label
@@ -325,167 +504,6 @@ components:
       - mutability
       - displayOptions
       - registrationOptions
-      type: object
-      x-addon: dashboard
-    ProfileField:
-      properties:
-        apiName:
-          description: The ID of the profile field.
-          type: string
-        label:
-          description: The name of the profile field.
-          type: string
-        description:
-          description: The description of the profile field.
-          type: string
-        dataType:
-          description: The data type of the profile field.
-          enum:
-          - text
-          - boolean
-          - date
-          - number
-          - string[]
-          - number[]
-          type: string
-        formType:
-          description: The form type of the profile field.
-          enum:
-          - text
-          - text-multiline
-          - dropdown
-          - tokens
-          - checkbox
-          - date
-          - number
-          type: string
-        visibility:
-          description: The visibility of the profile field.
-          enum:
-          - public
-          - private
-          - internal
-          type: string
-        mutability:
-          description: The mutability of the profile field.
-          enum:
-          - all
-          - restricted
-          - none
-          type: string
-        displayOptions:
-          description: The display options of the profile field.
-          properties:
-            userCards:
-              description: The field appears on user cards.
-              type: boolean
-            posts:
-              description: The field appears on user posts.
-              type: boolean
-            search:
-              description: The field appears in the member search directory.
-              type: boolean
-          type: object
-        dropdownOptions:
-          description: The list of availible options for a dropdown field. All dropdown options must be of the specified dataType.
-          type: array
-          items:
-            oneOf:
-            - type: string
-            - type: number
-          nullable: true
-        registrationOptions:
-          type: string
-          enum:
-          - required
-          - optional
-          - hidden
-        enabled:
-          description: Is the profile field enabled?
-          type: boolean
-        salesforceID:
-          type: string
-          nullable: true
-      required:
-      - apiName
-      - label
-      - description
-      - dataType
-      - formType
-      - visibility
-      - mutability
-      - displayOptions
-      - registrationOptions
-      type: object
-      x-addon: dashboard
-    ProfileFieldPatch:
-      properties:
-        label:
-          description: The name of the profile field.
-          minLength: 1
-          type: string
-        description:
-          description: The description of the profile field.
-          type: string
-        formType:
-          description: The form type of the profile field.
-          enum:
-          - text
-          - text-multiline
-          - dropdown
-          - tokens
-          - checkbox
-          - date
-          - number
-          type: string
-        visibility:
-          description: The visibility of the profile field.
-          enum:
-          - public
-          - private
-          - internal
-          type: string
-        mutability:
-          description: The mutability of the profile field.
-          enum:
-          - all
-          - restricted
-          - none
-          type: string
-        displayOptions:
-          description: The display options of the profile field.
-          properties:
-            userCards:
-              description: The field appears on user cards.
-              type: boolean
-            posts:
-              description: The field appears on user posts.
-              type: boolean
-            search:
-              description: The field appears in the member search directory.
-              type: boolean
-          type: object
-        dropdownOptions:
-          description: The list of availible options for a dropdown field.
-          type: array
-          items:
-            oneOf:
-            - type: string
-            - type: number
-            - type: integer
-          nullable: true
-        registrationOptions:
-          type: string
-          enum:
-          - required
-          - optional
-          - hidden
-        enabled:
-          description: Is the profile field enabled?
-          type: boolean
-        salesforceID:
-          type: string
-          nullable: true
       type: object
       x-addon: dashboard
 x-resourceEvents:
@@ -594,8 +612,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

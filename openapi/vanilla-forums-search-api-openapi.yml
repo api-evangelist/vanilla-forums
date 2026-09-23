@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Search API
+  title: Vanilla Search API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -328,10 +328,63 @@ paths:
           description: Success
       tags:
       - Search
-      summary: Search for records matching specific criteria.
+      summary: Search for records matching specific criteria
       x-addon: dashboard
+      operationId: getSearch
+      x-operation-id-source: derived
 components:
   schemas:
+    UserFragment:
+      oneOf:
+      - type: object
+        properties:
+          userID:
+            description: The ID of the user.
+            type: integer
+          name:
+            description: The username of the user.
+            minLength: 1
+            type: string
+          url:
+            description: The URL of the user's profile.
+            type: string
+            format: uri
+          photoUrl:
+            description: The URL of the user's avatar picture.
+            type: string
+            format: uri
+          dateLastActive:
+            description: Time the user was last active.
+            format: date-time
+            type:
+            - string
+            - 'null'
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+          label:
+            description: The label of the user as plaintext.
+            type: string
+          labelHtml:
+            description: The label of the user in HTML format.
+            type: string
+          private:
+            description: Whether the user profile is private or not.
+            type: boolean
+        required:
+        - userID
+        - name
+        - photoUrl
+        - dateLastActive
+      - type: object
+        description: A user fragment when only expanding by ssoID.
+        properties:
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+        required:
+        - ssoID
+      x-addon: dashboard
     SearchResult:
       properties:
         url:
@@ -340,8 +393,9 @@ components:
         body:
           description: The content of the record.
           minLength: 1
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         excerpt:
           description: An excerpt of the record.
           type: string
@@ -358,15 +412,17 @@ components:
         dateUpdated:
           description: When the user was updated.
           format: date-time
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         discussionID:
           description: The id of the discussion.
           type: integer
         groupID:
           description: The id of the group or the id of the group containing the record.
-          nullable: true
-          type: integer
+          type:
+          - integer
+          - 'null'
         insertUserID:
           description: The user that created the record.
           type: integer
@@ -401,8 +457,9 @@ components:
           type: string
         updateUserID:
           description: The user that updated the record.
-          nullable: true
-          type: integer
+          type:
+          - integer
+          - 'null'
         image:
           description: The url of the first image in the record.
           type: string
@@ -434,56 +491,6 @@ components:
       - updateUserID
       - dateUpdated
       type: object
-      x-addon: dashboard
-    UserFragment:
-      oneOf:
-      - type: object
-        properties:
-          userID:
-            description: The ID of the user.
-            type: integer
-          name:
-            description: The username of the user.
-            minLength: 1
-            type: string
-          url:
-            description: The URL of the user's profile.
-            type: string
-            format: uri
-          photoUrl:
-            description: The URL of the user's avatar picture.
-            type: string
-            format: uri
-          dateLastActive:
-            description: Time the user was last active.
-            format: date-time
-            nullable: true
-            type: string
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-          label:
-            description: The label of the user as plaintext.
-            type: string
-          labelHtml:
-            description: The label of the user in HTML format.
-            type: string
-          private:
-            description: Whether the user profile is private or not.
-            type: boolean
-        required:
-        - userID
-        - name
-        - photoUrl
-        - dateLastActive
-      - type: object
-        description: A user fragment when only expanding by ssoID.
-        properties:
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-        required:
-        - ssoID
       x-addon: dashboard
   parameters:
     DateInserted:
@@ -628,8 +635,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

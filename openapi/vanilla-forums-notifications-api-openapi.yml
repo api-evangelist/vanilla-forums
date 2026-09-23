@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Notifications API
+  title: Vanilla Notifications API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -60,10 +60,12 @@ paths:
           description: Success
       tags:
       - Notifications
-      summary: List notifications for the current user.
+      summary: List notifications for the current user
       x-addon: dashboard
+      operationId: getNotifications
+      x-operation-id-source: derived
     patch:
-      summary: Mark all notifications read.
+      summary: Mark all notifications read
       tags:
       - Notifications
       requestBody:
@@ -76,6 +78,8 @@ paths:
         '204':
           description: Success
       x-addon: dashboard
+      operationId: patchNotifications
+      x-operation-id-source: derived
   /notifications/{id}:
     get:
       parameters:
@@ -116,10 +120,12 @@ paths:
           description: Success
       tags:
       - Notifications
-      summary: Get a single notification.
+      summary: Get a single notification
       x-addon: dashboard
+      operationId: getNotificationsById
+      x-operation-id-source: derived
     patch:
-      summary: Mark a notification read.
+      summary: Mark a notification read
       tags:
       - Notifications
       parameters:
@@ -142,9 +148,11 @@ paths:
                 $ref: '#/components/schemas/NotificationSchema'
           description: Success
       x-addon: dashboard
+      operationId: patchNotificationsById
+      x-operation-id-source: derived
   /notifications/{id}/read:
     put:
-      summary: Mark a notification read.
+      summary: Mark a notification read
       tags:
       - Notifications
       parameters:
@@ -161,47 +169,10 @@ paths:
                 $ref: '#/components/schemas/NotificationSchema'
           description: Success
       x-addon: dashboard
+      operationId: putNotificationsByIdRead
+      x-operation-id-source: derived
 components:
-  parameters:
-    Page:
-      name: page
-      in: query
-      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
-
-        '
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
-      x-addon: dashboard
   schemas:
-    NotificationPatchSchema:
-      description: Fields for patching a notification.
-      type: object
-      properties:
-        read:
-          type: boolean
-          enum:
-          - true
-      x-addon: dashboard
-    NotificationDiscussionFragment:
-      description: An expanded discussion fragment for notifications.
-      type: object
-      properties:
-        discussionID:
-          description: The ID of the discussion.
-          type: integer
-        name:
-          description: The title of the discussion.
-          type: string
-        url:
-          description: The URL to the discussion.
-          type: string
-        categoryID:
-          description: An avatar or thumbnail associated with the discussion.
-          nullable: true
-          type: string
-      x-addon: dashboard
     NotificationSchema:
       properties:
         body:
@@ -229,8 +200,9 @@ components:
           type: string
         photoUrl:
           description: An avatar or thumbnail associated with the notification.
-          nullable: true
-          type: string
+          type:
+          - string
+          - 'null'
         read:
           description: Whether or not the notification has been seen.
           type: boolean
@@ -262,8 +234,9 @@ components:
           type: integer
         discussionID:
           description: The ID of the discussion associated with the notification. This is only set if the notification is related to a discussion and expand=discussion is passed.
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
         discussion:
           $ref: '#/components/schemas/NotificationDiscussionFragment'
       required:
@@ -275,6 +248,46 @@ components:
       - dateUpdated
       - read
       type: object
+      x-addon: dashboard
+    NotificationPatchSchema:
+      description: Fields for patching a notification.
+      type: object
+      properties:
+        read:
+          type: boolean
+          enum:
+          - true
+      x-addon: dashboard
+    NotificationDiscussionFragment:
+      description: An expanded discussion fragment for notifications.
+      type: object
+      properties:
+        discussionID:
+          description: The ID of the discussion.
+          type: integer
+        name:
+          description: The title of the discussion.
+          type: string
+        url:
+          description: The URL to the discussion.
+          type: string
+        categoryID:
+          description: An avatar or thumbnail associated with the discussion.
+          type:
+          - string
+          - 'null'
+      x-addon: dashboard
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
+
+        '
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
@@ -382,8 +395,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

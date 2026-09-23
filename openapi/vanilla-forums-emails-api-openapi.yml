@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Emails API
+  title: Vanilla Emails API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -38,6 +38,8 @@ paths:
                 type: string
           description: Success
       x-addon: dashboard
+      operationId: postEmailsPreview
+      x-operation-id-source: derived
   /emails/send-test:
     post:
       summary: Send out a test email to a specified address
@@ -79,9 +81,11 @@ paths:
                     type: boolean
           description: Success
       x-addon: dashboard
+      operationId: postEmailsSendTest
+      x-operation-id-source: derived
   /emails/send-test-digest:
     post:
-      summary: Send out an email digest for a particular user to a particular email. The original user will not receive the email.
+      summary: Send out an email digest for a particular user to a particular email.
       tags:
       - Emails
       requestBody:
@@ -128,6 +132,8 @@ paths:
                     type: boolean
           description: Success
       x-addon: dashboard
+      operationId: postEmailsSendTestDigest
+      x-operation-id-source: derived
 components:
   schemas:
     Footer:
@@ -264,8 +270,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string

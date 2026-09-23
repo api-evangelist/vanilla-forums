@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   description: API access to your community.
-  title: Vanilla Addons Themes API
+  title: Vanilla Themes API
   version: '2.0'
 servers:
 - url: https://open.vanillaforums.com/api/v2
@@ -31,8 +31,10 @@ paths:
           description: Success
       tags:
       - Themes
-      summary: Get all themes available.
+      summary: Get all themes available
       x-addon: dashboard
+      operationId: getThemes
+      x-operation-id-source: derived
     post:
       requestBody:
         $ref: '#/components/requestBodies/PostTheme'
@@ -45,11 +47,13 @@ paths:
           description: Success
       tags:
       - Themes
-      summary: Create a new theme.
+      summary: Create a new theme
       x-addon: themingapi
+      operationId: postThemes
+      x-operation-id-source: derived
   /themes/current:
     get:
-      summary: Get the current theme.
+      summary: Get the current theme
       parameters:
       - $ref: '#/components/parameters/ExpandAssetsParam'
       - name: fields
@@ -70,6 +74,8 @@ paths:
       tags:
       - Themes
       x-addon: dashboard
+      operationId: getThemesCurrent
+      x-operation-id-source: derived
     put:
       requestBody:
         content:
@@ -94,8 +100,10 @@ paths:
           description: Success
       tags:
       - Themes
-      summary: Set theme as "current".
+      summary: Set theme as "current"
       x-addon: themingapi
+      operationId: putThemesCurrent
+      x-operation-id-source: derived
   /themes/preview:
     put:
       requestBody:
@@ -123,6 +131,8 @@ paths:
       - Themes
       summary: 'Set preview theme. Note: only applies to current user session'
       x-addon: themingapi
+      operationId: putThemesPreview
+      x-operation-id-source: derived
   /themes/{themeID}:
     get:
       parameters:
@@ -150,8 +160,10 @@ paths:
           description: Success
       tags:
       - Themes
-      summary: Get a theme.
+      summary: Get a theme
       x-addon: dashboard
+      operationId: getThemesByThemeID
+      x-operation-id-source: derived
     patch:
       parameters:
       - description: Unique themeID.
@@ -171,8 +183,10 @@ paths:
           description: Success
       tags:
       - Themes
-      summary: Update theme name.
+      summary: Update theme name
       x-addon: themingapi
+      operationId: patchThemesByThemeID
+      x-operation-id-source: derived
     delete:
       parameters:
       - description: Unique themeID.
@@ -186,8 +200,10 @@ paths:
           description: Success
       tags:
       - Themes
-      summary: Delete theme.
+      summary: Delete theme
       x-addon: themingapi
+      operationId: deleteThemesByThemeID
+      x-operation-id-source: derived
   /themes/{themeID}/revisions:
     get:
       parameters:
@@ -216,20 +232,56 @@ paths:
           description: Success
       tags:
       - Themes
-      summary: Get all revisions for a theme.
+      summary: Get all revisions for a theme
       x-addon: dashboard
+      operationId: getThemesByThemeIDRevisions
+      x-operation-id-source: derived
 components:
   schemas:
-    ThemeScript:
+    Themes:
       properties:
-        url:
+        assets:
+          $ref: '#/components/schemas/ThemeAssets'
+        preview:
+          $ref: '#/components/schemas/PreviewAssets'
+        type:
+          type: string
+          enum:
+          - themeFile
+        themeID:
+          type: integer
+        version:
           type: string
       required:
-      - url
+      - assets
+      - type
+      - themeID
+      - version
       type: object
       x-addon: dashboard
-    ThemeLogoAsset:
-      description: Site logo to be displayed in the theme.
+    ThemeFooterAsset:
+      description: Custom footer HTML.
+      properties:
+        type:
+          description: The type of the asset.
+          type: string
+        url:
+          type: string
+          description: Absolute URL of the asset.
+        content-type:
+          description: The content-type of the asset.
+          type: string
+          example: application/json
+        data:
+          type: string
+          description: Contents of the asset. May require an expand parameter to retreive.
+      required:
+      - url
+      - type
+      type: object
+      x-addon: dashboard
+    ThemeMobileLogoAsset:
+      description: Site logo to be displayed in the theme when viewed on a mobile device.
       properties:
         type:
           description: The type of the asset.
@@ -243,8 +295,59 @@ components:
           example: application/json
       type: object
       x-addon: dashboard
-    ThemeFooterAsset:
-      description: Custom footer HTML.
+    ThemeScriptsAsset:
+      description: External script files to be included.
+      properties:
+        type:
+          description: The type of the asset.
+          type: string
+        url:
+          type: string
+          description: Absolute URL of the asset.
+        content-type:
+          description: The content-type of the asset.
+          type: string
+          example: application/json
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThemeScript'
+      required:
+      - url
+      - type
+      type: object
+      x-addon: dashboard
+    ThemeVariablesAsset:
+      description: A collection of variables intended to be used by theme.
+      properties:
+        type:
+          description: The type of the asset.
+          type: string
+        url:
+          type: string
+          description: Absolute URL of the asset.
+        content-type:
+          description: The content-type of the asset.
+          type: string
+          example: application/json
+        data:
+          type: object
+          description: JSON contents of the asset.
+      required:
+      - url
+      - type
+      type: object
+      x-addon: dashboard
+    ThemeScript:
+      properties:
+        url:
+          type: string
+      required:
+      - url
+      type: object
+      x-addon: dashboard
+    ThemeJavascriptAsset:
+      description: Javascript for the theme.
       properties:
         type:
           description: The type of the asset.
@@ -285,18 +388,6 @@ components:
           $ref: '#/components/schemas/ThemeMobileLogoAsset'
       type: object
       x-addon: dashboard
-    ExpandAssetsValues:
-      type: array
-      items:
-        type: string
-        enum:
-        - all
-        - javascript.data
-        - css.data
-        - variables.data
-        - header.data
-        - footer.data
-      x-addon: dashboard
     ThemeHeaderAsset:
       description: Custom header HTML.
       properties:
@@ -315,6 +406,42 @@ components:
           description: Contents of the asset. May require an expand parameter to retreive.
       required:
       - url
+      - type
+      type: object
+      x-addon: dashboard
+    ThemeLogoAsset:
+      description: Site logo to be displayed in the theme.
+      properties:
+        type:
+          description: The type of the asset.
+          type: string
+        url:
+          type: string
+          description: Absolute URL of the asset.
+        content-type:
+          description: The content-type of the asset.
+          type: string
+          example: application/json
+      type: object
+      x-addon: dashboard
+    ThemeCssAsset:
+      description: CSS for the theme.
+      properties:
+        type:
+          description: The type of the asset.
+          type: string
+        url:
+          type: string
+          description: Absolute URL of the asset.
+        content-type:
+          description: The content-type of the asset.
+          type: string
+          example: application/json
+        data:
+          type: string
+          description: Contents of the asset. May require an expand parameter to retreive.
+      required:
+      - data
       - type
       type: object
       x-addon: dashboard
@@ -352,162 +479,48 @@ components:
       - version
       type: object
       x-addon: dashboard
-    ThemeCssAsset:
-      description: CSS for the theme.
-      properties:
-        type:
-          description: The type of the asset.
-          type: string
-        url:
-          type: string
-          description: Absolute URL of the asset.
-        content-type:
-          description: The content-type of the asset.
-          type: string
-          example: application/json
-        data:
-          type: string
-          description: Contents of the asset. May require an expand parameter to retreive.
-      required:
-      - data
-      - type
-      type: object
-      x-addon: dashboard
-    ThemeJavascriptAsset:
-      description: Javascript for the theme.
-      properties:
-        type:
-          description: The type of the asset.
-          type: string
-        url:
-          type: string
-          description: Absolute URL of the asset.
-        content-type:
-          description: The content-type of the asset.
-          type: string
-          example: application/json
-        data:
-          type: string
-          description: Contents of the asset. May require an expand parameter to retreive.
-      required:
-      - url
-      - type
-      type: object
-      x-addon: dashboard
     PreviewAssets:
       description: A collections of variables to generate a preview.
       properties:
         preset:
           type: string
         globalPrimary:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         globalBg:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         globalFg:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         titleBarBg:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         titleBarFg:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         backgroundImage:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
       type: object
       x-addon: dashboard
-    Themes:
-      properties:
-        assets:
-          $ref: '#/components/schemas/ThemeAssets'
-        preview:
-          $ref: '#/components/schemas/PreviewAssets'
-        type:
-          type: string
-          enum:
-          - themeFile
-        themeID:
-          type: integer
-        version:
-          type: string
-      required:
-      - assets
-      - type
-      - themeID
-      - version
-      type: object
-      x-addon: dashboard
-    ThemeMobileLogoAsset:
-      description: Site logo to be displayed in the theme when viewed on a mobile device.
-      properties:
-        type:
-          description: The type of the asset.
-          type: string
-        url:
-          type: string
-          description: Absolute URL of the asset.
-        content-type:
-          description: The content-type of the asset.
-          type: string
-          example: application/json
-      type: object
-      x-addon: dashboard
-    ThemeVariablesAsset:
-      description: A collection of variables intended to be used by theme.
-      properties:
-        type:
-          description: The type of the asset.
-          type: string
-        url:
-          type: string
-          description: Absolute URL of the asset.
-        content-type:
-          description: The content-type of the asset.
-          type: string
-          example: application/json
-        data:
-          type: object
-          description: JSON contents of the asset.
-      required:
-      - url
-      - type
-      type: object
-      x-addon: dashboard
-    ThemeScriptsAsset:
-      description: External script files to be included.
-      properties:
-        type:
-          description: The type of the asset.
-          type: string
-        url:
-          type: string
-          description: Absolute URL of the asset.
-        content-type:
-          description: The content-type of the asset.
-          type: string
-          example: application/json
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/ThemeScript'
-      required:
-      - url
-      - type
-      type: object
-      x-addon: dashboard
-  parameters:
-    ExpandAssetsParam:
-      in: query
-      name: expand
-      description: 'Expand associated records using one or more valid field names. A value of `all` will expand all expandable fields. style
-
-        '
-      schema:
-        $ref: '#/components/schemas/ExpandAssetsValues'
-      style: form
+    ExpandAssetsValues:
+      type: array
+      items:
+        type: string
+        enum:
+        - all
+        - javascript.data
+        - css.data
+        - variables.data
+        - header.data
+        - footer.data
       x-addon: dashboard
   requestBodies:
     PatchTheme:
@@ -758,6 +771,17 @@ components:
             - name
       required: true
       x-addon: themingapi
+  parameters:
+    ExpandAssetsParam:
+      in: query
+      name: expand
+      description: 'Expand associated records using one or more valid field names. A value of `all` will expand all expandable fields. style
+
+        '
+      schema:
+        $ref: '#/components/schemas/ExpandAssetsValues'
+      style: form
+      x-addon: dashboard
 x-resourceEvents:
   emailTemplates:
     x-feature: Feature.emailTemplates.Enabled
@@ -864,8 +888,9 @@ x-aliases:
           properties:
             description:
               description: Verbose description of the error.
-              nullable: true
-              type: string
+              type:
+              - string
+              - 'null'
             message:
               description: Short description of the error.
               type: string
