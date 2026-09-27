@@ -40,6 +40,18 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Count:
+      type: object
+      properties:
+        count:
+          type: integer
+        isCalculating:
+          type: boolean
+          description: Whether the value is currently being calculated.
+        isFiltered:
+          type: boolean
+          description: Indicates whether the count value has been filtered by siteSection
+      x-addon: dashboard
     SiteTotalsCountsResponseFields:
       type: object
       properties:
@@ -64,18 +76,6 @@ components:
               $ref: '#/components/schemas/Count'
             user:
               $ref: '#/components/schemas/Count'
-      x-addon: dashboard
-    Count:
-      type: object
-      properties:
-        count:
-          type: integer
-        isCalculating:
-          type: boolean
-          description: Whether the value is currently being calculated.
-        isFiltered:
-          type: boolean
-          description: Indicates whether the count value has been filtered by siteSection
       x-addon: dashboard
   parameters:
     SiteTotalsCounts:

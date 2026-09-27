@@ -458,18 +458,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    PollVotePost:
-      properties:
-        pollOptionID:
-          description: The unique ID of the option.
-          type: integer
-        userID:
-          description: The user that made the vote
-          type: integer
-      required:
-      - pollOptionID
-      type: object
-      x-addon: polls
     PollOptionPost:
       properties:
         body:
@@ -481,6 +469,31 @@ components:
           type: integer
       required:
       - body
+      type: object
+      x-addon: polls
+    PollPost:
+      properties:
+        discussionID:
+          description: The description the poll is displayed in.
+          type: integer
+        categoryID:
+          description: The category the poll is displayed in.
+          type: integer
+        name:
+          description: The name of the poll.
+          minLength: 1
+          type: string
+        body:
+          description: The body of the discussion, main poll message.
+          minLength: 1
+          type: string
+        pollOption:
+          type: array
+          items:
+            $ref: '#/components/schemas/PollOptionPost'
+          minItems: 2
+      required:
+      - name
       type: object
       x-addon: polls
     UserFragment:
@@ -534,29 +547,16 @@ components:
         required:
         - ssoID
       x-addon: dashboard
-    PollPost:
+    PollVotePost:
       properties:
-        discussionID:
-          description: The description the poll is displayed in.
+        pollOptionID:
+          description: The unique ID of the option.
           type: integer
-        categoryID:
-          description: The category the poll is displayed in.
+        userID:
+          description: The user that made the vote
           type: integer
-        name:
-          description: The name of the poll.
-          minLength: 1
-          type: string
-        body:
-          description: The body of the discussion, main poll message.
-          minLength: 1
-          type: string
-        pollOption:
-          type: array
-          items:
-            $ref: '#/components/schemas/PollOptionPost'
-          minItems: 2
       required:
-      - name
+      - pollOptionID
       type: object
       x-addon: polls
 x-resourceEvents:

@@ -160,23 +160,6 @@ components:
       required: true
       x-addon: warnings2
   schemas:
-    RulePost:
-      properties:
-        name:
-          description: The name of the rule.
-          minLength: 1
-          type: string
-        description:
-          description: The description of the rule.
-          minLength: 1
-          type:
-          - string
-          - 'null'
-      required:
-      - name
-      - description
-      type: object
-      x-addon: warnings2
     Rule:
       properties:
         name:
@@ -193,6 +176,23 @@ components:
           type: integer
       required:
       - ruleID
+      - name
+      - description
+      type: object
+      x-addon: warnings2
+    RulePost:
+      properties:
+        name:
+          description: The name of the rule.
+          minLength: 1
+          type: string
+        description:
+          description: The description of the rule.
+          minLength: 1
+          type:
+          - string
+          - 'null'
+      required:
       - name
       - description
       type: object

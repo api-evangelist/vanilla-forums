@@ -69,30 +69,6 @@ paths:
       operationId: patchAiProcessingPreferencesById
       x-operation-id-source: derived
 components:
-  schemas:
-    AiProcessingPreferences:
-      type: object
-      description: User's AI processing preferences values. Preference names are shortened (e.g., "enabled" instead of "preferences.aiProcessing.enabled").
-      properties:
-        enabled:
-          type: boolean
-          description: Global toggle for enabling AI processing of user content.
-        sentimentAnalysis:
-          type: boolean
-          description: Allow sentiment analysis and keyword tracking on posts.
-        receiveSuggestedAnswers:
-          type: boolean
-          description: Allow AI to suggest answers to questions.
-        assistedSearch:
-          type: boolean
-          description: Allow AI-assisted search features.
-        contentReuse:
-          type: boolean
-          description: Allow AI to use content to help others.
-        aiTranslations:
-          type: boolean
-          description: Allow AI translations of content.
-      x-addon: dashboard
   responses:
     NotFound:
       description: The record does not exist or was not found.
@@ -153,6 +129,30 @@ components:
             recordIDs:
             - 2425
             - 1342
+      x-addon: dashboard
+  schemas:
+    AiProcessingPreferences:
+      type: object
+      description: User's AI processing preferences values. Preference names are shortened (e.g., "enabled" instead of "preferences.aiProcessing.enabled").
+      properties:
+        enabled:
+          type: boolean
+          description: Global toggle for enabling AI processing of user content.
+        sentimentAnalysis:
+          type: boolean
+          description: Allow sentiment analysis and keyword tracking on posts.
+        receiveSuggestedAnswers:
+          type: boolean
+          description: Allow AI to suggest answers to questions.
+        assistedSearch:
+          type: boolean
+          description: Allow AI-assisted search features.
+        contentReuse:
+          type: boolean
+          description: Allow AI to use content to help others.
+        aiTranslations:
+          type: boolean
+          description: Allow AI translations of content.
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

@@ -245,6 +245,78 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ProfileFieldPatch:
+      properties:
+        label:
+          description: The name of the profile field.
+          minLength: 1
+          type: string
+        description:
+          description: The description of the profile field.
+          type: string
+        formType:
+          description: The form type of the profile field.
+          enum:
+          - text
+          - text-multiline
+          - dropdown
+          - tokens
+          - checkbox
+          - date
+          - number
+          type: string
+        visibility:
+          description: The visibility of the profile field.
+          enum:
+          - public
+          - private
+          - internal
+          type: string
+        mutability:
+          description: The mutability of the profile field.
+          enum:
+          - all
+          - restricted
+          - none
+          type: string
+        displayOptions:
+          description: The display options of the profile field.
+          properties:
+            userCards:
+              description: The field appears on user cards.
+              type: boolean
+            posts:
+              description: The field appears on user posts.
+              type: boolean
+            search:
+              description: The field appears in the member search directory.
+              type: boolean
+          type: object
+        dropdownOptions:
+          description: The list of availible options for a dropdown field.
+          type:
+          - array
+          - 'null'
+          items:
+            oneOf:
+            - type: string
+            - type: number
+            - type: integer
+        registrationOptions:
+          type: string
+          enum:
+          - required
+          - optional
+          - hidden
+        enabled:
+          description: Is the profile field enabled?
+          type: boolean
+        salesforceID:
+          type:
+          - string
+          - 'null'
+      type: object
+      x-addon: dashboard
     ProfileField:
       properties:
         apiName:
@@ -336,78 +408,6 @@ components:
       - mutability
       - displayOptions
       - registrationOptions
-      type: object
-      x-addon: dashboard
-    ProfileFieldPatch:
-      properties:
-        label:
-          description: The name of the profile field.
-          minLength: 1
-          type: string
-        description:
-          description: The description of the profile field.
-          type: string
-        formType:
-          description: The form type of the profile field.
-          enum:
-          - text
-          - text-multiline
-          - dropdown
-          - tokens
-          - checkbox
-          - date
-          - number
-          type: string
-        visibility:
-          description: The visibility of the profile field.
-          enum:
-          - public
-          - private
-          - internal
-          type: string
-        mutability:
-          description: The mutability of the profile field.
-          enum:
-          - all
-          - restricted
-          - none
-          type: string
-        displayOptions:
-          description: The display options of the profile field.
-          properties:
-            userCards:
-              description: The field appears on user cards.
-              type: boolean
-            posts:
-              description: The field appears on user posts.
-              type: boolean
-            search:
-              description: The field appears in the member search directory.
-              type: boolean
-          type: object
-        dropdownOptions:
-          description: The list of availible options for a dropdown field.
-          type:
-          - array
-          - 'null'
-          items:
-            oneOf:
-            - type: string
-            - type: number
-            - type: integer
-        registrationOptions:
-          type: string
-          enum:
-          - required
-          - optional
-          - hidden
-        enabled:
-          description: Is the profile field enabled?
-          type: boolean
-        salesforceID:
-          type:
-          - string
-          - 'null'
       type: object
       x-addon: dashboard
     ProfileFieldPost:

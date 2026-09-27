@@ -213,6 +213,45 @@ components:
         minimum: 1
       x-addon: dashboard
   schemas:
+    AppealPatch:
+      type: object
+      description: 'Schema for updating an appeal. Requires community.manage permission.
+
+        '
+      properties:
+        status:
+          type: string
+          description: 'Update the appeal status. Can only be set by the assigned user.
+
+            '
+          enum:
+          - pending
+          - approved
+          - rejected
+          - in-review
+        assignedUserID:
+          type:
+          - integer
+          - 'null'
+          description: 'Update the moderator assigned to the appeal.
+
+            Cannot assign to the same moderator who created the original ban/removal.
+
+            '
+        appealEventInfo:
+          type: object
+          description: Additional information about the appeal decision.
+          properties:
+            decisionMessage:
+              type:
+              - string
+              - 'null'
+              description: 'Message explaining the decision on the appeal.
+
+                Can only be set by the assigned user.
+
+                '
+      x-addon: dashboard
     Appeal:
       type: object
       properties:
@@ -372,45 +411,6 @@ components:
       example:
         jwt: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
         appealText: I believe this ban was unjust because I was following community guidelines.
-      x-addon: dashboard
-    AppealPatch:
-      type: object
-      description: 'Schema for updating an appeal. Requires community.manage permission.
-
-        '
-      properties:
-        status:
-          type: string
-          description: 'Update the appeal status. Can only be set by the assigned user.
-
-            '
-          enum:
-          - pending
-          - approved
-          - rejected
-          - in-review
-        assignedUserID:
-          type:
-          - integer
-          - 'null'
-          description: 'Update the moderator assigned to the appeal.
-
-            Cannot assign to the same moderator who created the original ban/removal.
-
-            '
-        appealEventInfo:
-          type: object
-          description: Additional information about the appeal decision.
-          properties:
-            decisionMessage:
-              type:
-              - string
-              - 'null'
-              description: 'Message explaining the decision on the appeal.
-
-                Can only be set by the assigned user.
-
-                '
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

@@ -367,153 +367,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    UserFragment:
-      oneOf:
-      - type: object
-        properties:
-          userID:
-            description: The ID of the user.
-            type: integer
-          name:
-            description: The username of the user.
-            minLength: 1
-            type: string
-          url:
-            description: The URL of the user's profile.
-            type: string
-            format: uri
-          photoUrl:
-            description: The URL of the user's avatar picture.
-            type: string
-            format: uri
-          dateLastActive:
-            description: Time the user was last active.
-            format: date-time
-            type:
-            - string
-            - 'null'
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-          label:
-            description: The label of the user as plaintext.
-            type: string
-          labelHtml:
-            description: The label of the user in HTML format.
-            type: string
-          private:
-            description: Whether the user profile is private or not.
-            type: boolean
-        required:
-        - userID
-        - name
-        - photoUrl
-        - dateLastActive
-      - type: object
-        description: A user fragment when only expanding by ssoID.
-        properties:
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-        required:
-        - ssoID
-      x-addon: dashboard
-    Format:
-      description: The format of the body used to convert it to HTML.
-      type: string
-      enum:
-      - rich
-      - markdown
-      - text
-      - textex
-      - wysiwyg
-      - bbcode
-      example: markdown
-      x-addon: dashboard
-    MessagePost:
-      properties:
-        body:
-          description: The body of the message.
-          maxLength: 2000
-          minLength: 1
-          type: string
-        conversationID:
-          description: The ID of the conversation.
-          type: integer
-        format:
-          $ref: '#/components/schemas/Format'
-      required:
-      - conversationID
-      - body
-      type: object
-      x-addon: conversations
-    ConversationParticipants:
-      description: List of participants.
-      items:
-        properties:
-          userID:
-            description: The userID of the participant.
-            type: integer
-          status:
-            description: Participation status of the user.
-            enum:
-            - participating
-            - deleted
-            type: string
-          user:
-            $ref: '#/components/schemas/UserFragment'
-        required:
-        - userID
-        - status
-        type: object
-      type: array
-      x-addon: conversations
-    ConversationPost:
-      properties:
-        participantUserIDs:
-          description: List of userID of the participants.
-          items:
-            type: integer
-          type: array
-        initialBody:
-          description: Initial conversation message body.
-          type: string
-        initialFormat:
-          $ref: '#/components/schemas/Format'
-      required:
-      - participantUserIDs
-      type: object
-      x-addon: conversations
-    Message:
-      properties:
-        body:
-          description: The body of the message.
-          maxLength: 2000
-          minLength: 1
-          type: string
-        conversationID:
-          description: The ID of the conversation.
-          type: integer
-        dateInserted:
-          description: When the message was created.
-          format: date-time
-          type: string
-        insertUser:
-          $ref: '#/components/schemas/UserFragment'
-        insertUserID:
-          description: The user that created the message.
-          type: integer
-        messageID:
-          description: The ID of the message.
-          type: integer
-      required:
-      - messageID
-      - conversationID
-      - body
-      - insertUserID
-      - dateInserted
-      type: object
-      x-addon: conversations
     Conversation:
       properties:
         body:
@@ -581,6 +434,153 @@ components:
       - countMessages
       type: object
       x-addon: conversations
+    UserFragment:
+      oneOf:
+      - type: object
+        properties:
+          userID:
+            description: The ID of the user.
+            type: integer
+          name:
+            description: The username of the user.
+            minLength: 1
+            type: string
+          url:
+            description: The URL of the user's profile.
+            type: string
+            format: uri
+          photoUrl:
+            description: The URL of the user's avatar picture.
+            type: string
+            format: uri
+          dateLastActive:
+            description: Time the user was last active.
+            format: date-time
+            type:
+            - string
+            - 'null'
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+          label:
+            description: The label of the user as plaintext.
+            type: string
+          labelHtml:
+            description: The label of the user in HTML format.
+            type: string
+          private:
+            description: Whether the user profile is private or not.
+            type: boolean
+        required:
+        - userID
+        - name
+        - photoUrl
+        - dateLastActive
+      - type: object
+        description: A user fragment when only expanding by ssoID.
+        properties:
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+        required:
+        - ssoID
+      x-addon: dashboard
+    ConversationPost:
+      properties:
+        participantUserIDs:
+          description: List of userID of the participants.
+          items:
+            type: integer
+          type: array
+        initialBody:
+          description: Initial conversation message body.
+          type: string
+        initialFormat:
+          $ref: '#/components/schemas/Format'
+      required:
+      - participantUserIDs
+      type: object
+      x-addon: conversations
+    MessagePost:
+      properties:
+        body:
+          description: The body of the message.
+          maxLength: 2000
+          minLength: 1
+          type: string
+        conversationID:
+          description: The ID of the conversation.
+          type: integer
+        format:
+          $ref: '#/components/schemas/Format'
+      required:
+      - conversationID
+      - body
+      type: object
+      x-addon: conversations
+    ConversationParticipants:
+      description: List of participants.
+      items:
+        properties:
+          userID:
+            description: The userID of the participant.
+            type: integer
+          status:
+            description: Participation status of the user.
+            enum:
+            - participating
+            - deleted
+            type: string
+          user:
+            $ref: '#/components/schemas/UserFragment'
+        required:
+        - userID
+        - status
+        type: object
+      type: array
+      x-addon: conversations
+    Message:
+      properties:
+        body:
+          description: The body of the message.
+          maxLength: 2000
+          minLength: 1
+          type: string
+        conversationID:
+          description: The ID of the conversation.
+          type: integer
+        dateInserted:
+          description: When the message was created.
+          format: date-time
+          type: string
+        insertUser:
+          $ref: '#/components/schemas/UserFragment'
+        insertUserID:
+          description: The user that created the message.
+          type: integer
+        messageID:
+          description: The ID of the message.
+          type: integer
+      required:
+      - messageID
+      - conversationID
+      - body
+      - insertUserID
+      - dateInserted
+      type: object
+      x-addon: conversations
+    Format:
+      description: The format of the body used to convert it to HTML.
+      type: string
+      enum:
+      - rich
+      - markdown
+      - text
+      - textex
+      - wysiwyg
+      - bbcode
+      example: markdown
+      x-addon: dashboard
   requestBodies:
     ConversationPost:
       content:

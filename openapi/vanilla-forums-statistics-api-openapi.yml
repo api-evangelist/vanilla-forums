@@ -30,15 +30,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ExternalNavigation:
-      properties:
-        destinationUrl:
-          description: External URL the user navigated to
-          type: string
-      required:
-      - destinationUrl
-      type: object
-      x-addon: dashboard
     TrackableSearch:
       properties:
         type:
@@ -167,6 +158,15 @@ components:
           type: integer
       required:
       - url
+      type: object
+      x-addon: dashboard
+    ExternalNavigation:
+      properties:
+        destinationUrl:
+          description: External URL the user navigated to
+          type: string
+      required:
+      - destinationUrl
       type: object
       x-addon: dashboard
 x-resourceEvents:

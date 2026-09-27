@@ -335,25 +335,12 @@ components:
           $ref: '#/components/schemas/Scope'
       x-addon: dashboard
   responses:
-    NotFound:
-      description: The record does not exist or was not found.
+    RecordStatusResponse:
+      description: OK
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              message:
-                type: string
-                description: More information about the error.
-              status:
-                type: number
-                description: The HTTP status code for the error.
-                format: int32
-            required:
-            - message
-          example:
-            status: 404
-            message: Page Not Found
+            $ref: '#/components/schemas/RecordStatus'
       x-addon: dashboard
     PermissionError:
       description: Permission denied.
@@ -395,14 +382,39 @@ components:
             - 2425
             - 1342
       x-addon: dashboard
-    RecordStatusResponse:
-      description: OK
+    NotFound:
+      description: The record does not exist or was not found.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/RecordStatus'
+            type: object
+            properties:
+              message:
+                type: string
+                description: More information about the error.
+              status:
+                type: number
+                description: The HTTP status code for the error.
+                format: int32
+            required:
+            - message
+          example:
+            status: 404
+            message: Page Not Found
       x-addon: dashboard
   parameters:
+    ScopeTypeFilter:
+      name: scopeType
+      description: Filter by scope type. Can include 'global', 'scoped', or both.
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - global
+          - scoped
+      x-addon: dashboard
     ScopeFilter:
       name: scope
       in: query
@@ -419,18 +431,6 @@ components:
             type: array
             items:
               type: string
-      x-addon: dashboard
-    ScopeTypeFilter:
-      name: scopeType
-      description: Filter by scope type. Can include 'global', 'scoped', or both.
-      in: query
-      schema:
-        type: array
-        items:
-          type: string
-          enum:
-          - global
-          - scoped
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

@@ -302,64 +302,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    RolePost:
-      properties:
-        canSession:
-          description: Can users in this role start a session?
-          type: boolean
-        deletable:
-          description: Is the role deletable?
-          type: boolean
-        description:
-          description: Description of the role.
-          minLength: 0
-          type:
-          - string
-          - 'null'
-        name:
-          description: Name of the role.
-          minLength: 1
-          type: string
-        permissions:
-          items:
-            $ref: '#/components/schemas/PermissionFragment'
-          type: array
-        personalInfo:
-          description: Is membership in this role personal information?
-          type: boolean
-        type:
-          description: Default type of this role.
-          minLength: 0
-          type:
-          - string
-          - 'null'
-        domains:
-          description: Email domains of roles.
-          minLength: 0
-          type:
-          - string
-          - 'null'
-      required:
-      - name
-      type: object
-      x-addon: dashboard
-    PermissionFragment:
-      properties:
-        id:
-          type: integer
-        permissions:
-          type: object
-        type:
-          enum:
-          - global
-          - category
-          minLength: 1
-          type: string
-      required:
-      - type
-      - permissions
-      type: object
-      x-addon: dashboard
     Role:
       properties:
         canSession:
@@ -408,6 +350,64 @@ components:
       - deletable
       - canSession
       - personalInfo
+      type: object
+      x-addon: dashboard
+    PermissionFragment:
+      properties:
+        id:
+          type: integer
+        permissions:
+          type: object
+        type:
+          enum:
+          - global
+          - category
+          minLength: 1
+          type: string
+      required:
+      - type
+      - permissions
+      type: object
+      x-addon: dashboard
+    RolePost:
+      properties:
+        canSession:
+          description: Can users in this role start a session?
+          type: boolean
+        deletable:
+          description: Is the role deletable?
+          type: boolean
+        description:
+          description: Description of the role.
+          minLength: 0
+          type:
+          - string
+          - 'null'
+        name:
+          description: Name of the role.
+          minLength: 1
+          type: string
+        permissions:
+          items:
+            $ref: '#/components/schemas/PermissionFragment'
+          type: array
+        personalInfo:
+          description: Is membership in this role personal information?
+          type: boolean
+        type:
+          description: Default type of this role.
+          minLength: 0
+          type:
+          - string
+          - 'null'
+        domains:
+          description: Email domains of roles.
+          minLength: 0
+          type:
+          - string
+          - 'null'
+      required:
+      - name
       type: object
       x-addon: dashboard
   requestBodies:

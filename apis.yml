@@ -293,7 +293,7 @@ apis:
   - type: Documentation
     url: https://success.vanillaforums.com/kb/categories/97-api-and-webhooks
 - aid: vanilla-forums:vanilla-forums-email-templates-api
-  name: Vanilla Forums email-templates API
+  name: Vanilla Forums Email Templates API
   description: The email-templates API from Vanilla Forums — 1 operation(s) for email-templates.
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
@@ -758,8 +758,6 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
-  - Addons
-  tags_raw:
   - Add Ons
   properties:
   - type: OpenAPI
@@ -772,8 +770,6 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
-  - DataSource
-  tags_raw:
   - Data Source
   properties:
   - type: OpenAPI

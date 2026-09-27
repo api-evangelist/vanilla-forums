@@ -199,95 +199,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    DataSourcePost:
-      allOf:
-      - $ref: '#/components/schemas/DataSourceMutableFields'
-      - type: object
-        description: Create a data source
-        properties:
-          dataSourceID:
-            type: string
-            description: Named identifier for the data source
-            example: my-data-source
-        required:
-        - dataSourceID
-        - name
-        - authenticationType
-        - accessControlType
-        - baseUrl
-        - accessControl
-      x-addon: dashboard
-    DataSourceProxyCallPost:
-      type: object
-      description: Request body for making a proxy call through a data source. Either dataSourceID or dataSource must be provided, but not both.
-      properties:
-        dataSourceID:
-          type: string
-          description: ID of an existing data source to use
-          example: my-data-source
-        dataSource:
-          $ref: '#/components/schemas/DataSourcePost'
-        call:
-          $ref: '#/components/schemas/DataSourceCall'
-      required:
-      - call
-      x-addon: dashboard
-    DataSourcePatch:
-      allOf:
-      - $ref: '#/components/schemas/DataSourceMutableFields'
-      description: Patchable fields for a data source (dataSourceID is not patchable)
-      x-addon: dashboard
-    DataSource:
-      allOf:
-      - $ref: '#/components/schemas/DataSourcePost'
-      - type: object
-        description: A widget fragment
-        properties:
-          dateInserted:
-            type: string
-            format: date-time
-            description: Date the object was inserted
-            example: '2025-03-05T06:56:04+00:00'
-          insertUserID:
-            type: string
-            description: User who inserted the object
-            example: '2025-03-05T06:56:04+00:00'
-          dateUpdated:
-            type: string
-            format: date-time
-            description: Date the revision was updated
-            example: '2025-03-05T06:56:04+00:00'
-          updateUserID:
-            type: string
-            description: User who updated the object
-            example: '2025-03-05T06:56:04+00:00'
-        required:
-        - insertUserID
-        - dateInserted
-      x-addon: dashboard
-    DataSourceCallMethod:
-      type: string
-      description: HTTP method for the proxy call
-      enum:
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - PATCH
-      x-addon: dashboard
-    DataSourceAuthenticationType:
-      type: string
-      description: Authentication Type of the data source
-      enum:
-      - none
-      - vanilla
-      x-addon: dashboard
-    DataSourceAllowedPath:
-      type: string
-      description: Allowed Path of the data source
-      example: /api/the-thing*
-      default: '*'
-      x-addon: dashboard
     DataSourceAccessControlType:
       type: string
       description: Access Control Type of the data source
@@ -295,15 +206,10 @@ components:
       - none
       - restricted
       x-addon: dashboard
-    DataSourceAllowedMethod:
-      type: string
-      description: Allowed Method of the data source
-      enum:
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - PATCH
+    DataSourcePatch:
+      allOf:
+      - $ref: '#/components/schemas/DataSourceMutableFields'
+      description: Patchable fields for a data source (dataSourceID is not patchable)
       x-addon: dashboard
     DataSourceCall:
       type: object
@@ -336,6 +242,54 @@ components:
       required:
       - path
       - method
+      x-addon: dashboard
+    DataSourceCallMethod:
+      type: string
+      description: HTTP method for the proxy call
+      enum:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+      x-addon: dashboard
+    DataSource:
+      allOf:
+      - $ref: '#/components/schemas/DataSourcePost'
+      - type: object
+        description: A widget fragment
+        properties:
+          dateInserted:
+            type: string
+            format: date-time
+            description: Date the object was inserted
+            example: '2025-03-05T06:56:04+00:00'
+          insertUserID:
+            type: string
+            description: User who inserted the object
+            example: '2025-03-05T06:56:04+00:00'
+          dateUpdated:
+            type: string
+            format: date-time
+            description: Date the revision was updated
+            example: '2025-03-05T06:56:04+00:00'
+          updateUserID:
+            type: string
+            description: User who updated the object
+            example: '2025-03-05T06:56:04+00:00'
+        required:
+        - insertUserID
+        - dateInserted
+      x-addon: dashboard
+    DataSourceAllowedMethod:
+      type: string
+      description: Allowed Method of the data source
+      enum:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
       x-addon: dashboard
     DataSourceMutableFields:
       type: object
@@ -394,6 +348,52 @@ components:
               description: List of rank IDs that have access to the data source
               items:
                 type: integer
+      x-addon: dashboard
+    DataSourceProxyCallPost:
+      type: object
+      description: Request body for making a proxy call through a data source. Either dataSourceID or dataSource must be provided, but not both.
+      properties:
+        dataSourceID:
+          type: string
+          description: ID of an existing data source to use
+          example: my-data-source
+        dataSource:
+          $ref: '#/components/schemas/DataSourcePost'
+        call:
+          $ref: '#/components/schemas/DataSourceCall'
+      required:
+      - call
+      x-addon: dashboard
+    DataSourcePost:
+      allOf:
+      - $ref: '#/components/schemas/DataSourceMutableFields'
+      - type: object
+        description: Create a data source
+        properties:
+          dataSourceID:
+            type: string
+            description: Named identifier for the data source
+            example: my-data-source
+        required:
+        - dataSourceID
+        - name
+        - authenticationType
+        - accessControlType
+        - baseUrl
+        - accessControl
+      x-addon: dashboard
+    DataSourceAuthenticationType:
+      type: string
+      description: Authentication Type of the data source
+      enum:
+      - none
+      - vanilla
+      x-addon: dashboard
+    DataSourceAllowedPath:
+      type: string
+      description: Allowed Path of the data source
+      example: /api/the-thing*
+      default: '*'
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

@@ -212,47 +212,7 @@ paths:
       operationId: patchTranslationsByResourceUrlCodeRemove
       x-operation-id-source: derived
 components:
-  parameters:
-    LocaleCodeParameter:
-      name: locale
-      in: path
-      description: The locale code requested.
-      required: true
-      schema:
-        type: string
-        pattern: '[a-zA-Z0-9-]+'
-      x-addon: dashboard
-    CacheBusterParameter:
-      name: etag
-      in: query
-      description: 'Whether or not output is cached.
-
-        '
-      schema:
-        type: string
-      x-addon: dashboard
   schemas:
-    Translation:
-      properties:
-        resource:
-          description: Name of the resource.
-          type: string
-        key:
-          description: a unique translation identifier.
-          type: string
-        locale:
-          description: The locale of the translation.
-          type: string
-        translation:
-          description: The translation sentence.
-          type: string
-      required:
-      - resource
-      - key
-      - locale
-      - translation
-      type: object
-      x-addon: dashboard
     PatchTranslations:
       type: array
       items:
@@ -281,6 +241,46 @@ components:
         - propertyName
         - translation
         type: object
+      x-addon: dashboard
+    Translation:
+      properties:
+        resource:
+          description: Name of the resource.
+          type: string
+        key:
+          description: a unique translation identifier.
+          type: string
+        locale:
+          description: The locale of the translation.
+          type: string
+        translation:
+          description: The translation sentence.
+          type: string
+      required:
+      - resource
+      - key
+      - locale
+      - translation
+      type: object
+      x-addon: dashboard
+  parameters:
+    CacheBusterParameter:
+      name: etag
+      in: query
+      description: 'Whether or not output is cached.
+
+        '
+      schema:
+        type: string
+      x-addon: dashboard
+    LocaleCodeParameter:
+      name: locale
+      in: path
+      description: The locale code requested.
+      required: true
+      schema:
+        type: string
+        pattern: '[a-zA-Z0-9-]+'
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

@@ -496,94 +496,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Format:
-      description: The format of the body used to convert it to HTML.
-      type: string
-      enum:
-      - rich
-      - markdown
-      - text
-      - textex
-      - wysiwyg
-      - bbcode
-      example: markdown
-      x-addon: dashboard
-    UserFragment:
-      oneOf:
-      - type: object
-        properties:
-          userID:
-            description: The ID of the user.
-            type: integer
-          name:
-            description: The username of the user.
-            minLength: 1
-            type: string
-          url:
-            description: The URL of the user's profile.
-            type: string
-            format: uri
-          photoUrl:
-            description: The URL of the user's avatar picture.
-            type: string
-            format: uri
-          dateLastActive:
-            description: Time the user was last active.
-            format: date-time
-            type:
-            - string
-            - 'null'
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-          label:
-            description: The label of the user as plaintext.
-            type: string
-          labelHtml:
-            description: The label of the user in HTML format.
-            type: string
-          private:
-            description: Whether the user profile is private or not.
-            type: boolean
-        required:
-        - userID
-        - name
-        - photoUrl
-        - dateLastActive
-      - type: object
-        description: A user fragment when only expanding by ssoID.
-        properties:
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-        required:
-        - ssoID
-      x-addon: dashboard
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
-      x-addon: dashboard
-    CommentGet:
-      properties:
-        expand:
-          description: Expand associated records using one or more valid field names. A value of "all" will expand all expandable fields.
-          items:
-            enum:
-            - reactions
-            - all
-            type: string
-          type: array
-          x-collectionFormat: csv
-        id:
-          description: The comment ID.
-          type: integer
-      required:
-      - id
-      type: object
-      x-addon: vanilla
     SrcSet:
       description: An image's srcset for various sizes.
       type: object
@@ -601,98 +513,6 @@ components:
           description: 1200px large Image url.
           type: string
       x-addon: dashboard
-    PostPremoderation:
-      properties:
-        description:
-          description: Body of the premoderation
-          type: string
-        message:
-          description: General Message of the premoderation
-          type: string
-        reportID:
-          description: Id of the Report of the premoderation
-          type: string
-        premoderatinReasons:
-          items:
-            properties:
-              premoderationType:
-                description: Premoderation Type
-                enum:
-                - premoderatedCategory
-                - premoderatedKeyword
-                - premoderatedRole
-                - premoderatedSpamStopForumSpam
-                - premoderatedSpamAkisment
-                type: string
-            type: object
-          type: array
-      x-addon: vanilla
-    ReportReasonFragment:
-      type: object
-      properties:
-        reportReasonID:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        sort:
-          type: integer
-        reportID:
-          type: integer
-        deleted:
-          type: boolean
-      required:
-      - reportReasonID
-      - name
-      - description
-      - sort
-      - deleted
-      x-addon: vanilla
-    ReportMeta:
-      type: object
-      properties:
-        reportsReasons:
-          type: array
-          description: Report reasons.
-          items:
-            $ref: '#/components/schemas/ReportReasonFragment'
-        reportUserIDs:
-          description: User IDs that have reported this post.
-          type: array
-          items:
-            type: integer
-        reportUsers:
-          description: Users that have reported this post.
-          type: array
-          items:
-            $ref: '#/components/schemas/UserFragment'
-        countReportUsers:
-          description: The number of users that have reported this post.
-          type: number
-        reportGuestUsers:
-          description: Guest reporters, with email and name.
-          type: array
-          items:
-            type: object
-            properties:
-              reporterEmail:
-                type: string
-                description: The guest reporter's email address.
-              reporterName:
-                type: string
-                description: The guest reporter's display name.
-            required:
-            - reporterEmail
-        dateLastReport:
-          description: The date of the last report on the post.
-          type: string
-          format: date-time
-        countReports:
-          type: integer
-          default: 0
-          description: The number of reports on the post.
-      x-addon: vanilla
     Comment:
       properties:
         attributes:
@@ -812,19 +632,75 @@ components:
       - attributes
       type: object
       x-addon: vanilla
-    Image:
-      description: An image, pulled from content.
-      type: object
-      properties:
-        url:
-          description: The original image URL.
-          type: string
-        urlSrcSet:
-          $ref: '#/components/schemas/SrcSet'
-        alt:
-          description: The image's alternative text.
-          type: string
+    UserFragment:
+      oneOf:
+      - type: object
+        properties:
+          userID:
+            description: The ID of the user.
+            type: integer
+          name:
+            description: The username of the user.
+            minLength: 1
+            type: string
+          url:
+            description: The URL of the user's profile.
+            type: string
+            format: uri
+          photoUrl:
+            description: The URL of the user's avatar picture.
+            type: string
+            format: uri
+          dateLastActive:
+            description: Time the user was last active.
+            format: date-time
+            type:
+            - string
+            - 'null'
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+          label:
+            description: The label of the user as plaintext.
+            type: string
+          labelHtml:
+            description: The label of the user in HTML format.
+            type: string
+          private:
+            description: Whether the user profile is private or not.
+            type: boolean
+        required:
+        - userID
+        - name
+        - photoUrl
+        - dateLastActive
+      - type: object
+        description: A user fragment when only expanding by ssoID.
+        properties:
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+        required:
+        - ssoID
       x-addon: dashboard
+    CommentGet:
+      properties:
+        expand:
+          description: Expand associated records using one or more valid field names. A value of "all" will expand all expandable fields.
+          items:
+            enum:
+            - reactions
+            - all
+            type: string
+          type: array
+          x-collectionFormat: csv
+        id:
+          description: The comment ID.
+          type: integer
+      required:
+      - id
+      type: object
+      x-addon: vanilla
     CommentPost:
       properties:
         body:
@@ -848,11 +724,145 @@ components:
           $ref: '#/components/schemas/Format'
       type: object
       x-addon: vanilla
+    ReportMeta:
+      type: object
+      properties:
+        reportsReasons:
+          type: array
+          description: Report reasons.
+          items:
+            $ref: '#/components/schemas/ReportReasonFragment'
+        reportUserIDs:
+          description: User IDs that have reported this post.
+          type: array
+          items:
+            type: integer
+        reportUsers:
+          description: Users that have reported this post.
+          type: array
+          items:
+            $ref: '#/components/schemas/UserFragment'
+        countReportUsers:
+          description: The number of users that have reported this post.
+          type: number
+        reportGuestUsers:
+          description: Guest reporters, with email and name.
+          type: array
+          items:
+            type: object
+            properties:
+              reporterEmail:
+                type: string
+                description: The guest reporter's email address.
+              reporterName:
+                type: string
+                description: The guest reporter's display name.
+            required:
+            - reporterEmail
+        dateLastReport:
+          description: The date of the last report on the post.
+          type: string
+          format: date-time
+        countReports:
+          type: integer
+          default: 0
+          description: The number of reports on the post.
+      x-addon: vanilla
+    Image:
+      description: An image, pulled from content.
+      type: object
+      properties:
+        url:
+          description: The original image URL.
+          type: string
+        urlSrcSet:
+          $ref: '#/components/schemas/SrcSet'
+        alt:
+          description: The image's alternative text.
+          type: string
+      x-addon: dashboard
+    PostPremoderation:
+      properties:
+        description:
+          description: Body of the premoderation
+          type: string
+        message:
+          description: General Message of the premoderation
+          type: string
+        reportID:
+          description: Id of the Report of the premoderation
+          type: string
+        premoderatinReasons:
+          items:
+            properties:
+              premoderationType:
+                description: Premoderation Type
+                enum:
+                - premoderatedCategory
+                - premoderatedKeyword
+                - premoderatedRole
+                - premoderatedSpamStopForumSpam
+                - premoderatedSpamAkisment
+                type: string
+            type: object
+          type: array
+      x-addon: vanilla
+    ReportReasonFragment:
+      type: object
+      properties:
+        reportReasonID:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        sort:
+          type: integer
+        reportID:
+          type: integer
+        deleted:
+          type: boolean
+      required:
+      - reportReasonID
+      - name
+      - description
+      - sort
+      - deleted
+      x-addon: vanilla
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+      x-addon: dashboard
+    Format:
+      description: The format of the body used to convert it to HTML.
+      type: string
+      enum:
+      - rich
+      - markdown
+      - text
+      - textex
+      - wysiwyg
+      - bbcode
+      example: markdown
+      x-addon: dashboard
   parameters:
     DateInserted:
       name: dateInserted
       in: query
       description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
+
+        '
+      schema:
+        format: date-filter
+        type: string
+      x-addon: dashboard
+    DateUpdated:
+      name: dateUpdated
+      in: query
+      description: 'Filter by update date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
 
         '
       schema:
@@ -869,16 +879,6 @@ components:
         type: integer
         default: 1
         minimum: 1
-      x-addon: dashboard
-    DateUpdated:
-      name: dateUpdated
-      in: query
-      description: 'Filter by update date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
-
-        '
-      schema:
-        format: date-filter
-        type: string
       x-addon: dashboard
   requestBodies:
     CommentPost:

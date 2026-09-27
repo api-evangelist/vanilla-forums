@@ -179,24 +179,79 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Format:
-      description: The format of the body used to convert it to HTML.
+    ModerationMessagePost:
+      type: object
+      properties:
+        body:
+          type: string
+          description: The content of the message.
+        format:
+          $ref: '#/components/schemas/Format'
+        isDismissible:
+          type: boolean
+          description: Whether the moderation message can be dismissed by a user.
+        isEnabled:
+          type: boolean
+          description: Whether the message is enabled.
+        recordType:
+          type:
+          - string
+          - 'null'
+          enum:
+          - category
+          description: The record type (i.e., category) associated with the message, if any.
+        recordID:
+          type:
+          - integer
+          - 'null'
+          description: The recordID associated with the message, if any.
+        includeDescendants:
+          type: boolean
+          description: Whether to display the message for descendants of the record it's associated with (i.e., subcategories).
+        type:
+          type: string
+          description: The type of moderation message.
+          enum:
+          - casual
+          - info
+          - alert
+          - warning
+        viewLocation:
+          type: string
+          description: Where on the page the message should appear.
+          enum:
+          - content
+          - panel
+        layoutViewType:
+          $ref: '#/components/schemas/LayoutViewType'
+      required:
+      - body
+      - format
+      - layoutViewType
+      - viewLocation
+      x-addon: dashboard
+    LayoutViewType:
+      description: Type of resource to which this layout applies
       type: string
       enum:
-      - rich
-      - markdown
-      - text
-      - textex
-      - wysiwyg
-      - bbcode
-      example: markdown
-      x-addon: dashboard
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+      - all
+      - newQuestion
+      - question
+      - newIdea
+      - idea
+      - poll
+      - categoryList
+      - discussionList
+      - categoryList
+      - nestedCategoryList
+      - discussionCategoryPage
+      - discussion
+      - newDiscussion
+      - home
+      - profile
+      - registration
+      - signin
+      - inbox
       x-addon: dashboard
     ModerationMessagePatch:
       type: object
@@ -304,101 +359,26 @@ components:
       - isEnabled
       - isDismissible
       x-addon: dashboard
-    LayoutViewType:
-      description: Type of resource to which this layout applies
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+      x-addon: dashboard
+    Format:
+      description: The format of the body used to convert it to HTML.
       type: string
       enum:
-      - all
-      - newQuestion
-      - question
-      - newIdea
-      - idea
-      - poll
-      - categoryList
-      - discussionList
-      - categoryList
-      - nestedCategoryList
-      - discussionCategoryPage
-      - discussion
-      - newDiscussion
-      - home
-      - profile
-      - registration
-      - signin
-      - inbox
-      x-addon: dashboard
-    ModerationMessagePost:
-      type: object
-      properties:
-        body:
-          type: string
-          description: The content of the message.
-        format:
-          $ref: '#/components/schemas/Format'
-        isDismissible:
-          type: boolean
-          description: Whether the moderation message can be dismissed by a user.
-        isEnabled:
-          type: boolean
-          description: Whether the message is enabled.
-        recordType:
-          type:
-          - string
-          - 'null'
-          enum:
-          - category
-          description: The record type (i.e., category) associated with the message, if any.
-        recordID:
-          type:
-          - integer
-          - 'null'
-          description: The recordID associated with the message, if any.
-        includeDescendants:
-          type: boolean
-          description: Whether to display the message for descendants of the record it's associated with (i.e., subcategories).
-        type:
-          type: string
-          description: The type of moderation message.
-          enum:
-          - casual
-          - info
-          - alert
-          - warning
-        viewLocation:
-          type: string
-          description: Where on the page the message should appear.
-          enum:
-          - content
-          - panel
-        layoutViewType:
-          $ref: '#/components/schemas/LayoutViewType'
-      required:
-      - body
-      - format
-      - layoutViewType
-      - viewLocation
+      - rich
+      - markdown
+      - text
+      - textex
+      - wysiwyg
+      - bbcode
+      example: markdown
       x-addon: dashboard
   responses:
-    NotFound:
-      description: The record does not exist or was not found.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                description: More information about the error.
-              status:
-                type: number
-                description: The HTTP status code for the error.
-                format: int32
-            required:
-            - message
-          example:
-            status: 404
-            message: Page Not Found
-      x-addon: dashboard
     PermissionError:
       description: Permission denied.
       content:
@@ -438,6 +418,26 @@ components:
             recordIDs:
             - 2425
             - 1342
+      x-addon: dashboard
+    NotFound:
+      description: The record does not exist or was not found.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: More information about the error.
+              status:
+                type: number
+                description: The HTTP status code for the error.
+                format: int32
+            required:
+            - message
+          example:
+            status: 404
+            message: Page Not Found
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

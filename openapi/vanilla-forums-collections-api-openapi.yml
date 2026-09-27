@@ -369,100 +369,91 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    UserFragment:
-      oneOf:
-      - type: object
-        properties:
-          userID:
-            description: The ID of the user.
-            type: integer
-          name:
-            description: The username of the user.
-            minLength: 1
-            type: string
-          url:
-            description: The URL of the user's profile.
-            type: string
-            format: uri
-          photoUrl:
-            description: The URL of the user's avatar picture.
-            type: string
-            format: uri
-          dateLastActive:
-            description: Time the user was last active.
-            format: date-time
-            type:
-            - string
-            - 'null'
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-          label:
-            description: The label of the user as plaintext.
-            type: string
-          labelHtml:
-            description: The label of the user in HTML format.
-            type: string
-          private:
-            description: Whether the user profile is private or not.
-            type: boolean
-        required:
-        - userID
-        - name
-        - photoUrl
-        - dateLastActive
-      - type: object
-        description: A user fragment when only expanding by ssoID.
-        properties:
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-        required:
-        - ssoID
-      x-addon: dashboard
-    ReportMeta:
+    Collection:
+      description: A collection of multiple  resources
       type: object
       properties:
-        reportsReasons:
-          type: array
-          description: Report reasons.
+        name:
+          description: Name for the collection
+          minLength: 1
+          maxLength: 255
+          type: string
+        dateInserted:
+          description: When the collection was created.
+          format: date-time
+          type: string
+        dateUpdated:
+          description: When the collection was last updated.
+          format: date-time
+          type:
+          - string
+          - 'null'
+        insertUserID:
+          description: The unique ID of the user that created this collection.
+          type: integer
+        updateUserID:
+          description: The unique ID of the user who updated this collection.
+          type:
+          - integer
+          - 'null'
+        records:
+          description: An array of records that belongs to the collection.
           items:
-            $ref: '#/components/schemas/ReportReasonFragment'
-        reportUserIDs:
-          description: User IDs that have reported this post.
+            $ref: '#/components/schemas/PostCollectionRecord'
           type: array
-          items:
+          maxItems: 30
+      required:
+      - name
+      x-addon: vanilla
+    CollectionRecordContentSchema:
+      allOf:
+      - $ref: '#/components/schemas/CollectionRecord'
+      - type: object
+        properties:
+          collectionID:
+            description: The Id of the collection.
             type: integer
-        reportUsers:
-          description: Users that have reported this post.
-          type: array
-          items:
-            $ref: '#/components/schemas/UserFragment'
-        countReportUsers:
-          description: The number of users that have reported this post.
-          type: number
-        reportGuestUsers:
-          description: Guest reporters, with email and name.
-          type: array
-          items:
+            readOnly: true
+          record:
+            description: The expanded data of the specific record
+            type: object
+            anyOf:
+            - $ref: '#/components/schemas/Article'
+            - $ref: '#/components/schemas/Discussion'
+            - $ref: '#/components/schemas/CategorySchema'
+            - $ref: '#/components/schemas/Group'
+            - $ref: '#/components/schemas/FullEvent'
+            - $ref: '#/components/schemas/FullKnowledgeBaseSchema'
+          collection:
+            description: The collection that the record belongs to
             type: object
             properties:
-              reporterEmail:
+              collectionID:
+                description: The Id of the collection.
+                type: integer
+                readOnly: true
+              name:
+                description: Name for the collection
                 type: string
-                description: The guest reporter's email address.
-              reporterName:
-                type: string
-                description: The guest reporter's display name.
-            required:
-            - reporterEmail
-        dateLastReport:
-          description: The date of the last report on the post.
-          type: string
-          format: date-time
-        countReports:
-          type: integer
-          default: 0
-          description: The number of reports on the post.
+      x-addon: vanilla
+    FullCollectionSchema:
+      allOf:
+      - type: object
+        properties:
+          collectionID:
+            description: The Id of the collection.
+            type: integer
+            readOnly: true
+          records:
+            description: An array of records that belongs to the collection.
+            items:
+              $ref: '#/components/schemas/CollectionRecord'
+            type: array
+            maxItems: 30
+        required:
+        - collectionID
+        - records
+      - $ref: '#/components/schemas/Collection'
       x-addon: vanilla
     BasicError:
       type: object
@@ -510,54 +501,6 @@ components:
       externalDocs:
         url: https://success.vanillaforums.com/kb/articles/308-range-expressions
       x-addon: dashboard
-    SrcSet:
-      description: An image's srcset for various sizes.
-      type: object
-      properties:
-        '10':
-          description: 10px large Image url.
-          type: string
-        '300':
-          description: 300px large Image url.
-          type: string
-        '800':
-          description: 800px large Image url.
-          type: string
-        '1200':
-          description: 1200px large Image url.
-          type: string
-      x-addon: dashboard
-    ReportReasonFragment:
-      type: object
-      properties:
-        reportReasonID:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        sort:
-          type: integer
-        reportID:
-          type: integer
-        deleted:
-          type: boolean
-      required:
-      - reportReasonID
-      - name
-      - description
-      - sort
-      - deleted
-      x-addon: vanilla
-    PostMeta:
-      type: object
-      description: Custom post fields. This is an object keyed by postFieldID.
-      example:
-        my-field: value1
-        my-arrayField:
-        - arrVal1
-        - arrVal2
-      x-addon: vanilla
     CollectionPostSchema:
       allOf:
       - type: object
@@ -571,6 +514,108 @@ components:
         required:
         - records
       - $ref: '#/components/schemas/Collection'
+      x-addon: vanilla
+    CollectionContentSchema:
+      description: A collection resource with records expanded
+      type: object
+      properties:
+        collectionID:
+          description: The Id of the collection.
+          type: integer
+          readOnly: true
+        name:
+          description: Name for the collection
+          minLength: 1
+          maxLength: 255
+          type: string
+        records:
+          description: An array of records that belongs to the collection.
+          items:
+            properties:
+              recordID:
+                description: The ID of the corresponding record
+                type: integer
+              recordType:
+                description: The type of the record.
+                enum:
+                - article
+                - category
+                - discussion
+                - event
+                - groups
+                - knowledgeBase
+                type: string
+              sort:
+                description: Manual sort order for the group
+                type:
+                - integer
+                - 'null'
+              record:
+                description: The content of the specific record
+                type: object
+                anyOf:
+                - $ref: '#/components/schemas/Article'
+                - $ref: '#/components/schemas/Discussion'
+                - $ref: '#/components/schemas/CategorySchema'
+                - $ref: '#/components/schemas/Group'
+                - $ref: '#/components/schemas/FullEvent'
+                - $ref: '#/components/schemas/FullKnowledgeBaseSchema'
+            required:
+            - recordID
+            - recordType
+            - sort
+            - record
+            type: object
+          type: array
+          maxItems: 30
+      required:
+      - collectionID
+      - name
+      - records
+      x-addon: vanilla
+    ReportMeta:
+      type: object
+      properties:
+        reportsReasons:
+          type: array
+          description: Report reasons.
+          items:
+            $ref: '#/components/schemas/ReportReasonFragment'
+        reportUserIDs:
+          description: User IDs that have reported this post.
+          type: array
+          items:
+            type: integer
+        reportUsers:
+          description: Users that have reported this post.
+          type: array
+          items:
+            $ref: '#/components/schemas/UserFragment'
+        countReportUsers:
+          description: The number of users that have reported this post.
+          type: number
+        reportGuestUsers:
+          description: Guest reporters, with email and name.
+          type: array
+          items:
+            type: object
+            properties:
+              reporterEmail:
+                type: string
+                description: The guest reporter's email address.
+              reporterName:
+                type: string
+                description: The guest reporter's display name.
+            required:
+            - reporterEmail
+        dateLastReport:
+          description: The date of the last report on the post.
+          type: string
+          format: date-time
+        countReports:
+          type: integer
+          default: 0
+          description: The number of reports on the post.
       x-addon: vanilla
     CategoryFragment:
       properties:
@@ -591,30 +636,171 @@ components:
       - url
       type: object
       x-addon: vanilla
-    PostCollectionRecord:
+    StatusFragment:
+      type: object
+      description: Describes a status currently applied to a discussion. Expandable with `status` and `status.log` expands.
       properties:
-        recordID:
-          description: The ID of the corresponding record
+        statusID:
+          description: Record status ID of the discussion status.
           type: integer
-        recordType:
-          description: The type of the record.
-          enum:
-          - article
-          - category
-          - discussion
-          - event
-          - groups
-          - knowledgeBase
+        name:
+          description: The name of the status.
           type: string
-        sort:
-          description: Manual sort order for the group
+        recordType:
+          description: Type of the discussion status.
+          type: string
+          enum:
+          - discussion
+        recordSubType:
+          description: Some statuses may only apply to a specific subtype of record.
+          type: string
+        state:
+          description: States are used to group statuses together.
+          type: string
+          enum:
+          - open
+          - closed
+        dateUpdated:
+          type: string
+          format: date-time
+          description: When the discussion was updated with the status.
+        log:
+          type: object
+          description: Information about when the status was applied.
+          required:
+          - dateUpdated
+          - updateUser
+          properties:
+            reasonUpdated:
+              description: Reason for status change
+              type:
+              - string
+              - 'null'
+            updateUser:
+              $ref: '#/components/schemas/UserFragment'
+            dateUpdated:
+              description: When the discussion was last updated.
+              format: date-time
+              type: string
+      required:
+      - statusID
+      - name
+      - recordType
+      - state
+      x-addon: vanilla
+    CollectionRecord:
+      allOf:
+      - type: object
+        properties:
+          dateAddedToCollection:
+            description: When the record was added to collection.
+            format: date-time
+            type: string
+      - $ref: '#/components/schemas/PostCollectionRecord'
+      x-addon: vanilla
+    CategorySchema:
+      properties:
+        categoryID:
+          description: The ID of the category.
+          type: integer
+        countAllComments:
+          description: Total of all comments in a category and its children.
+          type: integer
+        countAllDiscussions:
+          description: Total of all discussions in a category and its children.
+          type: integer
+        countCategories:
+          description: Total number of child categories.
+          type: integer
+        countComments:
+          description: Total comments in the category.
+          type: integer
+        countDiscussions:
+          description: Total discussions in the category.
+          type: integer
+        countFollowers:
+          description: Total followers in the category.
+          type: integer
+        customPermissions:
+          description: Are custom permissions set for this category?
+          type: boolean
+        description:
+          description: The description of the category.
+          minLength: 0
+          type:
+          - string
+          - 'null'
+        displayAs:
+          type: string
+          default: discussions
+          description: The display style of the category.
+          enum:
+          - categories
+          - discussions
+          - flat
+          - heading
+          minLength: 1
+        followed:
+          description: Is the category being followed by the current user?
+          type: boolean
+        isArchived:
+          description: The archived state of this category.
+          type: boolean
+        name:
+          description: The name of the category.
+          minLength: 1
+          type: string
+        parentCategoryID:
+          description: Parent category ID.
           type:
           - integer
           - 'null'
+        url:
+          description: The URL to the category.
+          minLength: 1
+          type: string
+        urlcode:
+          description: The URL code of the category.
+          minLength: 1
+          type: string
+        ideationType:
+          description: Voting type used for ideation posts.
+          enum:
+          - up
+          - up-down
+          - false
+          x-addon: ideation
+        permissions:
+          $ref: '#/components/schemas/DiscussionPermissions'
+        defaultStatusID:
+          description: The default status ID of the category.
+          type: integer
       required:
-      - recordID
-      - recordType
+      - categoryID
+      - name
+      - description
+      - parentCategoryID
+      - customPermissions
+      - isArchived
+      - urlcode
+      - url
+      - displayAs
+      - countCategories
+      - countDiscussions
+      - countComments
+      - countFollowers
+      - countAllDiscussions
+      - countAllComments
       type: object
+      x-addon: vanilla
+    PostMeta:
+      type: object
+      description: Custom post fields. This is an object keyed by postFieldID.
+      example:
+        my-field: value1
+        my-arrayField:
+        - arrVal1
+        - arrVal2
       x-addon: vanilla
     Discussion:
       properties:
@@ -847,223 +1033,120 @@ components:
       - attributes
       type: object
       x-addon: vanilla
-    CategorySchema:
+    SrcSet:
+      description: An image's srcset for various sizes.
+      type: object
       properties:
-        categoryID:
-          description: The ID of the category.
-          type: integer
-        countAllComments:
-          description: Total of all comments in a category and its children.
-          type: integer
-        countAllDiscussions:
-          description: Total of all discussions in a category and its children.
-          type: integer
-        countCategories:
-          description: Total number of child categories.
-          type: integer
-        countComments:
-          description: Total comments in the category.
-          type: integer
-        countDiscussions:
-          description: Total discussions in the category.
-          type: integer
-        countFollowers:
-          description: Total followers in the category.
-          type: integer
-        customPermissions:
-          description: Are custom permissions set for this category?
-          type: boolean
-        description:
-          description: The description of the category.
-          minLength: 0
-          type:
-          - string
-          - 'null'
-        displayAs:
+        '10':
+          description: 10px large Image url.
           type: string
-          default: discussions
-          description: The display style of the category.
+        '300':
+          description: 300px large Image url.
+          type: string
+        '800':
+          description: 800px large Image url.
+          type: string
+        '1200':
+          description: 1200px large Image url.
+          type: string
+      x-addon: dashboard
+    PostCollectionRecord:
+      properties:
+        recordID:
+          description: The ID of the corresponding record
+          type: integer
+        recordType:
+          description: The type of the record.
           enum:
-          - categories
-          - discussions
-          - flat
-          - heading
-          minLength: 1
-        followed:
-          description: Is the category being followed by the current user?
-          type: boolean
-        isArchived:
-          description: The archived state of this category.
-          type: boolean
-        name:
-          description: The name of the category.
-          minLength: 1
+          - article
+          - category
+          - discussion
+          - event
+          - groups
+          - knowledgeBase
           type: string
-        parentCategoryID:
-          description: Parent category ID.
+        sort:
+          description: Manual sort order for the group
           type:
           - integer
           - 'null'
-        url:
-          description: The URL to the category.
-          minLength: 1
-          type: string
-        urlcode:
-          description: The URL code of the category.
-          minLength: 1
-          type: string
-        ideationType:
-          description: Voting type used for ideation posts.
-          enum:
-          - up
-          - up-down
-          - false
-          x-addon: ideation
-        permissions:
-          $ref: '#/components/schemas/DiscussionPermissions'
-        defaultStatusID:
-          description: The default status ID of the category.
-          type: integer
       required:
-      - categoryID
+      - recordID
+      - recordType
+      type: object
+      x-addon: vanilla
+    UserFragment:
+      oneOf:
+      - type: object
+        properties:
+          userID:
+            description: The ID of the user.
+            type: integer
+          name:
+            description: The username of the user.
+            minLength: 1
+            type: string
+          url:
+            description: The URL of the user's profile.
+            type: string
+            format: uri
+          photoUrl:
+            description: The URL of the user's avatar picture.
+            type: string
+            format: uri
+          dateLastActive:
+            description: Time the user was last active.
+            format: date-time
+            type:
+            - string
+            - 'null'
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+          label:
+            description: The label of the user as plaintext.
+            type: string
+          labelHtml:
+            description: The label of the user in HTML format.
+            type: string
+          private:
+            description: Whether the user profile is private or not.
+            type: boolean
+        required:
+        - userID
+        - name
+        - photoUrl
+        - dateLastActive
+      - type: object
+        description: A user fragment when only expanding by ssoID.
+        properties:
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+        required:
+        - ssoID
+      x-addon: dashboard
+    ReportReasonFragment:
+      type: object
+      properties:
+        reportReasonID:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        sort:
+          type: integer
+        reportID:
+          type: integer
+        deleted:
+          type: boolean
+      required:
+      - reportReasonID
       - name
       - description
-      - parentCategoryID
-      - customPermissions
-      - isArchived
-      - urlcode
-      - url
-      - displayAs
-      - countCategories
-      - countDiscussions
-      - countComments
-      - countFollowers
-      - countAllDiscussions
-      - countAllComments
-      type: object
-      x-addon: vanilla
-    Collection:
-      description: A collection of multiple  resources
-      type: object
-      properties:
-        name:
-          description: Name for the collection
-          minLength: 1
-          maxLength: 255
-          type: string
-        dateInserted:
-          description: When the collection was created.
-          format: date-time
-          type: string
-        dateUpdated:
-          description: When the collection was last updated.
-          format: date-time
-          type:
-          - string
-          - 'null'
-        insertUserID:
-          description: The unique ID of the user that created this collection.
-          type: integer
-        updateUserID:
-          description: The unique ID of the user who updated this collection.
-          type:
-          - integer
-          - 'null'
-        records:
-          description: An array of records that belongs to the collection.
-          items:
-            $ref: '#/components/schemas/PostCollectionRecord'
-          type: array
-          maxItems: 30
-      required:
-      - name
-      x-addon: vanilla
-    CollectionContentSchema:
-      description: A collection resource with records expanded
-      type: object
-      properties:
-        collectionID:
-          description: The Id of the collection.
-          type: integer
-          readOnly: true
-        name:
-          description: Name for the collection
-          minLength: 1
-          maxLength: 255
-          type: string
-        records:
-          description: An array of records that belongs to the collection.
-          items:
-            properties:
-              recordID:
-                description: The ID of the corresponding record
-                type: integer
-              recordType:
-                description: The type of the record.
-                enum:
-                - article
-                - category
-                - discussion
-                - event
-                - groups
-                - knowledgeBase
-                type: string
-              sort:
-                description: Manual sort order for the group
-                type:
-                - integer
-                - 'null'
-              record:
-                description: The content of the specific record
-                type: object
-                anyOf:
-                - $ref: '#/components/schemas/Article'
-                - $ref: '#/components/schemas/Discussion'
-                - $ref: '#/components/schemas/CategorySchema'
-                - $ref: '#/components/schemas/Group'
-                - $ref: '#/components/schemas/FullEvent'
-                - $ref: '#/components/schemas/FullKnowledgeBaseSchema'
-            required:
-            - recordID
-            - recordType
-            - sort
-            - record
-            type: object
-          type: array
-          maxItems: 30
-      required:
-      - collectionID
-      - name
-      - records
-      x-addon: vanilla
-    CollectionRecord:
-      allOf:
-      - type: object
-        properties:
-          dateAddedToCollection:
-            description: When the record was added to collection.
-            format: date-time
-            type: string
-      - $ref: '#/components/schemas/PostCollectionRecord'
-      x-addon: vanilla
-    FullCollectionSchema:
-      allOf:
-      - type: object
-        properties:
-          collectionID:
-            description: The Id of the collection.
-            type: integer
-            readOnly: true
-          records:
-            description: An array of records that belongs to the collection.
-            items:
-              $ref: '#/components/schemas/CollectionRecord'
-            type: array
-            maxItems: 30
-        required:
-        - collectionID
-        - records
-      - $ref: '#/components/schemas/Collection'
+      - sort
+      - deleted
       x-addon: vanilla
     PostFragment:
       properties:
@@ -1099,89 +1182,6 @@ components:
       - dateInserted
       - insertUserID
       type: object
-      x-addon: vanilla
-    CollectionRecordContentSchema:
-      allOf:
-      - $ref: '#/components/schemas/CollectionRecord'
-      - type: object
-        properties:
-          collectionID:
-            description: The Id of the collection.
-            type: integer
-            readOnly: true
-          record:
-            description: The expanded data of the specific record
-            type: object
-            anyOf:
-            - $ref: '#/components/schemas/Article'
-            - $ref: '#/components/schemas/Discussion'
-            - $ref: '#/components/schemas/CategorySchema'
-            - $ref: '#/components/schemas/Group'
-            - $ref: '#/components/schemas/FullEvent'
-            - $ref: '#/components/schemas/FullKnowledgeBaseSchema'
-          collection:
-            description: The collection that the record belongs to
-            type: object
-            properties:
-              collectionID:
-                description: The Id of the collection.
-                type: integer
-                readOnly: true
-              name:
-                description: Name for the collection
-                type: string
-      x-addon: vanilla
-    StatusFragment:
-      type: object
-      description: Describes a status currently applied to a discussion. Expandable with `status` and `status.log` expands.
-      properties:
-        statusID:
-          description: Record status ID of the discussion status.
-          type: integer
-        name:
-          description: The name of the status.
-          type: string
-        recordType:
-          description: Type of the discussion status.
-          type: string
-          enum:
-          - discussion
-        recordSubType:
-          description: Some statuses may only apply to a specific subtype of record.
-          type: string
-        state:
-          description: States are used to group statuses together.
-          type: string
-          enum:
-          - open
-          - closed
-        dateUpdated:
-          type: string
-          format: date-time
-          description: When the discussion was updated with the status.
-        log:
-          type: object
-          description: Information about when the status was applied.
-          required:
-          - dateUpdated
-          - updateUser
-          properties:
-            reasonUpdated:
-              description: Reason for status change
-              type:
-              - string
-              - 'null'
-            updateUser:
-              $ref: '#/components/schemas/UserFragment'
-            dateUpdated:
-              description: When the discussion was last updated.
-              format: date-time
-              type: string
-      required:
-      - statusID
-      - name
-      - recordType
-      - state
       x-addon: vanilla
   responses:
     PermissionError:
