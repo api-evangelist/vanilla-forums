@@ -245,14 +245,28 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ProfileFieldPatch:
+    ProfileFieldPost:
       properties:
+        apiName:
+          description: The ID of the profile field.
+          minLength: 1
+          type: string
         label:
           description: The name of the profile field.
           minLength: 1
           type: string
         description:
           description: The description of the profile field.
+          type: string
+        dataType:
+          description: The data type of the profile field.
+          enum:
+          - text
+          - boolean
+          - date
+          - number
+          - string[]
+          - number[]
           type: string
         formType:
           description: The form type of the profile field.
@@ -315,6 +329,16 @@ components:
           type:
           - string
           - 'null'
+      required:
+      - apiName
+      - label
+      - description
+      - dataType
+      - formType
+      - visibility
+      - mutability
+      - displayOptions
+      - registrationOptions
       type: object
       x-addon: dashboard
     ProfileField:
@@ -410,28 +434,14 @@ components:
       - registrationOptions
       type: object
       x-addon: dashboard
-    ProfileFieldPost:
+    ProfileFieldPatch:
       properties:
-        apiName:
-          description: The ID of the profile field.
-          minLength: 1
-          type: string
         label:
           description: The name of the profile field.
           minLength: 1
           type: string
         description:
           description: The description of the profile field.
-          type: string
-        dataType:
-          description: The data type of the profile field.
-          enum:
-          - text
-          - boolean
-          - date
-          - number
-          - string[]
-          - number[]
           type: string
         formType:
           description: The form type of the profile field.
@@ -494,16 +504,6 @@ components:
           type:
           - string
           - 'null'
-      required:
-      - apiName
-      - label
-      - description
-      - dataType
-      - formType
-      - visibility
-      - mutability
-      - displayOptions
-      - registrationOptions
       type: object
       x-addon: dashboard
 x-resourceEvents:

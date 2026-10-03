@@ -113,46 +113,26 @@ paths:
       x-addon: dashboard
 components:
   schemas:
-    BooleanPlanFeature:
-      allOf:
-      - $ref: '#/components/schemas/PlanFeatureBase'
-      - type: object
-        properties:
-          type:
-            type: string
-            enum:
-            - boolean
-          isAvailable:
-            type: boolean
-            description: Whether the feature is allowed at the current plan level.
-        required:
-        - isAvailable
-      x-addon: dashboard
-    PlanFeature:
-      oneOf:
-      - $ref: '#/components/schemas/BooleanPlanFeature'
-      - $ref: '#/components/schemas/LimitPlanFeature'
-      - $ref: '#/components/schemas/RetentionPlanFeature'
-      - $ref: '#/components/schemas/EnumPlanFeature'
-      - $ref: '#/components/schemas/UsageFeature'
-      discriminator:
-        propertyName: type
-        mapping:
-          boolean: '#/components/schemas/BooleanPlanFeature'
-          limit: '#/components/schemas/LimitPlanFeature'
-          retention: '#/components/schemas/RetentionPlanFeature'
-          enum: '#/components/schemas/EnumPlanFeature'
-          usage: '#/components/schemas/UsageFeature'
-      x-addon: dashboard
-    UsageFeature:
-      allOf:
-      - $ref: '#/components/schemas/PlanFeatureBase'
-      - type: object
-        properties:
-          type:
-            type: string
-            enum:
-            - usage
+    PlanFeatureBase:
+      type: object
+      properties:
+        featureID:
+          $ref: '#/components/schemas/PlanFeatureID'
+        type:
+          $ref: '#/components/schemas/PlanFeatureType'
+        configKey:
+          type: string
+          description: Primary configuration key for this feature.
+        isInUse:
+          type: boolean
+          description: Whether the feature is in use on the site. Only present when `expand=usage`.
+        currentCount:
+          type: integer
+          description: Current usage count for limit features. Only present when `expand=usage`.
+      required:
+      - featureID
+      - type
+      - configKey
       x-addon: dashboard
     PlanFeatureID:
       type: string
@@ -177,6 +157,73 @@ components:
       - VanillaAnalytics
       - Webhooks
       - WidgetBuilder
+      x-addon: dashboard
+    PlanFeatureType:
+      type: string
+      enum:
+      - boolean
+      - limit
+      - retention
+      - enum
+      - usage
+      x-addon: dashboard
+    LimitPlanFeature:
+      allOf:
+      - $ref: '#/components/schemas/PlanFeatureBase'
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - limit
+          isAvailable:
+            type: boolean
+            description: Whether the feature is allowed at the current plan level. A limit of `0` is not available.
+          limitAvailable:
+            $ref: '#/components/schemas/LimitAvailable'
+        required:
+        - isAvailable
+        - limitAvailable
+      x-addon: dashboard
+    BooleanPlanFeature:
+      allOf:
+      - $ref: '#/components/schemas/PlanFeatureBase'
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - boolean
+          isAvailable:
+            type: boolean
+            description: Whether the feature is allowed at the current plan level.
+        required:
+        - isAvailable
+      x-addon: dashboard
+    LimitAvailable:
+      oneOf:
+      - type: integer
+        minimum: 0
+      - type: string
+        enum:
+        - infinity
+      description: Maximum allowed count at the current plan level. The string `infinity` means unlimited.
+      x-addon: dashboard
+    PlanFeature:
+      oneOf:
+      - $ref: '#/components/schemas/BooleanPlanFeature'
+      - $ref: '#/components/schemas/LimitPlanFeature'
+      - $ref: '#/components/schemas/RetentionPlanFeature'
+      - $ref: '#/components/schemas/EnumPlanFeature'
+      - $ref: '#/components/schemas/UsageFeature'
+      discriminator:
+        propertyName: type
+        mapping:
+          boolean: '#/components/schemas/BooleanPlanFeature'
+          limit: '#/components/schemas/LimitPlanFeature'
+          retention: '#/components/schemas/RetentionPlanFeature'
+          enum: '#/components/schemas/EnumPlanFeature'
+          usage: '#/components/schemas/UsageFeature'
       x-addon: dashboard
     RetentionPlanFeature:
       allOf:
@@ -203,16 +250,7 @@ components:
         - isAvailable
         - retainForTimespan
       x-addon: dashboard
-    LimitAvailable:
-      oneOf:
-      - type: integer
-        minimum: 0
-      - type: string
-        enum:
-        - infinity
-      description: Maximum allowed count at the current plan level. The string `infinity` means unlimited.
-      x-addon: dashboard
-    LimitPlanFeature:
+    UsageFeature:
       allOf:
       - $ref: '#/components/schemas/PlanFeatureBase'
       - type: object
@@ -220,24 +258,7 @@ components:
           type:
             type: string
             enum:
-            - limit
-          isAvailable:
-            type: boolean
-            description: Whether the feature is allowed at the current plan level. A limit of `0` is not available.
-          limitAvailable:
-            $ref: '#/components/schemas/LimitAvailable'
-        required:
-        - isAvailable
-        - limitAvailable
-      x-addon: dashboard
-    PlanFeatureType:
-      type: string
-      enum:
-      - boolean
-      - limit
-      - retention
-      - enum
-      - usage
+            - usage
       x-addon: dashboard
     EnumPlanFeature:
       allOf:
@@ -256,27 +277,6 @@ components:
             description: Current enum value for the plan tier.
         required:
         - value
-      x-addon: dashboard
-    PlanFeatureBase:
-      type: object
-      properties:
-        featureID:
-          $ref: '#/components/schemas/PlanFeatureID'
-        type:
-          $ref: '#/components/schemas/PlanFeatureType'
-        configKey:
-          type: string
-          description: Primary configuration key for this feature.
-        isInUse:
-          type: boolean
-          description: Whether the feature is in use on the site. Only present when `expand=usage`.
-        currentCount:
-          type: integer
-          description: Current usage count for limit features. Only present when `expand=usage`.
-      required:
-      - featureID
-      - type
-      - configKey
       x-addon: dashboard
   responses:
     PermissionError:

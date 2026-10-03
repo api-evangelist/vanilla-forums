@@ -96,14 +96,6 @@ paths:
       x-addon: dashboard
 components:
   schemas:
-    AnnouncementType:
-      type: string
-      description: Determine how the message pops up.
-      enum:
-      - None
-      - Inbox
-      - Direct
-      x-addon: dashboard
     ProductMessage:
       type: object
       properties:
@@ -188,6 +180,14 @@ components:
       - dateInserted
       - isDismissed
       - countViewers
+      x-addon: dashboard
+    AnnouncementType:
+      type: string
+      description: Determine how the message pops up.
+      enum:
+      - None
+      - Inbox
+      - Direct
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

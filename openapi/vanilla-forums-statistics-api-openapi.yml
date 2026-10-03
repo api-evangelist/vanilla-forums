@@ -30,6 +30,34 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    PageView:
+      properties:
+        url:
+          description: URL of page view to track for analytics
+          minLength: 1
+          type: string
+        referrer:
+          description: URL of referrer
+          type: string
+        type:
+          description: The type of page view event (i.e. page_view, discussion_view)
+          type: string
+        discussionID:
+          description: The ID of a discussion to include in analytics
+          type: integer
+        articleID:
+          description: The ID of an article to include in analytics
+          type: integer
+        knowledgeCategoryID:
+          description: The ID of a knowledge category to include in analytics
+          type: integer
+        knowledgeBaseID:
+          description: The ID of a knowledge base to include in analytics
+          type: integer
+      required:
+      - url
+      type: object
+      x-addon: dashboard
     TrackableSearch:
       properties:
         type:
@@ -131,34 +159,6 @@ components:
       - domain
       - searchResults
       - searchQuery
-      x-addon: dashboard
-    PageView:
-      properties:
-        url:
-          description: URL of page view to track for analytics
-          minLength: 1
-          type: string
-        referrer:
-          description: URL of referrer
-          type: string
-        type:
-          description: The type of page view event (i.e. page_view, discussion_view)
-          type: string
-        discussionID:
-          description: The ID of a discussion to include in analytics
-          type: integer
-        articleID:
-          description: The ID of an article to include in analytics
-          type: integer
-        knowledgeCategoryID:
-          description: The ID of a knowledge category to include in analytics
-          type: integer
-        knowledgeBaseID:
-          description: The ID of a knowledge base to include in analytics
-          type: integer
-      required:
-      - url
-      type: object
       x-addon: dashboard
     ExternalNavigation:
       properties:

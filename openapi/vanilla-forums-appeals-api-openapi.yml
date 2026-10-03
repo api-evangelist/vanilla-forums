@@ -182,75 +182,24 @@ paths:
       operationId: patchAppealsById
       x-operation-id-source: derived
 components:
-  parameters:
-    DateInserted:
-      name: dateInserted
-      in: query
-      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
-
-        '
-      schema:
-        format: date-filter
-        type: string
-      x-addon: dashboard
-    AppealID:
-      name: id
-      in: path
-      description: The ID of the appeal.
-      required: true
-      schema:
-        type: integer
-      x-addon: dashboard
-    Page:
-      name: page
-      in: query
-      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
-
-        '
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
-      x-addon: dashboard
   schemas:
-    AppealPatch:
+    AppealPost:
       type: object
-      description: 'Schema for updating an appeal. Requires community.manage permission.
+      description: 'Schema for creating a new appeal using a JWT token.
 
         '
       properties:
-        status:
+        jwt:
           type: string
-          description: 'Update the appeal status. Can only be set by the assigned user.
-
-            '
-          enum:
-          - pending
-          - approved
-          - rejected
-          - in-review
-        assignedUserID:
-          type:
-          - integer
-          - 'null'
-          description: 'Update the moderator assigned to the appeal.
-
-            Cannot assign to the same moderator who created the original ban/removal.
-
-            '
-        appealEventInfo:
-          type: object
-          description: Additional information about the appeal decision.
-          properties:
-            decisionMessage:
-              type:
-              - string
-              - 'null'
-              description: 'Message explaining the decision on the appeal.
-
-                Can only be set by the assigned user.
-
-                '
+        appealText:
+          type: string
+          description: The user's appeal message explaining why the decision should be reversed.
+      required:
+      - jwt
+      - appealText
+      example:
+        jwt: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+        appealText: I believe this ban was unjust because I was following community guidelines.
       x-addon: dashboard
     Appeal:
       type: object
@@ -394,23 +343,74 @@ components:
       - appealingUserInfo
       - appealEventInfo
       x-addon: dashboard
-    AppealPost:
+    AppealPatch:
       type: object
-      description: 'Schema for creating a new appeal using a JWT token.
+      description: 'Schema for updating an appeal. Requires community.manage permission.
 
         '
       properties:
-        jwt:
+        status:
           type: string
-        appealText:
-          type: string
-          description: The user's appeal message explaining why the decision should be reversed.
-      required:
-      - jwt
-      - appealText
-      example:
-        jwt: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
-        appealText: I believe this ban was unjust because I was following community guidelines.
+          description: 'Update the appeal status. Can only be set by the assigned user.
+
+            '
+          enum:
+          - pending
+          - approved
+          - rejected
+          - in-review
+        assignedUserID:
+          type:
+          - integer
+          - 'null'
+          description: 'Update the moderator assigned to the appeal.
+
+            Cannot assign to the same moderator who created the original ban/removal.
+
+            '
+        appealEventInfo:
+          type: object
+          description: Additional information about the appeal decision.
+          properties:
+            decisionMessage:
+              type:
+              - string
+              - 'null'
+              description: 'Message explaining the decision on the appeal.
+
+                Can only be set by the assigned user.
+
+                '
+      x-addon: dashboard
+  parameters:
+    DateInserted:
+      name: dateInserted
+      in: query
+      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
+
+        '
+      schema:
+        format: date-filter
+        type: string
+      x-addon: dashboard
+    AppealID:
+      name: id
+      in: path
+      description: The ID of the appeal.
+      required: true
+      schema:
+        type: integer
+      x-addon: dashboard
+    Page:
+      name: page
+      in: query
+      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
+
+        '
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

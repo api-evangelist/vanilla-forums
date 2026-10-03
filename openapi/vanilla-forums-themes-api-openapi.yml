@@ -250,6 +250,14 @@ components:
         - header.data
         - footer.data
       x-addon: dashboard
+    ThemeScript:
+      properties:
+        url:
+          type: string
+      required:
+      - url
+      type: object
+      x-addon: dashboard
     PreviewAssets:
       description: A collections of variables to generate a preview.
       properties:
@@ -281,29 +289,23 @@ components:
           - 'null'
       type: object
       x-addon: dashboard
-    Themes:
+    ThemeLogoAsset:
+      description: Site logo to be displayed in the theme.
       properties:
-        assets:
-          $ref: '#/components/schemas/ThemeAssets'
-        preview:
-          $ref: '#/components/schemas/PreviewAssets'
         type:
+          description: The type of the asset.
           type: string
-          enum:
-          - themeFile
-        themeID:
-          type: integer
-        version:
+        url:
           type: string
-      required:
-      - assets
-      - type
-      - themeID
-      - version
+          description: Absolute URL of the asset.
+        content-type:
+          description: The content-type of the asset.
+          type: string
+          example: application/json
       type: object
       x-addon: dashboard
-    ThemeScriptsAsset:
-      description: External script files to be included.
+    ThemeFooterAsset:
+      description: Custom footer HTML.
       properties:
         type:
           description: The type of the asset.
@@ -316,9 +318,8 @@ components:
           type: string
           example: application/json
         data:
-          type: array
-          items:
-            $ref: '#/components/schemas/ThemeScript'
+          type: string
+          description: Contents of the asset. May require an expand parameter to retreive.
       required:
       - url
       - type
@@ -358,27 +359,6 @@ components:
       - version
       type: object
       x-addon: dashboard
-    ThemeCssAsset:
-      description: CSS for the theme.
-      properties:
-        type:
-          description: The type of the asset.
-          type: string
-        url:
-          type: string
-          description: Absolute URL of the asset.
-        content-type:
-          description: The content-type of the asset.
-          type: string
-          example: application/json
-        data:
-          type: string
-          description: Contents of the asset. May require an expand parameter to retreive.
-      required:
-      - data
-      - type
-      type: object
-      x-addon: dashboard
     ThemeJavascriptAsset:
       description: Javascript for the theme.
       properties:
@@ -400,8 +380,8 @@ components:
       - type
       type: object
       x-addon: dashboard
-    ThemeVariablesAsset:
-      description: A collection of variables intended to be used by theme.
+    ThemeCssAsset:
+      description: CSS for the theme.
       properties:
         type:
           description: The type of the asset.
@@ -414,19 +394,54 @@ components:
           type: string
           example: application/json
         data:
-          type: object
-          description: JSON contents of the asset.
+          type: string
+          description: Contents of the asset. May require an expand parameter to retreive.
       required:
-      - url
+      - data
       - type
       type: object
       x-addon: dashboard
-    ThemeScript:
+    ThemeAssets:
+      description: Assets to include in a page as part of the theme.
       properties:
+        header:
+          $ref: '#/components/schemas/ThemeHeaderAsset'
+        footer:
+          $ref: '#/components/schemas/ThemeFooterAsset'
+        javascript:
+          $ref: '#/components/schemas/ThemeJavascriptAsset'
+        scripts:
+          $ref: '#/components/schemas/ThemeScriptsAsset'
+        styles:
+          $ref: '#/components/schemas/ThemeCssAsset'
+        variables:
+          $ref: '#/components/schemas/ThemeVariablesAsset'
+        logo:
+          $ref: '#/components/schemas/ThemeLogoAsset'
+        mobileLogo:
+          $ref: '#/components/schemas/ThemeMobileLogoAsset'
+      type: object
+      x-addon: dashboard
+    ThemeScriptsAsset:
+      description: External script files to be included.
+      properties:
+        type:
+          description: The type of the asset.
+          type: string
         url:
           type: string
+          description: Absolute URL of the asset.
+        content-type:
+          description: The content-type of the asset.
+          type: string
+          example: application/json
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThemeScript'
       required:
       - url
+      - type
       type: object
       x-addon: dashboard
     ThemeMobileLogoAsset:
@@ -465,29 +480,29 @@ components:
       - type
       type: object
       x-addon: dashboard
-    ThemeAssets:
-      description: Assets to include in a page as part of the theme.
+    Themes:
       properties:
-        header:
-          $ref: '#/components/schemas/ThemeHeaderAsset'
-        footer:
-          $ref: '#/components/schemas/ThemeFooterAsset'
-        javascript:
-          $ref: '#/components/schemas/ThemeJavascriptAsset'
-        scripts:
-          $ref: '#/components/schemas/ThemeScriptsAsset'
-        styles:
-          $ref: '#/components/schemas/ThemeCssAsset'
-        variables:
-          $ref: '#/components/schemas/ThemeVariablesAsset'
-        logo:
-          $ref: '#/components/schemas/ThemeLogoAsset'
-        mobileLogo:
-          $ref: '#/components/schemas/ThemeMobileLogoAsset'
+        assets:
+          $ref: '#/components/schemas/ThemeAssets'
+        preview:
+          $ref: '#/components/schemas/PreviewAssets'
+        type:
+          type: string
+          enum:
+          - themeFile
+        themeID:
+          type: integer
+        version:
+          type: string
+      required:
+      - assets
+      - type
+      - themeID
+      - version
       type: object
       x-addon: dashboard
-    ThemeFooterAsset:
-      description: Custom footer HTML.
+    ThemeVariablesAsset:
+      description: A collection of variables intended to be used by theme.
       properties:
         type:
           description: The type of the asset.
@@ -500,29 +515,132 @@ components:
           type: string
           example: application/json
         data:
-          type: string
-          description: Contents of the asset. May require an expand parameter to retreive.
+          type: object
+          description: JSON contents of the asset.
       required:
       - url
       - type
       type: object
       x-addon: dashboard
-    ThemeLogoAsset:
-      description: Site logo to be displayed in the theme.
-      properties:
-        type:
-          description: The type of the asset.
-          type: string
-        url:
-          type: string
-          description: Absolute URL of the asset.
-        content-type:
-          description: The content-type of the asset.
-          type: string
-          example: application/json
-      type: object
-      x-addon: dashboard
   requestBodies:
+    PatchTheme:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                description: Theme name.
+                type: string
+              revisionName:
+                type: string
+                description: Theme revision name
+              assets:
+                type: object
+                properties:
+                  header:
+                    description: Header HTML Asset.
+                    type: object
+                    properties:
+                      type:
+                        description: The type of the asset.
+                        type: string
+                        example: html
+                        enum:
+                        - html
+                        - css
+                        - js
+                      data:
+                        type: string
+                        example: <header>Hello Footer<footer />
+                        description: Contents of the asset. May require an expand parameter to retreive.
+                  footer:
+                    description: Footer HTML Asset.
+                    type: object
+                    properties:
+                      type:
+                        description: The type of the asset.
+                        type: string
+                        example: html
+                        enum:
+                        - html
+                        - css
+                        - js
+                      data:
+                        type: string
+                        example: <header>Hello Footer<footer />
+                        description: Contents of the asset. May require an expand parameter to retreive.
+                  variables:
+                    description: Variables JSON Asset.
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: json
+                      data:
+                        type: object
+                        description: JSON content of the asset.
+                        example:
+                          global:
+                            mainColors:
+                              primary: '#5cc530'
+                  scripts:
+                    description: Scripts JSON Asset.
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: json
+                      data:
+                        type: object
+                        description: JSON content of the asset.
+                        example:
+                          global:
+                            mainColors:
+                              primary: '#5cc530'
+                  styles:
+                    description: Styles CSS Asset.
+                    type: object
+                    properties:
+                      type:
+                        description: The type of the asset.
+                        type: string
+                        example: html
+                        enum:
+                        - html
+                        - css
+                        - js
+                      data:
+                        type: string
+                        example: <header>Hello Footer<footer />
+                        description: Contents of the asset. May require an expand parameter to retreive.
+                  javascript:
+                    description: Javascript JS Asset.
+                    type: object
+                    properties:
+                      type:
+                        description: The type of the asset.
+                        type: string
+                        example: html
+                        enum:
+                        - html
+                        - css
+                        - js
+                      data:
+                        type: string
+                        example: <header>Hello Footer<footer />
+                        description: Contents of the asset. May require an expand parameter to retreive.
+            example:
+              name: My custom Theme
+              assets:
+                header:
+                  data: <div><!-- HEADER --></div>
+                  type: html
+                footer:
+                  data: <div><!-- FOOTER --></div>
+                  type: html
+      required: true
+      x-addon: themingapi
     PostTheme:
       content:
         application/json:
@@ -651,124 +769,6 @@ components:
               parentTheme: theme-foundation
             required:
             - name
-      required: true
-      x-addon: themingapi
-    PatchTheme:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              name:
-                description: Theme name.
-                type: string
-              revisionName:
-                type: string
-                description: Theme revision name
-              assets:
-                type: object
-                properties:
-                  header:
-                    description: Header HTML Asset.
-                    type: object
-                    properties:
-                      type:
-                        description: The type of the asset.
-                        type: string
-                        example: html
-                        enum:
-                        - html
-                        - css
-                        - js
-                      data:
-                        type: string
-                        example: <header>Hello Footer<footer />
-                        description: Contents of the asset. May require an expand parameter to retreive.
-                  footer:
-                    description: Footer HTML Asset.
-                    type: object
-                    properties:
-                      type:
-                        description: The type of the asset.
-                        type: string
-                        example: html
-                        enum:
-                        - html
-                        - css
-                        - js
-                      data:
-                        type: string
-                        example: <header>Hello Footer<footer />
-                        description: Contents of the asset. May require an expand parameter to retreive.
-                  variables:
-                    description: Variables JSON Asset.
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                        example: json
-                      data:
-                        type: object
-                        description: JSON content of the asset.
-                        example:
-                          global:
-                            mainColors:
-                              primary: '#5cc530'
-                  scripts:
-                    description: Scripts JSON Asset.
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                        example: json
-                      data:
-                        type: object
-                        description: JSON content of the asset.
-                        example:
-                          global:
-                            mainColors:
-                              primary: '#5cc530'
-                  styles:
-                    description: Styles CSS Asset.
-                    type: object
-                    properties:
-                      type:
-                        description: The type of the asset.
-                        type: string
-                        example: html
-                        enum:
-                        - html
-                        - css
-                        - js
-                      data:
-                        type: string
-                        example: <header>Hello Footer<footer />
-                        description: Contents of the asset. May require an expand parameter to retreive.
-                  javascript:
-                    description: Javascript JS Asset.
-                    type: object
-                    properties:
-                      type:
-                        description: The type of the asset.
-                        type: string
-                        example: html
-                        enum:
-                        - html
-                        - css
-                        - js
-                      data:
-                        type: string
-                        example: <header>Hello Footer<footer />
-                        description: Contents of the asset. May require an expand parameter to retreive.
-            example:
-              name: My custom Theme
-              assets:
-                header:
-                  data: <div><!-- HEADER --></div>
-                  type: html
-                footer:
-                  data: <div><!-- FOOTER --></div>
-                  type: html
       required: true
       x-addon: themingapi
   parameters:

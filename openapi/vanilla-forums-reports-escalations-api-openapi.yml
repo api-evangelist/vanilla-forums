@@ -916,67 +916,11 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    EscalationInsert:
+    Report:
       type: object
       properties:
-        name:
-          description: Name for the escalation.
-          type: string
-        status:
-          type: string
-          description: Status of the escalation.
-          enum:
-          - open
-          - in-progress
-          - on-hold
-          - external-zendesk
-          - done
-        assignedUserID:
-          description: ID of the user assigned to the escalation. -4 indicates "unassigned".
-          type: integer
-        recordType:
-          description: Type of record being reported.
-          type: string
-          enum:
-          - discussion
-          - comment
-          - premoderated
-        recordID:
-          description: ID of the record being reported.
-          type: integer
         reportID:
-          description: ID of the report being escalated.
           type: integer
-        reportReasonIDs:
-          description: One or more reasons for the report. Used if reportID is not provided.
-          type: array
-          items:
-            type: string
-          example:
-          - spam
-          - abuse
-        noteBody:
-          description: Additional information about the report.
-          type: string
-        noteFormat:
-          description: Format of the note field.
-          type: string
-        recordIsLive:
-          type: boolean
-          description: If false, remove the post from the frontend.
-        initialCommentBody:
-          type: string
-          description: Create an initial comment on the escalation.
-        initialCommentFormat:
-          $ref: '#/components/schemas/Format'
-      required:
-      - name
-      - recordType
-      - recordID
-      x-addon: vanilla
-    ReportCounter:
-      type: object
-      properties:
         recordType:
           description: Type of record being reported.
           type: string
@@ -992,6 +936,18 @@ components:
         recordHtml:
           description: Rendered HTML contents of the reported record.
           type: string
+        recordExcerpt:
+          description: Excerpt of the reported record.
+          type: string
+        recordUrl:
+          description: URL of the record being reported.
+          type: string
+        recordIsLive:
+          description: Whether the record still exists.
+          type: boolean
+        recordWasEdited:
+          description: Whether the record was edited after the report was made.
+          type: boolean
         placeRecordType:
           description: Type of record the reported record is placed in.
           type: string
@@ -1003,20 +959,88 @@ components:
         placeRecordName:
           description: Name of the record the reported record is placed in.
           type: string
+        placeRecordUrl:
+          description: URL of the record the reported record is placed in.
+          type: string
+          format: uri
+        recordUserID:
+          description: ID of the user who made the reported record.
+          type: integer
+        recordUser:
+          $ref: '#/components/schemas/UserFragment'
+        recordDateInserted:
+          type: string
+          format: date-time
+        recordDateUpdated:
+          type: string
+          format: date-time
+        isPending:
+          description: Whether the reported content is a pending post (Eg. premoderation report).
+          type: boolean
+        isPendingUpdate:
+          description: Whether the reported content is a pending update for a post that was live.
+          type: boolean
         reportReasons:
           description: Full report reasons
           type: array
           items:
             $ref: '#/components/schemas/ReportReasonFragment'
+        noteHtml:
+          type: string
+          description: Additional information about the report in HTML format.
+        insertUserID:
+          description: ID of the user making the report. 0 for guest reporters.
+          type: integer
+        insertUser:
+          $ref: '#/components/schemas/UserFragment'
+        reporterEmail:
+          description: Email address of the guest reporter. Only present when insertUserID is 0.
+          type:
+          - string
+          - 'null'
+        reporterName:
+          description: Display name of the guest reporter. Only present when insertUserID is 0.
+          type:
+          - string
+          - 'null'
+        reportedUserID:
+          description: ID of the user being reported.
+          type: integer
+        reportedUser:
+          $ref: '#/components/schemas/UserFragment'
+        updateUserID:
+          description: ID of the user who last updated the report.
+          type: integer
+        updateUser:
+          $ref: '#/components/schemas/UserFragment'
+        dateInserted:
+          description: Date the report was made.
+          type: string
+          format: date-time
+        dateUpdated:
+          description: Date the report was last updated.
+          type: string
+          format: date-time
       required:
+      - reportID
       - recordType
       - recordID
       - recordName
       - recordHtml
+      - recordUrl
+      - recordIsLive
+      - recordWasEdited
+      - recordUserID
+      - recordDateInserted
       - placeRecordType
       - placeRecordID
-      - placeRecordName
       - reportReasonIDs
+      - insertUserID
+      - reportedUserID
+      - updateUserID
+      - dateInserted
+      - dateUpdated
+      - noteHtml
       x-addon: vanilla
     UserFragment:
       oneOf:
@@ -1109,15 +1133,16 @@ components:
       - noteBody
       - noteFormat
       x-addon: vanilla
-    EscalationPatch:
+    Escalation:
       type: object
       properties:
-        recordIsLive:
-          type: boolean
-          description: If false, remove the post from the frontend.
-        assignedUserID:
-          type: integer
-          description: ID of the user to assign the escalation to. The user must have the "post.moderate" permission in the records category. -4 indicates "unassigned".
+        name:
+          description: Title of the escalation.
+          type: string
+        url:
+          description: HTML url of the escalation.
+          type: string
+          format: uri
         status:
           type: string
           description: Status of the escalation.
@@ -1127,55 +1152,164 @@ components:
           - on-hold
           - external-zendesk
           - done
-      x-addon: vanilla
-    ReportReason:
-      type: object
-      properties:
-        reportReasonID:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        dateInserted:
-          type: string
-          format: date-time
-        dateUpdated:
-          type: string
-          format: date-time
-        insertUserID:
+        assignedUserID:
+          description: ID of the user assigned to the escalation. -4 indicates "unassigned".
           type: integer
-        updateUserID:
+        assignedUser:
+          $ref: '#/components/schemas/UserFragment'
+        recordType:
+          description: Type of record being reported.
+          type: string
+          enum:
+          - discussion
+          - comment
+          - premoderated
+        recordID:
+          description: ID of the record being reported.
           type: integer
-        sort:
+        recordUrl:
+          description: URL of the record being reported.
+          type: string
+        recordName:
+          description: Name/title of the record being reported.
+          type: string
+        recordIsLive:
+          description: Whether the record still exists.
+          type: boolean
+        recordWasEdited:
+          description: Whether the record was edited after the report was made.
+          type: boolean
+        placeRecordType:
+          description: Type of record the reported record is placed in.
+          type: string
+          enum:
+          - category
+        placeRecordID:
+          description: ID of the record the reported record is placed in.
           type: integer
-        roleIDs:
+        placeRecordName:
+          description: Name of the record the reported record is placed in.
+          type: string
+        placeRecordUrl:
+          description: URL of the record the reported record is placed in.
+          type: string
+          format: uri
+        reportReasons:
+          description: Full report reasons
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportReasonFragment'
+        countReports:
+          description: The number of reports made about this record.
+          type: integer
+        countReportUsers:
+          description: The number of unique users who have reported this record.
+          type: integer
+        reportUserIDs:
+          description: The IDs of the users who have reported this record.
           type: array
           items:
             type: integer
-        roles:
+        reportUsers:
+          description: The users who have reported this record.
           type: array
           items:
-            type: object
-            properties:
-              roleID:
-                type: integer
-              name:
-                type: string
-        deleted:
-          type: boolean
-        countReports:
+            $ref: '#/components/schemas/UserFragment'
+        dateLastReport:
+          description: The date of the most recent report made about this record.
+          type: string
+          format: date-time
+        lastCommentID:
+          description: The ID of the last comment.
           type: integer
-          description: The number of reports that have used this reason. Only available with `community.manage` permission.
+        dateLastComment:
+          description: The date of the last comment.
+          format: date-time
+          type: string
+        lastCommentUserID:
+          description: The ID of the user who made the last comment.
+          type: integer
+        lastCommentUser:
+          description: The user who made the last comment.
+          $ref: '#/components/schemas/UserFragment'
+        appeals:
+          description: Appeals submitted for this escalation.
+          type: array
+          items:
+            $ref: '#/components/schemas/Appeal'
+        countAppeals:
+          description: The number of appeals submitted for this escalation.
+          type: integer
       required:
-      - reportReasonID
       - name
-      - description
-      - dateInserted
-      - insertUserID
-      - sort
-      - deleted
+      - status
+      - recordType
+      - recordID
+      - recordName
+      - recordUrl
+      - recordIsLive
+      - recordWasEdited
+      - recordUserID
+      - recordDateInserted
+      - placeRecordType
+      - placeRecordID
+      - reportReasons
+      - countReportUsers
+      - countReports
+      - reportUserIDs
+      - reportUsers
       x-addon: vanilla
+    ReportCounter:
+      type: object
+      properties:
+        recordType:
+          description: Type of record being reported.
+          type: string
+          enum:
+          - discussion
+          - comment
+        recordID:
+          description: ID of the record being reported.
+          type: integer
+        recordName:
+          description: Name of the record being reported.
+          type: string
+        recordHtml:
+          description: Rendered HTML contents of the reported record.
+          type: string
+        placeRecordType:
+          description: Type of record the reported record is placed in.
+          type: string
+          enum:
+          - category
+        placeRecordID:
+          description: ID of the record the reported record is placed in.
+          type: integer
+        placeRecordName:
+          description: Name of the record the reported record is placed in.
+          type: string
+        reportReasons:
+          description: Full report reasons
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportReasonFragment'
+      required:
+      - recordType
+      - recordID
+      - recordName
+      - recordHtml
+      - placeRecordType
+      - placeRecordID
+      - placeRecordName
+      - reportReasonIDs
+      x-addon: vanilla
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+      x-addon: dashboard
     Appeal:
       type: object
       properties:
@@ -1318,6 +1452,124 @@ components:
       - appealingUserInfo
       - appealEventInfo
       x-addon: dashboard
+    EscalationInsert:
+      type: object
+      properties:
+        name:
+          description: Name for the escalation.
+          type: string
+        status:
+          type: string
+          description: Status of the escalation.
+          enum:
+          - open
+          - in-progress
+          - on-hold
+          - external-zendesk
+          - done
+        assignedUserID:
+          description: ID of the user assigned to the escalation. -4 indicates "unassigned".
+          type: integer
+        recordType:
+          description: Type of record being reported.
+          type: string
+          enum:
+          - discussion
+          - comment
+          - premoderated
+        recordID:
+          description: ID of the record being reported.
+          type: integer
+        reportID:
+          description: ID of the report being escalated.
+          type: integer
+        reportReasonIDs:
+          description: One or more reasons for the report. Used if reportID is not provided.
+          type: array
+          items:
+            type: string
+          example:
+          - spam
+          - abuse
+        noteBody:
+          description: Additional information about the report.
+          type: string
+        noteFormat:
+          description: Format of the note field.
+          type: string
+        recordIsLive:
+          type: boolean
+          description: If false, remove the post from the frontend.
+        initialCommentBody:
+          type: string
+          description: Create an initial comment on the escalation.
+        initialCommentFormat:
+          $ref: '#/components/schemas/Format'
+      required:
+      - name
+      - recordType
+      - recordID
+      x-addon: vanilla
+    Format:
+      description: The format of the body used to convert it to HTML.
+      type: string
+      enum:
+      - rich
+      - markdown
+      - text
+      - textex
+      - wysiwyg
+      - bbcode
+      example: markdown
+      x-addon: dashboard
+    ReportReason:
+      type: object
+      properties:
+        reportReasonID:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        dateInserted:
+          type: string
+          format: date-time
+        dateUpdated:
+          type: string
+          format: date-time
+        insertUserID:
+          type: integer
+        updateUserID:
+          type: integer
+        sort:
+          type: integer
+        roleIDs:
+          type: array
+          items:
+            type: integer
+        roles:
+          type: array
+          items:
+            type: object
+            properties:
+              roleID:
+                type: integer
+              name:
+                type: string
+        deleted:
+          type: boolean
+        countReports:
+          type: integer
+          description: The number of reports that have used this reason. Only available with `community.manage` permission.
+      required:
+      - reportReasonID
+      - name
+      - description
+      - dateInserted
+      - insertUserID
+      - sort
+      - deleted
+      x-addon: vanilla
     ReportReasonPost:
       type: object
       properties:
@@ -1338,6 +1590,25 @@ components:
       - name
       - description
       - roleIDs
+      x-addon: vanilla
+    EscalationPatch:
+      type: object
+      properties:
+        recordIsLive:
+          type: boolean
+          description: If false, remove the post from the frontend.
+        assignedUserID:
+          type: integer
+          description: ID of the user to assign the escalation to. The user must have the "post.moderate" permission in the records category. -4 indicates "unassigned".
+        status:
+          type: string
+          description: Status of the escalation.
+          enum:
+          - open
+          - in-progress
+          - on-hold
+          - external-zendesk
+          - done
       x-addon: vanilla
     EscalationLog:
       type: object
@@ -1411,258 +1682,6 @@ components:
       - recordUserID
       - insertUserID
       x-addon: vanilla
-    Escalation:
-      type: object
-      properties:
-        name:
-          description: Title of the escalation.
-          type: string
-        url:
-          description: HTML url of the escalation.
-          type: string
-          format: uri
-        status:
-          type: string
-          description: Status of the escalation.
-          enum:
-          - open
-          - in-progress
-          - on-hold
-          - external-zendesk
-          - done
-        assignedUserID:
-          description: ID of the user assigned to the escalation. -4 indicates "unassigned".
-          type: integer
-        assignedUser:
-          $ref: '#/components/schemas/UserFragment'
-        recordType:
-          description: Type of record being reported.
-          type: string
-          enum:
-          - discussion
-          - comment
-          - premoderated
-        recordID:
-          description: ID of the record being reported.
-          type: integer
-        recordUrl:
-          description: URL of the record being reported.
-          type: string
-        recordName:
-          description: Name/title of the record being reported.
-          type: string
-        recordIsLive:
-          description: Whether the record still exists.
-          type: boolean
-        recordWasEdited:
-          description: Whether the record was edited after the report was made.
-          type: boolean
-        placeRecordType:
-          description: Type of record the reported record is placed in.
-          type: string
-          enum:
-          - category
-        placeRecordID:
-          description: ID of the record the reported record is placed in.
-          type: integer
-        placeRecordName:
-          description: Name of the record the reported record is placed in.
-          type: string
-        placeRecordUrl:
-          description: URL of the record the reported record is placed in.
-          type: string
-          format: uri
-        reportReasons:
-          description: Full report reasons
-          type: array
-          items:
-            $ref: '#/components/schemas/ReportReasonFragment'
-        countReports:
-          description: The number of reports made about this record.
-          type: integer
-        countReportUsers:
-          description: The number of unique users who have reported this record.
-          type: integer
-        reportUserIDs:
-          description: The IDs of the users who have reported this record.
-          type: array
-          items:
-            type: integer
-        reportUsers:
-          description: The users who have reported this record.
-          type: array
-          items:
-            $ref: '#/components/schemas/UserFragment'
-        dateLastReport:
-          description: The date of the most recent report made about this record.
-          type: string
-          format: date-time
-        lastCommentID:
-          description: The ID of the last comment.
-          type: integer
-        dateLastComment:
-          description: The date of the last comment.
-          format: date-time
-          type: string
-        lastCommentUserID:
-          description: The ID of the user who made the last comment.
-          type: integer
-        lastCommentUser:
-          description: The user who made the last comment.
-          $ref: '#/components/schemas/UserFragment'
-        appeals:
-          description: Appeals submitted for this escalation.
-          type: array
-          items:
-            $ref: '#/components/schemas/Appeal'
-        countAppeals:
-          description: The number of appeals submitted for this escalation.
-          type: integer
-      required:
-      - name
-      - status
-      - recordType
-      - recordID
-      - recordName
-      - recordUrl
-      - recordIsLive
-      - recordWasEdited
-      - recordUserID
-      - recordDateInserted
-      - placeRecordType
-      - placeRecordID
-      - reportReasons
-      - countReportUsers
-      - countReports
-      - reportUserIDs
-      - reportUsers
-      x-addon: vanilla
-    Report:
-      type: object
-      properties:
-        reportID:
-          type: integer
-        recordType:
-          description: Type of record being reported.
-          type: string
-          enum:
-          - discussion
-          - comment
-        recordID:
-          description: ID of the record being reported.
-          type: integer
-        recordName:
-          description: Name of the record being reported.
-          type: string
-        recordHtml:
-          description: Rendered HTML contents of the reported record.
-          type: string
-        recordExcerpt:
-          description: Excerpt of the reported record.
-          type: string
-        recordUrl:
-          description: URL of the record being reported.
-          type: string
-        recordIsLive:
-          description: Whether the record still exists.
-          type: boolean
-        recordWasEdited:
-          description: Whether the record was edited after the report was made.
-          type: boolean
-        placeRecordType:
-          description: Type of record the reported record is placed in.
-          type: string
-          enum:
-          - category
-        placeRecordID:
-          description: ID of the record the reported record is placed in.
-          type: integer
-        placeRecordName:
-          description: Name of the record the reported record is placed in.
-          type: string
-        placeRecordUrl:
-          description: URL of the record the reported record is placed in.
-          type: string
-          format: uri
-        recordUserID:
-          description: ID of the user who made the reported record.
-          type: integer
-        recordUser:
-          $ref: '#/components/schemas/UserFragment'
-        recordDateInserted:
-          type: string
-          format: date-time
-        recordDateUpdated:
-          type: string
-          format: date-time
-        isPending:
-          description: Whether the reported content is a pending post (Eg. premoderation report).
-          type: boolean
-        isPendingUpdate:
-          description: Whether the reported content is a pending update for a post that was live.
-          type: boolean
-        reportReasons:
-          description: Full report reasons
-          type: array
-          items:
-            $ref: '#/components/schemas/ReportReasonFragment'
-        noteHtml:
-          type: string
-          description: Additional information about the report in HTML format.
-        insertUserID:
-          description: ID of the user making the report. 0 for guest reporters.
-          type: integer
-        insertUser:
-          $ref: '#/components/schemas/UserFragment'
-        reporterEmail:
-          description: Email address of the guest reporter. Only present when insertUserID is 0.
-          type:
-          - string
-          - 'null'
-        reporterName:
-          description: Display name of the guest reporter. Only present when insertUserID is 0.
-          type:
-          - string
-          - 'null'
-        reportedUserID:
-          description: ID of the user being reported.
-          type: integer
-        reportedUser:
-          $ref: '#/components/schemas/UserFragment'
-        updateUserID:
-          description: ID of the user who last updated the report.
-          type: integer
-        updateUser:
-          $ref: '#/components/schemas/UserFragment'
-        dateInserted:
-          description: Date the report was made.
-          type: string
-          format: date-time
-        dateUpdated:
-          description: Date the report was last updated.
-          type: string
-          format: date-time
-      required:
-      - reportID
-      - recordType
-      - recordID
-      - recordName
-      - recordHtml
-      - recordUrl
-      - recordIsLive
-      - recordWasEdited
-      - recordUserID
-      - recordDateInserted
-      - placeRecordType
-      - placeRecordID
-      - reportReasonIDs
-      - insertUserID
-      - reportedUserID
-      - updateUserID
-      - dateInserted
-      - dateUpdated
-      - noteHtml
-      x-addon: vanilla
     ReportReasonFragment:
       type: object
       properties:
@@ -1685,25 +1704,6 @@ components:
       - sort
       - deleted
       x-addon: vanilla
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
-      x-addon: dashboard
-    Format:
-      description: The format of the body used to convert it to HTML.
-      type: string
-      enum:
-      - rich
-      - markdown
-      - text
-      - textex
-      - wysiwyg
-      - bbcode
-      example: markdown
-      x-addon: dashboard
   parameters:
     DateInserted:
       name: dateInserted

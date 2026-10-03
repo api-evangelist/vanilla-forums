@@ -63,31 +63,19 @@ paths:
       operationId: postCallsRun
       x-operation-id-source: derived
 components:
-  schemas:
-    LongRunnerResult:
-      description: 'Endpoints will return this if they may time out and require the client
+  responses:
+    LongRunnerResponse:
+      description: 'Endpoints that may time out and require the client to
 
-        to progress the task with additional requests.
+        progress them with the `/api/v2/calls` endpoints may return this.
 
         '
-      type: object
-      required:
-      - progress
-      - callbackPayload
-      properties:
-        callbackPayload:
-          description: 'A signed JWT payload to pass to the /api/v2/calls endpoint in order to continue
-
-            progression of the task.
-
-            '
-          type: string
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-
-            '
-        progress:
-          $ref: '#/components/schemas/LongRunnerProgress'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LongRunnerResult'
       x-addon: dashboard
+  schemas:
     LongRunnerProgress:
       description: Progress of the task.
       type: object
@@ -137,17 +125,29 @@ components:
           description: Total count of records that can be progressed.
           type: integer
       x-addon: dashboard
-  responses:
-    LongRunnerResponse:
-      description: 'Endpoints that may time out and require the client to
+    LongRunnerResult:
+      description: 'Endpoints will return this if they may time out and require the client
 
-        progress them with the `/api/v2/calls` endpoints may return this.
+        to progress the task with additional requests.
 
         '
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/LongRunnerResult'
+      type: object
+      required:
+      - progress
+      - callbackPayload
+      properties:
+        callbackPayload:
+          description: 'A signed JWT payload to pass to the /api/v2/calls endpoint in order to continue
+
+            progression of the task.
+
+            '
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+            '
+        progress:
+          $ref: '#/components/schemas/LongRunnerProgress'
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

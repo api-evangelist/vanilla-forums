@@ -171,6 +171,24 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    StatusPatch:
+      type: object
+      properties:
+        name:
+          description: Label for the status.
+          minLength: 1
+          type: string
+        isDefault:
+          description: Is this the default status?
+          type: boolean
+        state:
+          description: The open/closed state of an idea.
+          enum:
+          - open
+          - closed
+          minLength: 1
+          type: string
+      x-addon: ideation
     Status:
       properties:
         statusID:
@@ -197,24 +215,6 @@ components:
       - state
       - isDefault
       type: object
-      x-addon: ideation
-    StatusPatch:
-      type: object
-      properties:
-        name:
-          description: Label for the status.
-          minLength: 1
-          type: string
-        isDefault:
-          description: Is this the default status?
-          type: boolean
-        state:
-          description: The open/closed state of an idea.
-          enum:
-          - open
-          - closed
-          minLength: 1
-          type: string
       x-addon: ideation
 x-resourceEvents:
   emailTemplates:

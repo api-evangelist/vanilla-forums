@@ -165,6 +165,134 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    RankPost:
+      properties:
+        abilities:
+          properties:
+            avatar:
+              description: Allow user to have a custom avatar.
+              type: boolean
+            commentsAdd:
+              description: Allow adding comments.
+              enum:
+              - false
+              type: boolean
+            conversationsAdd:
+              description: Allow starting conversations.
+              type: boolean
+            curation:
+              description: Allow content curation.
+              type: boolean
+            discussionsAdd:
+              description: Allow starting discussions.
+              enum:
+              - false
+              type: boolean
+            editTimeout:
+              description: Length of time, in seconds, a user can edit their post. -1 for no limit.
+              type: integer
+            format:
+              description: Formatting restrictions.
+              enum:
+              - Text
+              - TextEx
+              type: string
+            linksActivity:
+              description: Allow links in activity feed.
+              enum:
+              - false
+              type: boolean
+            linksConversations:
+              description: Allow links in conversations.
+              enum:
+              - false
+              type: boolean
+            linksPosts:
+              description: Allow links in posts.
+              enum:
+              - false
+              type: boolean
+            location:
+              description: Allow user to have a location.
+              type: boolean
+            meActions:
+              description: Allow usage of "me actions".
+              type: boolean
+            polls:
+              description: Allow creation of polls.
+              type: boolean
+            roleID:
+              description: Permissions of this role are applied to users with the rank.
+              type: integer
+            signature:
+              description: Allow user to have a signature.
+              type: boolean
+            signatureImages:
+              description: Maximum number of images in a signature. -1 for no limit.
+              type: integer
+            signatureLength:
+              description: Maximum length of a signature.
+              type: integer
+            title:
+              description: Allow user to have a title.
+              type: boolean
+            verified:
+              description: Verified status. true is verified. false requires verification.
+              type: boolean
+          type: object
+        criteria:
+          properties:
+            manual:
+              description: Allow manually granting this rank.
+              type: boolean
+            permission:
+              description: Permission slug.
+              enum:
+              - site.manage
+              - community.moderate
+              type: string
+            points:
+              description: User points.
+              type: integer
+            posts:
+              description: Total posts created by the user.
+              type: integer
+            roleID:
+              description: ID of a role required for this rank.
+              type: integer
+            time:
+              description: Age of user account (e.g. 1 day, 3 weeks, 1 month).
+              type: string
+          type: object
+        cssClass:
+          description: Custom CSS class for users of this rank.
+          minLength: 1
+          type:
+          - string
+          - 'null'
+        level:
+          description: Level of the rank. Determines the sort order.
+          type: integer
+        name:
+          description: Name of the rank.
+          minLength: 1
+          type: string
+        notificationBody:
+          description: Message for the users when they earn this rank.
+          minLength: 0
+          type:
+          - string
+          - 'null'
+        userTitle:
+          description: Label that will display beside the user.
+          minLength: 1
+          type: string
+      required:
+      - name
+      - userTitle
+      - level
+      type: object
+      x-addon: ranks
     RankPatch:
       properties:
         abilities:
@@ -422,134 +550,6 @@ components:
       - level
       - notificationBody
       - cssClass
-      x-addon: ranks
-    RankPost:
-      properties:
-        abilities:
-          properties:
-            avatar:
-              description: Allow user to have a custom avatar.
-              type: boolean
-            commentsAdd:
-              description: Allow adding comments.
-              enum:
-              - false
-              type: boolean
-            conversationsAdd:
-              description: Allow starting conversations.
-              type: boolean
-            curation:
-              description: Allow content curation.
-              type: boolean
-            discussionsAdd:
-              description: Allow starting discussions.
-              enum:
-              - false
-              type: boolean
-            editTimeout:
-              description: Length of time, in seconds, a user can edit their post. -1 for no limit.
-              type: integer
-            format:
-              description: Formatting restrictions.
-              enum:
-              - Text
-              - TextEx
-              type: string
-            linksActivity:
-              description: Allow links in activity feed.
-              enum:
-              - false
-              type: boolean
-            linksConversations:
-              description: Allow links in conversations.
-              enum:
-              - false
-              type: boolean
-            linksPosts:
-              description: Allow links in posts.
-              enum:
-              - false
-              type: boolean
-            location:
-              description: Allow user to have a location.
-              type: boolean
-            meActions:
-              description: Allow usage of "me actions".
-              type: boolean
-            polls:
-              description: Allow creation of polls.
-              type: boolean
-            roleID:
-              description: Permissions of this role are applied to users with the rank.
-              type: integer
-            signature:
-              description: Allow user to have a signature.
-              type: boolean
-            signatureImages:
-              description: Maximum number of images in a signature. -1 for no limit.
-              type: integer
-            signatureLength:
-              description: Maximum length of a signature.
-              type: integer
-            title:
-              description: Allow user to have a title.
-              type: boolean
-            verified:
-              description: Verified status. true is verified. false requires verification.
-              type: boolean
-          type: object
-        criteria:
-          properties:
-            manual:
-              description: Allow manually granting this rank.
-              type: boolean
-            permission:
-              description: Permission slug.
-              enum:
-              - site.manage
-              - community.moderate
-              type: string
-            points:
-              description: User points.
-              type: integer
-            posts:
-              description: Total posts created by the user.
-              type: integer
-            roleID:
-              description: ID of a role required for this rank.
-              type: integer
-            time:
-              description: Age of user account (e.g. 1 day, 3 weeks, 1 month).
-              type: string
-          type: object
-        cssClass:
-          description: Custom CSS class for users of this rank.
-          minLength: 1
-          type:
-          - string
-          - 'null'
-        level:
-          description: Level of the rank. Determines the sort order.
-          type: integer
-        name:
-          description: Name of the rank.
-          minLength: 1
-          type: string
-        notificationBody:
-          description: Message for the users when they earn this rank.
-          minLength: 0
-          type:
-          - string
-          - 'null'
-        userTitle:
-          description: Label that will display beside the user.
-          minLength: 1
-          type: string
-      required:
-      - name
-      - userTitle
-      - level
-      type: object
       x-addon: ranks
 x-resourceEvents:
   emailTemplates:

@@ -173,6 +173,15 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    NotificationPatchSchema:
+      description: Fields for patching a notification.
+      type: object
+      properties:
+        read:
+          type: boolean
+          enum:
+          - true
+      x-addon: dashboard
     NotificationSchema:
       properties:
         body:
@@ -248,15 +257,6 @@ components:
       - dateUpdated
       - read
       type: object
-      x-addon: dashboard
-    NotificationPatchSchema:
-      description: Fields for patching a notification.
-      type: object
-      properties:
-        read:
-          type: boolean
-          enum:
-          - true
       x-addon: dashboard
     NotificationDiscussionFragment:
       description: An expanded discussion fragment for notifications.

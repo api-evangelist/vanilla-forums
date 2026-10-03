@@ -367,72 +367,26 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Conversation:
-      properties:
-        body:
-          description: The most recent unread message in the conversation.
-          minLength: 1
-          type: string
-        conversationID:
-          description: The ID of the conversation.
-          type: integer
-        countMessages:
-          description: The number of messages on the conversation.
-          type: integer
-        countParticipants:
-          description: The number of participants on the conversation.
-          type: integer
-        countUnread:
-          description: The number of unread messages.
-          type: integer
-        dateInserted:
-          description: When the conversation was created.
-          format: date-time
-          type: string
-        insertUser:
-          $ref: '#/components/schemas/UserFragment'
-        insertUserID:
-          description: The user that created the conversation.
-          type: integer
-        lastMessage:
-          properties:
-            dateInserted:
-              description: The date of the message.
-              format: date-time
-              type: string
-            insertUser:
-              $ref: '#/components/schemas/UserFragment'
-            insertUserID:
-              description: The author of the your most recent message.
-              type: integer
-          required:
-          - insertUserID
-          - dateInserted
-          - insertUser
-          type: object
-        name:
-          description: The name of the conversation.
-          minLength: 1
-          type: string
-        participants:
-          $ref: '#/components/schemas/ConversationParticipants'
-        unread:
-          description: Whether the conversation has an unread indicator.
-          type: boolean
-        url:
-          description: The URL of the conversation.
-          minLength: 1
-          type: string
-      required:
-      - conversationID
-      - name
-      - body
-      - url
-      - dateInserted
-      - insertUserID
-      - countParticipants
-      - countMessages
-      type: object
+    ConversationParticipants:
+      description: List of participants.
+      items:
+        properties:
+          userID:
+            description: The userID of the participant.
+            type: integer
+          status:
+            description: Participation status of the user.
+            enum:
+            - participating
+            - deleted
+            type: string
+          user:
+            $ref: '#/components/schemas/UserFragment'
+        required:
+        - userID
+        - status
+        type: object
+      type: array
       x-addon: conversations
     UserFragment:
       oneOf:
@@ -501,44 +455,6 @@ components:
       - participantUserIDs
       type: object
       x-addon: conversations
-    MessagePost:
-      properties:
-        body:
-          description: The body of the message.
-          maxLength: 2000
-          minLength: 1
-          type: string
-        conversationID:
-          description: The ID of the conversation.
-          type: integer
-        format:
-          $ref: '#/components/schemas/Format'
-      required:
-      - conversationID
-      - body
-      type: object
-      x-addon: conversations
-    ConversationParticipants:
-      description: List of participants.
-      items:
-        properties:
-          userID:
-            description: The userID of the participant.
-            type: integer
-          status:
-            description: Participation status of the user.
-            enum:
-            - participating
-            - deleted
-            type: string
-          user:
-            $ref: '#/components/schemas/UserFragment'
-        required:
-        - userID
-        - status
-        type: object
-      type: array
-      x-addon: conversations
     Message:
       properties:
         body:
@@ -581,6 +497,90 @@ components:
       - bbcode
       example: markdown
       x-addon: dashboard
+    Conversation:
+      properties:
+        body:
+          description: The most recent unread message in the conversation.
+          minLength: 1
+          type: string
+        conversationID:
+          description: The ID of the conversation.
+          type: integer
+        countMessages:
+          description: The number of messages on the conversation.
+          type: integer
+        countParticipants:
+          description: The number of participants on the conversation.
+          type: integer
+        countUnread:
+          description: The number of unread messages.
+          type: integer
+        dateInserted:
+          description: When the conversation was created.
+          format: date-time
+          type: string
+        insertUser:
+          $ref: '#/components/schemas/UserFragment'
+        insertUserID:
+          description: The user that created the conversation.
+          type: integer
+        lastMessage:
+          properties:
+            dateInserted:
+              description: The date of the message.
+              format: date-time
+              type: string
+            insertUser:
+              $ref: '#/components/schemas/UserFragment'
+            insertUserID:
+              description: The author of the your most recent message.
+              type: integer
+          required:
+          - insertUserID
+          - dateInserted
+          - insertUser
+          type: object
+        name:
+          description: The name of the conversation.
+          minLength: 1
+          type: string
+        participants:
+          $ref: '#/components/schemas/ConversationParticipants'
+        unread:
+          description: Whether the conversation has an unread indicator.
+          type: boolean
+        url:
+          description: The URL of the conversation.
+          minLength: 1
+          type: string
+      required:
+      - conversationID
+      - name
+      - body
+      - url
+      - dateInserted
+      - insertUserID
+      - countParticipants
+      - countMessages
+      type: object
+      x-addon: conversations
+    MessagePost:
+      properties:
+        body:
+          description: The body of the message.
+          maxLength: 2000
+          minLength: 1
+          type: string
+        conversationID:
+          description: The ID of the conversation.
+          type: integer
+        format:
+          $ref: '#/components/schemas/Format'
+      required:
+      - conversationID
+      - body
+      type: object
+      x-addon: conversations
   requestBodies:
     ConversationPost:
       content:

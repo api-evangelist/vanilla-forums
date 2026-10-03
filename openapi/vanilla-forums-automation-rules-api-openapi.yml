@@ -269,18 +269,6 @@ paths:
       operationId: getAutomationRulesByAutomationRuleIDDispatchesByRuleDispatchID
       x-operation-id-source: derived
 components:
-  parameters:
-    Page:
-      name: page
-      in: query
-      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
-
-        '
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
-      x-addon: dashboard
   responses:
     PermissionError:
       description: Permission denied.
@@ -323,6 +311,36 @@ components:
             - 1342
       x-addon: dashboard
   schemas:
+    TriggerAction:
+      type: object
+      properties:
+        trigger:
+          type: object
+          description: The trigger for the automation rule
+          properties:
+            triggerType:
+              type: string
+              description: The name of the trigger type
+            triggerName:
+              type: string
+              description: The name/label of the trigger or action
+            triggerValue:
+              type: object
+              description: The value of the trigger
+        action:
+          type: object
+          description: The action for the automation rule
+          properties:
+            actionType:
+              type: string
+              description: The name of the action type
+            actionName:
+              type: string
+              description: The name/label of the trigger or action
+            actionValue:
+              type: object
+              description: The value of the action
+      x-addon: dashboard
     AutomationDispatch:
       description: 'provides the list of automation recipes that has been created by the user
 
@@ -370,35 +388,17 @@ components:
           items:
             $ref: '#/components/schemas/TriggerAction'
       x-addon: dashboard
-    TriggerAction:
-      type: object
-      properties:
-        trigger:
-          type: object
-          description: The trigger for the automation rule
-          properties:
-            triggerType:
-              type: string
-              description: The name of the trigger type
-            triggerName:
-              type: string
-              description: The name/label of the trigger or action
-            triggerValue:
-              type: object
-              description: The value of the trigger
-        action:
-          type: object
-          description: The action for the automation rule
-          properties:
-            actionType:
-              type: string
-              description: The name of the action type
-            actionName:
-              type: string
-              description: The name/label of the trigger or action
-            actionValue:
-              type: object
-              description: The value of the action
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
+
+        '
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

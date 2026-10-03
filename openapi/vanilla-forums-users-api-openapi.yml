@@ -1146,75 +1146,34 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    UserFollow:
+    RoleFragment:
       type: object
       properties:
-        preferences.followed:
-          description: Set to true to follow the user, false to unfollow.
-          type: boolean
-        preferences.popup.userFollowingNewDiscussion:
-          description: Receive popup notifications when the followed user creates a new discussion.
-          type: boolean
-        preferences.email.userFollowingNewDiscussion:
-          description: Receive email notifications when the followed user creates a new discussion.
-          type: boolean
-        preferences.popup.userFollowingNewComment:
-          description: Receive popup notifications when the followed user creates a new comment.
-          type: boolean
-        preferences.email.userFollowingNewComment:
-          description: Receive email notifications when the followed user creates a new comment.
-          type: boolean
-        preferences.popup.userFollowingNewEvent:
-          description: Receive popup notifications when the followed user creates a new event.
-          type: boolean
-        preferences.email.userFollowingNewEvent:
-          description: Receive email notifications when the followed user creates a new event.
-          type: boolean
+        name:
+          description: Name of the role.
+          minLength: 1
+          type: string
+        roleID:
+          description: ID of the role.
+          type: integer
+      required:
+      - roleID
+      - name
       x-addon: dashboard
-    UserFollowingPreferences:
+    ReactionFragment:
       type: object
       properties:
-        preferences.followed:
-          description: Whether the current user is following this user.
-          type: boolean
-        preferences.popup.userFollowingNewDiscussion:
-          description: Receive popup notifications when the followed user creates a new discussion.
-          type: boolean
-        preferences.email.userFollowingNewDiscussion:
-          description: Receive email notifications when the followed user creates a new discussion.
-          type: boolean
-        preferences.popup.userFollowingNewComment:
-          description: Receive popup notifications when the followed user creates a new comment.
-          type: boolean
-        preferences.email.userFollowingNewComment:
-          description: Receive email notifications when the followed user creates a new comment.
-          type: boolean
-        preferences.popup.userFollowingNewEvent:
-          description: Receive popup notifications when the followed user creates a new event.
-          type: boolean
-        preferences.email.userFollowingNewEvent:
-          description: Receive email notifications when the followed user creates a new event.
-          type: boolean
+        tagID:
+          type: integer
+        urlcode:
+          type: string
+        name:
+          type: string
+        class:
+          type: string
+        count:
+          type: integer
       x-addon: dashboard
-    UserProfileFields:
-      type: object
-      properties:
-        Country:
-          type:
-          - string
-          - 'null'
-        GitHub:
-          type:
-          - string
-          - 'null'
-        Location:
-          type:
-          - string
-          - 'null'
-        Twitter:
-          type:
-          - string
-          - 'null'
     UserFragment:
       oneOf:
       - type: object
@@ -1265,6 +1224,13 @@ components:
             type: string
         required:
         - ssoID
+      x-addon: dashboard
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
       x-addon: dashboard
     UserPatch:
       type: object
@@ -1326,59 +1292,107 @@ components:
           - 'null'
           description: ID of the user rank. Setting to null will remove manually applied rank.
       x-addon: dashboard
-    UserPost:
+    BasicError:
       type: object
       properties:
-        bypassSpam:
-          default: false
-          description: Should submissions from this user bypass SPAM checks?
-          type: boolean
-        email:
-          description: Email address of the user.
-          minLength: 1
+        message:
+          description: Verbose description of the error.
           type: string
-        showEmail:
-          description: Is the email address visible to other users?
+        status:
+          description: Response status code.
+          type: integer
+      required:
+      - message
+      - status
+      x-addon: dashboard
+    UserFollowingPreferences:
+      type: object
+      properties:
+        preferences.followed:
+          description: Whether the current user is following this user.
           type: boolean
-        emailConfirmed:
-          default: true
-          description: Has the email address for this user been confirmed?
+        preferences.popup.userFollowingNewDiscussion:
+          description: Receive popup notifications when the followed user creates a new discussion.
           type: boolean
-        sendWelcomeEmail:
-          default: true
-          description: Send welcome email?
+        preferences.email.userFollowingNewDiscussion:
+          description: Receive email notifications when the followed user creates a new discussion.
           type: boolean
-        name:
-          description: Name of the user.
-          minLength: 1
-          type: string
-        password:
-          description: Password of the user.
-          minLength: 1
-          type: string
-        photo:
-          description: Raw photo field value from the user record.
-          minLength: 0
+        preferences.popup.userFollowingNewComment:
+          description: Receive popup notifications when the followed user creates a new comment.
+          type: boolean
+        preferences.email.userFollowingNewComment:
+          description: Receive email notifications when the followed user creates a new comment.
+          type: boolean
+        preferences.popup.userFollowingNewEvent:
+          description: Receive popup notifications when the followed user creates a new event.
+          type: boolean
+        preferences.email.userFollowingNewEvent:
+          description: Receive email notifications when the followed user creates a new event.
+          type: boolean
+      x-addon: dashboard
+    UserProfileFields:
+      type: object
+      properties:
+        Country:
           type:
           - string
           - 'null'
-        roleID:
-          description: Roles to set on the user.
-          items:
-            type: integer
+        GitHub:
+          type:
+          - string
+          - 'null'
+        Location:
+          type:
+          - string
+          - 'null'
+        Twitter:
+          type:
+          - string
+          - 'null'
+    ReactedRecord:
+      type: object
+      properties:
+        name:
+          description: The name of the record
+          type: string
+        body:
+          description: The body of the record
+          type: string
+        insertUserID:
+          description: The author of the record
+          type: integer
+        dateUpdated:
+          format: date-time
+          type: string
+        recordID:
+          type: integer
+        recordType:
+          type: string
+          enum:
+          - Comment
+          - Discussion
+        discussionID:
+          type: integer
+        commentID:
+          type: integer
+        url:
+          type: string
+        insertUser:
+          $ref: '#/components/schemas/UserFragment'
+        updateUser:
+          $ref: '#/components/schemas/UserFragment'
+        reactions:
           type: array
-        private:
-          description: Is the profile visible to other users?
-          type: boolean
-          default: false
-        profileFields:
-          $ref: '#/components/schemas/UserProfileFields'
+          items:
+            $ref: '#/components/schemas/ReactionFragment'
       required:
       - name
-      - email
-      - password
-      - emailConfirmed
-      - bypassSpam
+      - body
+      - insertUserID
+      - recordID
+      - recordType
+      - discussionID
+      - url
       x-addon: dashboard
     User:
       properties:
@@ -1540,120 +1554,86 @@ components:
       - dateUpdated
       type: object
       x-addon: dashboard
-    RoleFragment:
+    UserFollow:
       type: object
       properties:
-        name:
-          description: Name of the role.
+        preferences.followed:
+          description: Set to true to follow the user, false to unfollow.
+          type: boolean
+        preferences.popup.userFollowingNewDiscussion:
+          description: Receive popup notifications when the followed user creates a new discussion.
+          type: boolean
+        preferences.email.userFollowingNewDiscussion:
+          description: Receive email notifications when the followed user creates a new discussion.
+          type: boolean
+        preferences.popup.userFollowingNewComment:
+          description: Receive popup notifications when the followed user creates a new comment.
+          type: boolean
+        preferences.email.userFollowingNewComment:
+          description: Receive email notifications when the followed user creates a new comment.
+          type: boolean
+        preferences.popup.userFollowingNewEvent:
+          description: Receive popup notifications when the followed user creates a new event.
+          type: boolean
+        preferences.email.userFollowingNewEvent:
+          description: Receive email notifications when the followed user creates a new event.
+          type: boolean
+      x-addon: dashboard
+    UserPost:
+      type: object
+      properties:
+        bypassSpam:
+          default: false
+          description: Should submissions from this user bypass SPAM checks?
+          type: boolean
+        email:
+          description: Email address of the user.
           minLength: 1
           type: string
+        showEmail:
+          description: Is the email address visible to other users?
+          type: boolean
+        emailConfirmed:
+          default: true
+          description: Has the email address for this user been confirmed?
+          type: boolean
+        sendWelcomeEmail:
+          default: true
+          description: Send welcome email?
+          type: boolean
+        name:
+          description: Name of the user.
+          minLength: 1
+          type: string
+        password:
+          description: Password of the user.
+          minLength: 1
+          type: string
+        photo:
+          description: Raw photo field value from the user record.
+          minLength: 0
+          type:
+          - string
+          - 'null'
         roleID:
-          description: ID of the role.
-          type: integer
-      required:
-      - roleID
-      - name
-      x-addon: dashboard
-    BasicError:
-      type: object
-      properties:
-        message:
-          description: Verbose description of the error.
-          type: string
-        status:
-          description: Response status code.
-          type: integer
-      required:
-      - message
-      - status
-      x-addon: dashboard
-    ReactionFragment:
-      type: object
-      properties:
-        tagID:
-          type: integer
-        urlcode:
-          type: string
-        name:
-          type: string
-        class:
-          type: string
-        count:
-          type: integer
-      x-addon: dashboard
-    ReactedRecord:
-      type: object
-      properties:
-        name:
-          description: The name of the record
-          type: string
-        body:
-          description: The body of the record
-          type: string
-        insertUserID:
-          description: The author of the record
-          type: integer
-        dateUpdated:
-          format: date-time
-          type: string
-        recordID:
-          type: integer
-        recordType:
-          type: string
-          enum:
-          - Comment
-          - Discussion
-        discussionID:
-          type: integer
-        commentID:
-          type: integer
-        url:
-          type: string
-        insertUser:
-          $ref: '#/components/schemas/UserFragment'
-        updateUser:
-          $ref: '#/components/schemas/UserFragment'
-        reactions:
-          type: array
+          description: Roles to set on the user.
           items:
-            $ref: '#/components/schemas/ReactionFragment'
+            type: integer
+          type: array
+        private:
+          description: Is the profile visible to other users?
+          type: boolean
+          default: false
+        profileFields:
+          $ref: '#/components/schemas/UserProfileFields'
       required:
       - name
-      - body
-      - insertUserID
-      - recordID
-      - recordType
-      - discussionID
-      - url
-      x-addon: dashboard
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+      - email
+      - password
+      - emailConfirmed
+      - bypassSpam
       x-addon: dashboard
   parameters:
-    DateInserted:
-      name: dateInserted
-      in: query
-      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
-
-        '
-      schema:
-        format: date-filter
-        type: string
-      x-addon: dashboard
-    DateUpdated:
-      name: dateUpdated
-      in: query
-      description: 'Filter by update date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
-
-        '
-      schema:
-        format: date-filter
-        type: string
-      x-addon: dashboard
     UserExpand:
       description: 'Expand associated records using one or more valid field names. A value of "all" will expand all expandable fields.
 
@@ -1675,6 +1655,16 @@ components:
         type: array
       style: form
       x-addon: dashboard
+    DateInserted:
+      name: dateInserted
+      in: query
+      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
+
+        '
+      schema:
+        format: date-filter
+        type: string
+      x-addon: dashboard
     Page:
       name: page
       in: query
@@ -1685,6 +1675,16 @@ components:
         type: integer
         default: 1
         minimum: 1
+      x-addon: dashboard
+    DateUpdated:
+      name: dateUpdated
+      in: query
+      description: 'Filter by update date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
+
+        '
+      schema:
+        format: date-filter
+        type: string
       x-addon: dashboard
   responses:
     NotFound:

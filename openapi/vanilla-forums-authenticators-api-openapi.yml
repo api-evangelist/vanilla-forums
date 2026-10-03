@@ -233,82 +233,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    AuthenticatorFragment:
-      type: object
-      properties:
-        authenticatorID:
-          type: integer
-          description: The authenticator's ID.
-        authenticationKey:
-          type: string
-          description: The authenticator's unique authentication key.
-        name:
-          type: string
-          description: A human readible name for the authenticator.
-        type:
-          type: string
-          description: The type of authenticator
-          example: oauth2
-        clientID:
-          type: string
-        default:
-          type: boolean
-        active:
-          type: boolean
-          example: true
-        visible:
-          type: boolean
-        isOidc:
-          type: boolean
-          default: false
-        markVerified:
-          type: boolean
-          default: false
-        urls:
-          $ref: '#/components/schemas/AuthenticatorUrlSchema'
-        isDebugEnabled:
-          type: boolean
-          description: Whether debug logging is enabled for this authenticator.
-          default: false
-        dateDebugExpires:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: When debug logging will be automatically disabled.
-        metadataUrls:
-          type: array
-          description: The metadata URLs for the authenticator.
-          items:
-            $ref: '#/components/schemas/AuthenticatorMetaDataUrl'
-      required:
-      - authenticatorID
-      - name
-      - type
-      - clientID
-      - default
-      - active
-      - visible
-      - metadataUrls
-      x-addon: dashboard
-    AuthenticationTypeService:
-      description: Authentication types configuration attributes.
-      x-addon: dashboard
-    AuthenticatorDebugStatus:
-      type: object
-      properties:
-        enabled:
-          type: boolean
-          description: Whether debug logging is enabled.
-        dateDebugExpires:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: When debug logging will be automatically disabled.
-      required:
-      - enabled
-      x-addon: dashboard
     UserFragment:
       oneOf:
       - type: object
@@ -360,57 +284,20 @@ components:
         required:
         - ssoID
       x-addon: dashboard
-    DebugLogAttempt:
+    AuthenticatorMetaDataUrl:
       type: object
-      description: A grouped authentication attempt containing multiple log messages.
+      description: A URL for a metadata file for the authenticator.
       properties:
-        debugAttemptUUID:
+        labelCode:
           type: string
-          format: uuid
-          description: Unique identifier for the authentication attempt.
-        foreignType:
+          description: The translation code for the label of the metadata URL.
+        url:
           type: string
-          description: The owning resource type for this attempt.
-        foreignID:
-          type: integer
-          description: The owning resource ID for this attempt.
-        countMessages:
-          type: integer
-          description: Number of log messages in this attempt.
-        wasSuccessful:
-          type: boolean
-          description: Whether this attempt resulted in a successful connection or logout.
-        attemptFlow:
-          type: string
-          enum:
-          - login
-          - logout
-          description: Whether this attempt is a login or logout flow.
-        dateInserted:
-          type: string
-          format: date-time
-          description: When the most recent log in this attempt was created.
-        insertUserID:
-          type:
-          - integer
-          - 'null'
-          description: User ID associated with this attempt (if any).
-        insertUser:
-          $ref: '#/components/schemas/UserFragment'
-        messages:
-          type: array
-          description: The individual log messages for this attempt.
-          items:
-            $ref: '#/components/schemas/DebugLog'
+          description: The URL.
+          format: uri
       required:
-      - debugAttemptUUID
-      - foreignType
-      - foreignID
-      - countMessages
-      - wasSuccessful
-      - attemptFlow
-      - dateInserted
-      - messages
+      - labelCode
+      - url
       x-addon: dashboard
     DebugLog:
       type: object
@@ -472,6 +359,73 @@ components:
       - dateInserted
       - insertUserID
       x-addon: dashboard
+    AuthenticatorDebugStatus:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Whether debug logging is enabled.
+        dateDebugExpires:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When debug logging will be automatically disabled.
+      required:
+      - enabled
+      x-addon: dashboard
+    DebugLogAttempt:
+      type: object
+      description: A grouped authentication attempt containing multiple log messages.
+      properties:
+        debugAttemptUUID:
+          type: string
+          format: uuid
+          description: Unique identifier for the authentication attempt.
+        foreignType:
+          type: string
+          description: The owning resource type for this attempt.
+        foreignID:
+          type: integer
+          description: The owning resource ID for this attempt.
+        countMessages:
+          type: integer
+          description: Number of log messages in this attempt.
+        wasSuccessful:
+          type: boolean
+          description: Whether this attempt resulted in a successful connection or logout.
+        attemptFlow:
+          type: string
+          enum:
+          - login
+          - logout
+          description: Whether this attempt is a login or logout flow.
+        dateInserted:
+          type: string
+          format: date-time
+          description: When the most recent log in this attempt was created.
+        insertUserID:
+          type:
+          - integer
+          - 'null'
+          description: User ID associated with this attempt (if any).
+        insertUser:
+          $ref: '#/components/schemas/UserFragment'
+        messages:
+          type: array
+          description: The individual log messages for this attempt.
+          items:
+            $ref: '#/components/schemas/DebugLog'
+      required:
+      - debugAttemptUUID
+      - foreignType
+      - foreignID
+      - countMessages
+      - wasSuccessful
+      - attemptFlow
+      - dateInserted
+      - messages
+      x-addon: dashboard
     AuthenticatorUrlSchema:
       type: object
       properties:
@@ -515,20 +469,81 @@ components:
       required:
       - enabled
       x-addon: dashboard
-    AuthenticatorMetaDataUrl:
+    AuthenticatorPatchSchema:
       type: object
-      description: A URL for a metadata file for the authenticator.
       properties:
-        labelCode:
+        default:
+          type: boolean
+          default: false
+        active:
+          type: boolean
+          default: false
+          example: true
+        visible:
+          type: boolean
+          default: false
+        urls:
+          $ref: '#/components/schemas/AuthenticatorUrlSchema'
+        authenticatorConfig:
+          $ref: '#/components/schemas/AuthenticationTypeService'
+      x-addon: dashboard
+    AuthenticatorFragment:
+      type: object
+      properties:
+        authenticatorID:
+          type: integer
+          description: The authenticator's ID.
+        authenticationKey:
           type: string
-          description: The translation code for the label of the metadata URL.
-        url:
+          description: The authenticator's unique authentication key.
+        name:
           type: string
-          description: The URL.
-          format: uri
+          description: A human readible name for the authenticator.
+        type:
+          type: string
+          description: The type of authenticator
+          example: oauth2
+        clientID:
+          type: string
+        default:
+          type: boolean
+        active:
+          type: boolean
+          example: true
+        visible:
+          type: boolean
+        isOidc:
+          type: boolean
+          default: false
+        markVerified:
+          type: boolean
+          default: false
+        urls:
+          $ref: '#/components/schemas/AuthenticatorUrlSchema'
+        isDebugEnabled:
+          type: boolean
+          description: Whether debug logging is enabled for this authenticator.
+          default: false
+        dateDebugExpires:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When debug logging will be automatically disabled.
+        metadataUrls:
+          type: array
+          description: The metadata URLs for the authenticator.
+          items:
+            $ref: '#/components/schemas/AuthenticatorMetaDataUrl'
       required:
-      - labelCode
-      - url
+      - authenticatorID
+      - name
+      - type
+      - clientID
+      - default
+      - active
+      - visible
+      - metadataUrls
       x-addon: dashboard
     AuthenticatorTypeInfo:
       type: object
@@ -561,23 +576,8 @@ components:
       - schema
       - metadataUrls
       x-addon: dashboard
-    AuthenticatorPatchSchema:
-      type: object
-      properties:
-        default:
-          type: boolean
-          default: false
-        active:
-          type: boolean
-          default: false
-          example: true
-        visible:
-          type: boolean
-          default: false
-        urls:
-          $ref: '#/components/schemas/AuthenticatorUrlSchema'
-        authenticatorConfig:
-          $ref: '#/components/schemas/AuthenticationTypeService'
+    AuthenticationTypeService:
+      description: Authentication types configuration attributes.
       x-addon: dashboard
   responses:
     PermissionError:

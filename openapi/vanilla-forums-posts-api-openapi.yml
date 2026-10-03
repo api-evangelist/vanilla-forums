@@ -82,23 +82,182 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    SrcSet:
-      description: An image's srcset for various sizes.
+    PostMeta:
+      type: object
+      description: Custom post fields. This is an object keyed by postFieldID.
+      example:
+        my-field: value1
+        my-arrayField:
+        - arrVal1
+        - arrVal2
+      x-addon: vanilla
+    UserFragment:
+      oneOf:
+      - type: object
+        properties:
+          userID:
+            description: The ID of the user.
+            type: integer
+          name:
+            description: The username of the user.
+            minLength: 1
+            type: string
+          url:
+            description: The URL of the user's profile.
+            type: string
+            format: uri
+          photoUrl:
+            description: The URL of the user's avatar picture.
+            type: string
+            format: uri
+          dateLastActive:
+            description: Time the user was last active.
+            format: date-time
+            type:
+            - string
+            - 'null'
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+          label:
+            description: The label of the user as plaintext.
+            type: string
+          labelHtml:
+            description: The label of the user in HTML format.
+            type: string
+          private:
+            description: Whether the user profile is private or not.
+            type: boolean
+        required:
+        - userID
+        - name
+        - photoUrl
+        - dateLastActive
+      - type: object
+        description: A user fragment when only expanding by ssoID.
+        properties:
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+        required:
+        - ssoID
+      x-addon: dashboard
+    DiscussionPermissions:
+      type: object
+      description: Permissions for the current user related to discussions. Applied when expanded..
+      example:
+        discussions.view: true
+        discussions.add: true
+        discussions.edit: false
+        discussions.delete: false
+        discussions.sink: false
+        comments.add: true
+        comments.edit: false
+        comments.delete: false
+      x-addon: vanilla
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+      x-addon: dashboard
+    StatusFragment:
+      type: object
+      description: Describes a status currently applied to a discussion. Expandable with `status` and `status.log` expands.
+      properties:
+        statusID:
+          description: Record status ID of the discussion status.
+          type: integer
+        name:
+          description: The name of the status.
+          type: string
+        recordType:
+          description: Type of the discussion status.
+          type: string
+          enum:
+          - discussion
+        recordSubType:
+          description: Some statuses may only apply to a specific subtype of record.
+          type: string
+        state:
+          description: States are used to group statuses together.
+          type: string
+          enum:
+          - open
+          - closed
+        dateUpdated:
+          type: string
+          format: date-time
+          description: When the discussion was updated with the status.
+        log:
+          type: object
+          description: Information about when the status was applied.
+          required:
+          - dateUpdated
+          - updateUser
+          properties:
+            reasonUpdated:
+              description: Reason for status change
+              type:
+              - string
+              - 'null'
+            updateUser:
+              $ref: '#/components/schemas/UserFragment'
+            dateUpdated:
+              description: When the discussion was last updated.
+              format: date-time
+              type: string
+      required:
+      - statusID
+      - name
+      - recordType
+      - state
+      x-addon: vanilla
+    ReportMeta:
       type: object
       properties:
-        '10':
-          description: 10px large Image url.
+        reportsReasons:
+          type: array
+          description: Report reasons.
+          items:
+            $ref: '#/components/schemas/ReportReasonFragment'
+        reportUserIDs:
+          description: User IDs that have reported this post.
+          type: array
+          items:
+            type: integer
+        reportUsers:
+          description: Users that have reported this post.
+          type: array
+          items:
+            $ref: '#/components/schemas/UserFragment'
+        countReportUsers:
+          description: The number of users that have reported this post.
+          type: number
+        reportGuestUsers:
+          description: Guest reporters, with email and name.
+          type: array
+          items:
+            type: object
+            properties:
+              reporterEmail:
+                type: string
+                description: The guest reporter's email address.
+              reporterName:
+                type: string
+                description: The guest reporter's display name.
+            required:
+            - reporterEmail
+        dateLastReport:
+          description: The date of the last report on the post.
           type: string
-        '300':
-          description: 300px large Image url.
-          type: string
-        '800':
-          description: 800px large Image url.
-          type: string
-        '1200':
-          description: 1200px large Image url.
-          type: string
-      x-addon: dashboard
+          format: date-time
+        countReports:
+          type: integer
+          default: 0
+          description: The number of reports on the post.
+      x-addon: vanilla
     Discussion:
       properties:
         attributes:
@@ -330,41 +489,55 @@ components:
       - attributes
       type: object
       x-addon: vanilla
-    PostFragment:
+    Image:
+      description: An image, pulled from content.
+      type: object
       properties:
-        discussionID:
-          description: The discussion ID of the post.
-          type: integer
-        commentID:
-          description: The comment ID of the post, if any.
+        url:
+          description: The original image URL.
+          type: string
+        urlSrcSet:
+          $ref: '#/components/schemas/SrcSet'
+        alt:
+          description: The image's alternative text.
+          type: string
+      x-addon: dashboard
+    CategoryFragment:
+      properties:
+        categoryID:
+          description: The ID of the category.
           type: integer
         name:
-          description: The title of the post.
+          description: The name of the category.
           minLength: 1
-          type: string
-        body:
-          description: The HTML formatted body of the post.
           type: string
         url:
-          description: The URL of the post.
+          description: Full URL to the category.
           minLength: 1
           type: string
-        dateInserted:
-          description: The date of the post.
-          format: date-time
-          type: string
-        insertUser:
-          $ref: '#/components/schemas/UserFragment'
-        insertUserID:
-          description: The author of the post.
-          type: integer
       required:
+      - categoryID
       - name
       - url
-      - dateInserted
-      - insertUserID
       type: object
       x-addon: vanilla
+    SrcSet:
+      description: An image's srcset for various sizes.
+      type: object
+      properties:
+        '10':
+          description: 10px large Image url.
+          type: string
+        '300':
+          description: 300px large Image url.
+          type: string
+        '800':
+          description: 800px large Image url.
+          type: string
+        '1200':
+          description: 1200px large Image url.
+          type: string
+      x-addon: dashboard
     Comment:
       properties:
         attributes:
@@ -484,198 +657,6 @@ components:
       - attributes
       type: object
       x-addon: vanilla
-    UserFragment:
-      oneOf:
-      - type: object
-        properties:
-          userID:
-            description: The ID of the user.
-            type: integer
-          name:
-            description: The username of the user.
-            minLength: 1
-            type: string
-          url:
-            description: The URL of the user's profile.
-            type: string
-            format: uri
-          photoUrl:
-            description: The URL of the user's avatar picture.
-            type: string
-            format: uri
-          dateLastActive:
-            description: Time the user was last active.
-            format: date-time
-            type:
-            - string
-            - 'null'
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-          label:
-            description: The label of the user as plaintext.
-            type: string
-          labelHtml:
-            description: The label of the user in HTML format.
-            type: string
-          private:
-            description: Whether the user profile is private or not.
-            type: boolean
-        required:
-        - userID
-        - name
-        - photoUrl
-        - dateLastActive
-      - type: object
-        description: A user fragment when only expanding by ssoID.
-        properties:
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-        required:
-        - ssoID
-      x-addon: dashboard
-    ReportMeta:
-      type: object
-      properties:
-        reportsReasons:
-          type: array
-          description: Report reasons.
-          items:
-            $ref: '#/components/schemas/ReportReasonFragment'
-        reportUserIDs:
-          description: User IDs that have reported this post.
-          type: array
-          items:
-            type: integer
-        reportUsers:
-          description: Users that have reported this post.
-          type: array
-          items:
-            $ref: '#/components/schemas/UserFragment'
-        countReportUsers:
-          description: The number of users that have reported this post.
-          type: number
-        reportGuestUsers:
-          description: Guest reporters, with email and name.
-          type: array
-          items:
-            type: object
-            properties:
-              reporterEmail:
-                type: string
-                description: The guest reporter's email address.
-              reporterName:
-                type: string
-                description: The guest reporter's display name.
-            required:
-            - reporterEmail
-        dateLastReport:
-          description: The date of the last report on the post.
-          type: string
-          format: date-time
-        countReports:
-          type: integer
-          default: 0
-          description: The number of reports on the post.
-      x-addon: vanilla
-    CategoryFragment:
-      properties:
-        categoryID:
-          description: The ID of the category.
-          type: integer
-        name:
-          description: The name of the category.
-          minLength: 1
-          type: string
-        url:
-          description: Full URL to the category.
-          minLength: 1
-          type: string
-      required:
-      - categoryID
-      - name
-      - url
-      type: object
-      x-addon: vanilla
-    Image:
-      description: An image, pulled from content.
-      type: object
-      properties:
-        url:
-          description: The original image URL.
-          type: string
-        urlSrcSet:
-          $ref: '#/components/schemas/SrcSet'
-        alt:
-          description: The image's alternative text.
-          type: string
-      x-addon: dashboard
-    StatusFragment:
-      type: object
-      description: Describes a status currently applied to a discussion. Expandable with `status` and `status.log` expands.
-      properties:
-        statusID:
-          description: Record status ID of the discussion status.
-          type: integer
-        name:
-          description: The name of the status.
-          type: string
-        recordType:
-          description: Type of the discussion status.
-          type: string
-          enum:
-          - discussion
-        recordSubType:
-          description: Some statuses may only apply to a specific subtype of record.
-          type: string
-        state:
-          description: States are used to group statuses together.
-          type: string
-          enum:
-          - open
-          - closed
-        dateUpdated:
-          type: string
-          format: date-time
-          description: When the discussion was updated with the status.
-        log:
-          type: object
-          description: Information about when the status was applied.
-          required:
-          - dateUpdated
-          - updateUser
-          properties:
-            reasonUpdated:
-              description: Reason for status change
-              type:
-              - string
-              - 'null'
-            updateUser:
-              $ref: '#/components/schemas/UserFragment'
-            dateUpdated:
-              description: When the discussion was last updated.
-              format: date-time
-              type: string
-      required:
-      - statusID
-      - name
-      - recordType
-      - state
-      x-addon: vanilla
-    DiscussionPermissions:
-      type: object
-      description: Permissions for the current user related to discussions. Applied when expanded..
-      example:
-        discussions.view: true
-        discussions.add: true
-        discussions.edit: false
-        discussions.delete: false
-        discussions.sink: false
-        comments.add: true
-        comments.edit: false
-        comments.delete: false
-      x-addon: vanilla
     ReportReasonFragment:
       type: object
       properties:
@@ -698,21 +679,40 @@ components:
       - sort
       - deleted
       x-addon: vanilla
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
-      x-addon: dashboard
-    PostMeta:
+    PostFragment:
+      properties:
+        discussionID:
+          description: The discussion ID of the post.
+          type: integer
+        commentID:
+          description: The comment ID of the post, if any.
+          type: integer
+        name:
+          description: The title of the post.
+          minLength: 1
+          type: string
+        body:
+          description: The HTML formatted body of the post.
+          type: string
+        url:
+          description: The URL of the post.
+          minLength: 1
+          type: string
+        dateInserted:
+          description: The date of the post.
+          format: date-time
+          type: string
+        insertUser:
+          $ref: '#/components/schemas/UserFragment'
+        insertUserID:
+          description: The author of the post.
+          type: integer
+      required:
+      - name
+      - url
+      - dateInserted
+      - insertUserID
       type: object
-      description: Custom post fields. This is an object keyed by postFieldID.
-      example:
-        my-field: value1
-        my-arrayField:
-        - arrVal1
-        - arrVal2
       x-addon: vanilla
 x-resourceEvents:
   emailTemplates:

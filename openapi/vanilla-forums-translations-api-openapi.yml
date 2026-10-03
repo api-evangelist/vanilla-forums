@@ -213,6 +213,27 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Translation:
+      properties:
+        resource:
+          description: Name of the resource.
+          type: string
+        key:
+          description: a unique translation identifier.
+          type: string
+        locale:
+          description: The locale of the translation.
+          type: string
+        translation:
+          description: The translation sentence.
+          type: string
+      required:
+      - resource
+      - key
+      - locale
+      - translation
+      type: object
+      x-addon: dashboard
     PatchTranslations:
       type: array
       items:
@@ -241,27 +262,6 @@ components:
         - propertyName
         - translation
         type: object
-      x-addon: dashboard
-    Translation:
-      properties:
-        resource:
-          description: Name of the resource.
-          type: string
-        key:
-          description: a unique translation identifier.
-          type: string
-        locale:
-          description: The locale of the translation.
-          type: string
-        translation:
-          description: The translation sentence.
-          type: string
-      required:
-      - resource
-      - key
-      - locale
-      - translation
-      type: object
       x-addon: dashboard
   parameters:
     CacheBusterParameter:
