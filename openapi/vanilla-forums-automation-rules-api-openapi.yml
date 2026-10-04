@@ -269,47 +269,6 @@ paths:
       operationId: getAutomationRulesByAutomationRuleIDDispatchesByRuleDispatchID
       x-operation-id-source: derived
 components:
-  responses:
-    PermissionError:
-      description: Permission denied.
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-            - message
-            - status
-            - permissions
-            properties:
-              message:
-                type: string
-                description: A message that tells you the permissions you need.
-                example: Permission denied.
-              status:
-                type: integer
-                description: The HTTP status code for the error.
-                format: int32
-                example: 403
-              permissions:
-                description: The permissions the requesting user is missing.
-                type: array
-                items:
-                  type: string
-              recordIDs:
-                description: The recordIDs the user didn't have permission on.
-                type: array
-                items:
-                  type: integer
-          example:
-            status: 403
-            message: Permission Problem
-            permissions:
-            - Vanilla.Discussions.Edit
-            - Vanilla.Community.Manage
-            recordIDs:
-            - 2425
-            - 1342
-      x-addon: dashboard
   schemas:
     TriggerAction:
       type: object
@@ -399,6 +358,47 @@ components:
         type: integer
         default: 1
         minimum: 1
+      x-addon: dashboard
+  responses:
+    PermissionError:
+      description: Permission denied.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - message
+            - status
+            - permissions
+            properties:
+              message:
+                type: string
+                description: A message that tells you the permissions you need.
+                example: Permission denied.
+              status:
+                type: integer
+                description: The HTTP status code for the error.
+                format: int32
+                example: 403
+              permissions:
+                description: The permissions the requesting user is missing.
+                type: array
+                items:
+                  type: string
+              recordIDs:
+                description: The recordIDs the user didn't have permission on.
+                type: array
+                items:
+                  type: integer
+          example:
+            status: 403
+            message: Permission Problem
+            permissions:
+            - Vanilla.Discussions.Edit
+            - Vanilla.Community.Manage
+            recordIDs:
+            - 2425
+            - 1342
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

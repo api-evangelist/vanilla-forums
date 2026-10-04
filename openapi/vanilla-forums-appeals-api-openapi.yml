@@ -182,6 +182,36 @@ paths:
       operationId: patchAppealsById
       x-operation-id-source: derived
 components:
+  parameters:
+    DateInserted:
+      name: dateInserted
+      in: query
+      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
+
+        '
+      schema:
+        format: date-filter
+        type: string
+      x-addon: dashboard
+    Page:
+      name: page
+      in: query
+      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
+
+        '
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      x-addon: dashboard
+    AppealID:
+      name: id
+      in: path
+      description: The ID of the appeal.
+      required: true
+      schema:
+        type: integer
+      x-addon: dashboard
   schemas:
     AppealPost:
       type: object
@@ -381,36 +411,6 @@ components:
                 Can only be set by the assigned user.
 
                 '
-      x-addon: dashboard
-  parameters:
-    DateInserted:
-      name: dateInserted
-      in: query
-      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
-
-        '
-      schema:
-        format: date-filter
-        type: string
-      x-addon: dashboard
-    AppealID:
-      name: id
-      in: path
-      description: The ID of the appeal.
-      required: true
-      schema:
-        type: integer
-      x-addon: dashboard
-    Page:
-      name: page
-      in: query
-      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
-
-        '
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

@@ -694,51 +694,26 @@ components:
       - foreignID
       type: object
       x-addon: dashboard
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
-      x-addon: dashboard
-    TrackingSlipData:
-      type: object
-      description: 'Represents a scheduled server-side job.
-
-        '
-      properties:
-        jobID:
-          description: The ID of a particular job.
-          type: string
-          example: 10232183.longrunnerjob.5fa1a178cfe1b9.07902191
-        jobTrackingID:
-          description: 'A shared ID that can be used to track the status of a job.
-
-            This ID persists even if jobs fail and retry, or spawn child jobs.
-
-            '
-          type: string
-          example: 42adsf424::613fda84bdea32.25565677
-        status:
-          description: The current status of the job.
-          type: string
-          enum:
-          - abandoned
-          - complete
-          - error
-          - failed
-          - intended
-          - invalid
-          - stackError
-          - progress
-          - retry
-          - received
-          - unknown
-          example: received
-      x-addon: dashboard
     UploadedFile:
       type: string
       format: binary
+      x-addon: dashboard
+    MediaItemPatch:
+      properties:
+        foreignID:
+          description: Unique ID of the resource this media item will be attached to.
+          type: integer
+        foreignType:
+          description: Type of resource the media item will be attached to (e.g. comment).
+          enum:
+          - embed
+          - comment
+          - discussion
+          type: string
+      required:
+      - foreignType
+      - foreignID
+      type: object
       x-addon: dashboard
     LongRunnerResult:
       description: 'Endpoints will return this if they may time out and require the client
@@ -763,6 +738,13 @@ components:
             '
         progress:
           $ref: '#/components/schemas/LongRunnerProgress'
+      x-addon: dashboard
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
       x-addon: dashboard
     LongRunnerProgress:
       description: Progress of the task.
@@ -813,34 +795,50 @@ components:
           description: Total count of records that can be progressed.
           type: integer
       x-addon: dashboard
-    MediaItemPatch:
-      properties:
-        foreignID:
-          description: Unique ID of the resource this media item will be attached to.
-          type: integer
-        foreignType:
-          description: Type of resource the media item will be attached to (e.g. comment).
-          enum:
-          - embed
-          - comment
-          - discussion
-          type: string
-      required:
-      - foreignType
-      - foreignID
+    TrackingSlipData:
       type: object
+      description: 'Represents a scheduled server-side job.
+
+        '
+      properties:
+        jobID:
+          description: The ID of a particular job.
+          type: string
+          example: 10232183.longrunnerjob.5fa1a178cfe1b9.07902191
+        jobTrackingID:
+          description: 'A shared ID that can be used to track the status of a job.
+
+            This ID persists even if jobs fail and retry, or spawn child jobs.
+
+            '
+          type: string
+          example: 42adsf424::613fda84bdea32.25565677
+        status:
+          description: The current status of the job.
+          type: string
+          enum:
+          - abandoned
+          - complete
+          - error
+          - failed
+          - intended
+          - invalid
+          - stackError
+          - progress
+          - retry
+          - received
+          - unknown
+          example: received
       x-addon: dashboard
   responses:
-    LongRunnerResponse:
-      description: 'Endpoints that may time out and require the client to
-
-        progress them with the `/api/v2/calls` endpoints may return this.
+    TrackingSlipResponse:
+      description: 'Endpoints may queue a job to perform a task in the background.
 
         '
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/LongRunnerResult'
+            $ref: '#/components/schemas/TrackingSlipData'
       x-addon: dashboard
     PermissionError:
       description: Permission denied.
@@ -882,14 +880,16 @@ components:
             - 2425
             - 1342
       x-addon: dashboard
-    TrackingSlipResponse:
-      description: 'Endpoints may queue a job to perform a task in the background.
+    LongRunnerResponse:
+      description: 'Endpoints that may time out and require the client to
+
+        progress them with the `/api/v2/calls` endpoints may return this.
 
         '
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/TrackingSlipData'
+            $ref: '#/components/schemas/LongRunnerResult'
       x-addon: dashboard
   parameters:
     Page:

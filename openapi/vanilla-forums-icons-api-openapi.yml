@@ -185,6 +185,18 @@ paths:
       operationId: getIconsSystem
       x-operation-id-source: derived
 components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
+
+        '
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      x-addon: dashboard
   schemas:
     Icon:
       type: object
@@ -218,18 +230,6 @@ components:
         insertUserID:
           type: integer
           description: The userID that uploaded the icon.
-      x-addon: dashboard
-  parameters:
-    Page:
-      name: page
-      in: query
-      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
-
-        '
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

@@ -186,184 +186,6 @@ paths:
       operationId: putDiscussionsToggleScopedStatuses
       x-operation-id-source: derived
 components:
-  schemas:
-    ScopeType:
-      type: string
-      description: Scope type for a record.
-      enum:
-      - global
-      - scoped
-      x-addon: dashboard
-    RecordStatus:
-      type: object
-      properties:
-        statusID:
-          description: Unique numeric ID of a status.
-          type: string
-        name:
-          description: Name of status
-          type: string
-        state:
-          description: State of the item associated with this status
-          type: string
-          enum:
-          - open
-          - closed
-        recordType:
-          description: Type of resource to which this status applies
-          type: string
-          minLength: 1
-        recordSubtype:
-          description: Subtype of resource to which this status applies
-          type:
-          - string
-          - 'null'
-        isDefault:
-          description: True if this status is to be assigned to the resource upon its creation, false otherwise
-          type: boolean
-          default: false
-        isSystem:
-          description: True if this status is defined by the application and is not accessible for modification or deletion.
-          type: boolean
-          default: false
-        isIntenral:
-          description: True if this status is internal.
-          type: boolean
-          default: false
-        scopeType:
-          $ref: '#/components/schemas/ScopeType'
-        scope:
-          $ref: '#/components/schemas/Scope'
-      x-addon: dashboard
-    BasicError:
-      type: object
-      properties:
-        message:
-          description: Verbose description of the error.
-          type: string
-        status:
-          description: Response status code.
-          type: integer
-      required:
-      - message
-      - status
-      x-addon: dashboard
-    Scope:
-      type: object
-      description: Scoping information for a record.
-      properties:
-        categoryIDs:
-          type: array
-          items:
-            type: integer
-        siteSectionIDs:
-          type: array
-          items:
-            type: string
-        defaults:
-          type: object
-          properties:
-            categoryIDs:
-              type: array
-              items:
-                type: integer
-            siteSectionIDs:
-              type: array
-              items:
-                type: string
-      x-addon: dashboard
-    RecordStatusPatch:
-      type: object
-      properties:
-        name:
-          description: Name of status
-          type: string
-        isDefault:
-          description: True if this status is to be assigned to the resource upon its creation, false otherwise
-          type: boolean
-        state:
-          description: State of the item associated with this status
-          type: string
-          enum:
-          - open
-          - closed
-        recordSubtype:
-          description: Subtype of resource to which this status applies
-          type:
-          - string
-          - 'null'
-        isInternal:
-          description: True if this status is internal status, false otherwise
-          type:
-          - boolean
-          - 'null'
-        scopeType:
-          $ref: '#/components/schemas/ScopeType'
-        scope:
-          $ref: '#/components/schemas/Scope'
-      x-addon: dashboard
-    RecordStatusPost:
-      type: object
-      properties:
-        name:
-          description: Name of status
-          type: string
-        isDefault:
-          description: True if this status is to be assigned to the resource upon its creation, false otherwise
-          type: boolean
-        state:
-          description: State of the item associated with this status
-          type: string
-          enum:
-          - open
-          - closed
-        recordSubtype:
-          description: Subtype of resource to which this status applies
-          type:
-          - string
-          - 'null'
-        isInternal:
-          description: True if the status is internal, defaults to false.
-          type:
-          - boolean
-          - 'null'
-        scopeType:
-          $ref: '#/components/schemas/ScopeType'
-        scope:
-          $ref: '#/components/schemas/Scope'
-      required:
-      - name
-      x-addon: dashboard
-  parameters:
-    ScopeFilter:
-      name: scope
-      in: query
-      schema:
-        type: object
-        properties:
-          categoryIDs:
-            description: Filter by specific categoryIDs this record is scoped to.
-            type: array
-            items:
-              type: integer
-          siteSectionIDs:
-            description: Filter by specific siteSectionIDs this record is scoped to.
-            type: array
-            items:
-              type: string
-      x-addon: dashboard
-    ScopeTypeFilter:
-      name: scopeType
-      description: Filter by scope type. Can include 'global', 'scoped', or both.
-      in: query
-      schema:
-        type: array
-        items:
-          type: string
-          enum:
-          - global
-          - scoped
-      x-addon: dashboard
   responses:
     RecordStatusResponse:
       description: OK
@@ -431,6 +253,184 @@ components:
           example:
             status: 404
             message: Page Not Found
+      x-addon: dashboard
+  schemas:
+    RecordStatusPatch:
+      type: object
+      properties:
+        name:
+          description: Name of status
+          type: string
+        isDefault:
+          description: True if this status is to be assigned to the resource upon its creation, false otherwise
+          type: boolean
+        state:
+          description: State of the item associated with this status
+          type: string
+          enum:
+          - open
+          - closed
+        recordSubtype:
+          description: Subtype of resource to which this status applies
+          type:
+          - string
+          - 'null'
+        isInternal:
+          description: True if this status is internal status, false otherwise
+          type:
+          - boolean
+          - 'null'
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        scope:
+          $ref: '#/components/schemas/Scope'
+      x-addon: dashboard
+    Scope:
+      type: object
+      description: Scoping information for a record.
+      properties:
+        categoryIDs:
+          type: array
+          items:
+            type: integer
+        siteSectionIDs:
+          type: array
+          items:
+            type: string
+        defaults:
+          type: object
+          properties:
+            categoryIDs:
+              type: array
+              items:
+                type: integer
+            siteSectionIDs:
+              type: array
+              items:
+                type: string
+      x-addon: dashboard
+    BasicError:
+      type: object
+      properties:
+        message:
+          description: Verbose description of the error.
+          type: string
+        status:
+          description: Response status code.
+          type: integer
+      required:
+      - message
+      - status
+      x-addon: dashboard
+    ScopeType:
+      type: string
+      description: Scope type for a record.
+      enum:
+      - global
+      - scoped
+      x-addon: dashboard
+    RecordStatusPost:
+      type: object
+      properties:
+        name:
+          description: Name of status
+          type: string
+        isDefault:
+          description: True if this status is to be assigned to the resource upon its creation, false otherwise
+          type: boolean
+        state:
+          description: State of the item associated with this status
+          type: string
+          enum:
+          - open
+          - closed
+        recordSubtype:
+          description: Subtype of resource to which this status applies
+          type:
+          - string
+          - 'null'
+        isInternal:
+          description: True if the status is internal, defaults to false.
+          type:
+          - boolean
+          - 'null'
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        scope:
+          $ref: '#/components/schemas/Scope'
+      required:
+      - name
+      x-addon: dashboard
+    RecordStatus:
+      type: object
+      properties:
+        statusID:
+          description: Unique numeric ID of a status.
+          type: string
+        name:
+          description: Name of status
+          type: string
+        state:
+          description: State of the item associated with this status
+          type: string
+          enum:
+          - open
+          - closed
+        recordType:
+          description: Type of resource to which this status applies
+          type: string
+          minLength: 1
+        recordSubtype:
+          description: Subtype of resource to which this status applies
+          type:
+          - string
+          - 'null'
+        isDefault:
+          description: True if this status is to be assigned to the resource upon its creation, false otherwise
+          type: boolean
+          default: false
+        isSystem:
+          description: True if this status is defined by the application and is not accessible for modification or deletion.
+          type: boolean
+          default: false
+        isIntenral:
+          description: True if this status is internal.
+          type: boolean
+          default: false
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        scope:
+          $ref: '#/components/schemas/Scope'
+      x-addon: dashboard
+  parameters:
+    ScopeFilter:
+      name: scope
+      in: query
+      schema:
+        type: object
+        properties:
+          categoryIDs:
+            description: Filter by specific categoryIDs this record is scoped to.
+            type: array
+            items:
+              type: integer
+          siteSectionIDs:
+            description: Filter by specific siteSectionIDs this record is scoped to.
+            type: array
+            items:
+              type: string
+      x-addon: dashboard
+    ScopeTypeFilter:
+      name: scopeType
+      description: Filter by scope type. Can include 'global', 'scoped', or both.
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - global
+          - scoped
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

@@ -519,6 +519,204 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    SortDirection:
+      description: The sort direction for ordering results.
+      type: string
+      enum:
+      - ASC
+      - DESC
+      default: DESC
+      x-addon: vanillaanalytics
+    TargetProperty:
+      description: An event property to perform the analysis on. Required for count_unique, minimum, maximum, median and sum query types.
+      x-addon: vanillaanalytics
+    AnalyticsExtractCsv:
+      description: CSV data returned when extracting CSV data.
+      type: string
+      format: text/csv
+      example: 'type,urlParsed.path,user.name
+
+        page,/page,John Doe
+
+        page,/page,Jane Doe
+
+        page,/page,Jim Doe
+
+        '
+      x-addon: vanillaanalytics
+    QueryInterval:
+      description: Time interval for grouping results. If your specified interval and date range produce more than 500 intervals, the interval will be automatically bumped up to the next largest interval.
+      type: string
+      enum:
+      - hourly
+      - daily
+      - weekly
+      - monthly
+      - yearly
+      x-addon: vanillaanalytics
+    AnalyticsDataSourceFragment:
+      description: Represents a data source that can be queried.
+      type: object
+      properties:
+        aliases:
+          type: object
+          description: Defines an alternate names for properties.
+        name:
+          description: The human-readable name of the data source.
+          type: string
+        description:
+          description: More information about the data source.
+          type: string
+      example:
+        name: Page Views
+        description: Contains all of the page view events from the site.
+      required:
+      - name
+      - description
+      x-addon: vanillaanalytics
+    ExportStatus:
+      type: string
+      enum:
+      - pending
+      - created
+      - failed
+      - timeout
+      description: The status of the export.
+      x-addon: dashboard
+    Leaderboard:
+      properties:
+        count:
+          description: Associated total for this row.
+          type: integer
+        id:
+          description: ID of the record.
+          type: integer
+        position:
+          description: Current leaderboard position.
+          type: integer
+        positionChange:
+          description: Progression status of the record.
+          enum:
+          - Fall
+          - New
+          - Rise
+          - Same
+          minLength: 1
+          type: string
+        previous:
+          description: Previous position of the record
+          type:
+          - integer
+          - 'null'
+        title:
+          description: Title for the row.
+          minLength: 1
+          type:
+          - string
+          - 'null'
+        url:
+          description: Full URL to the record.
+          minLength: 1
+          type: string
+      required:
+      - id
+      - position
+      - positionChange
+      - previous
+      - url
+      - title
+      - count
+      type: object
+      x-addon: vanillaanalytics
+    AnalyticsSingleResult:
+      description: Single numeric result returned when neither grouping nor intervals are specified.
+      type: object
+      properties:
+        resultType:
+          description: The type of result.
+          type: string
+          enum:
+          - single
+          default: single
+        result:
+          description: The single aggregated value.
+          type: number
+      required:
+      - resultType
+      - result
+      example:
+        resultType: single
+        result: 38
+      x-addon: vanillaanalytics
+    EventCollection:
+      description: Analytics event collection. Different types of events are stored in different collections.
+      enum:
+      - aiConversation
+      - article
+      - article_modify
+      - article_reaction
+      - attachmentDownload
+      - cmdEscalation
+      - communityEvent
+      - escalation
+      - group
+      - keyword
+      - moderation
+      - page
+      - point
+      - post
+      - postEscalations
+      - post-modify
+      - qna
+      - reaction
+      - registration
+      - report
+      - reports
+      - search
+      - subscriptionChange
+      - tag
+      - userBadge
+      minLength: 1
+      type: string
+      x-addon: vanillaanalytics
+    UpdateInfo:
+      type: object
+      properties:
+        dateUpdated:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date the record was updateed.
+          readOnly: true
+        updateUserID:
+          type:
+          - integer
+          - 'null'
+          description: The user that updateed the record.
+          readOnly: true
+        updateIPAddress:
+          type:
+          - string
+          - 'null'
+          format: ipv4
+          description: The IP address the record was updateed from.
+          readOnly: true
+      x-addon: dashboard
+    AnalyticsDashboard:
+      description: An analytics dashboard.
+      allOf:
+      - $ref: '#/components/schemas/AnalyticsDashboardFragment'
+      - type: object
+        properties:
+          attributes:
+            description: The dashboard definition.
+            type: object
+        required:
+        - attributes
+      - $ref: '#/components/schemas/InsertInfo'
+      - $ref: '#/components/schemas/UpdateInfo'
+      x-addon: vanillaanalytics
     Export:
       type: object
       properties:
@@ -604,25 +802,148 @@ components:
       - updateUserID
       - mediaID
       x-addon: dashboard
-    AnalyticsDataSourceFragment:
-      description: Represents a data source that can be queried.
+    LegacyOrderBy:
+      description: Ordering specification for legacy analytics queries.
       type: object
       properties:
-        aliases:
-          type: object
-          description: Defines an alternate names for properties.
-        name:
-          description: The human-readable name of the data source.
+        prop:
+          description: The property name to order by.
+          minLength: 1
           type: string
-        description:
-          description: More information about the data source.
+        direction:
+          $ref: '#/components/schemas/SortDirection'
+      x-addon: vanillaanalytics
+    AnalyticsLimit:
+      description: Maximum number of results to return. Requires at least one group field.
+      type: integer
+      minimum: 1
+      x-addon: vanillaanalytics
+    InsertInfo:
+      type: object
+      properties:
+        dateInserted:
           type: string
-      example:
-        name: Page Views
-        description: Contains all of the page view events from the site.
+          format: date-time
+          description: The date the record was inserted.
+          readOnly: true
+        insertUserID:
+          type: integer
+          description: The user that inserted the record.
+          readOnly: true
+        insertIPAddress:
+          type: string
+          format: ipv4
+          description: The IP address the record was inserted from.
+          readOnly: true
       required:
-      - name
-      - description
+      - dateInserted
+      - insertUserID
+      - insertIPAddress
+      x-addon: dashboard
+    AnalyticsIntervalResult:
+      description: Time-series results returned when interval is specified without groupBy.
+      type: object
+      properties:
+        result:
+          description: Array of time-bucketed results.
+          type: array
+          items:
+            type: object
+            properties:
+              timeframe:
+                type: object
+                properties:
+                  start:
+                    description: Start of this time bucket.
+                    type: string
+                    format: date-time
+                  end:
+                    description: End of this time bucket.
+                    type: string
+                    format: date-time
+                required:
+                - start
+                - end
+              value:
+                description: The aggregated value for this time bucket.
+                type: number
+            required:
+            - timeframe
+            - value
+      required:
+      - resultType
+      - result
+      example:
+        resultType: interval
+        result:
+        - timeframe:
+            start: '2025-04-01T04:00:00.000Z'
+            end: '2025-05-01T04:00:00.000Z'
+          value: 359
+        - timeframe:
+            start: '2025-05-01T04:00:00.000Z'
+            end: '2025-06-01T04:00:00.000Z'
+          value: 421
+      x-addon: vanillaanalytics
+    Timeframe:
+      description: Time range for analytics queries.
+      type: object
+      properties:
+        start:
+          description: Start of the time frame.
+          format: date-time
+          type: string
+        end:
+          description: End of the time frame.
+          format: date-time
+          type: string
+      required:
+      - start
+      - end
+      x-addon: vanillaanalytics
+    FilterOperator:
+      type: string
+      default: eq
+      description: The comparison or logical operation for analytics filters.
+      enum:
+      - eq
+      - ne
+      - gt
+      - gte
+      - lt
+      - lte
+      - in
+      - contains
+      - not_contains
+      - exists
+      - and
+      - or
+      minLength: 1
+      x-addon: vanillaanalytics
+    AnalyticsDashboardFragment:
+      description: Basic information about an analytics dashboard.
+      type: object
+      properties:
+        dashboardID:
+          type: integer
+          description: The ID of the dasboard.
+          readOnly: true
+        name:
+          type: string
+          description: The name of the dashboard.
+        description:
+          description: The dashboard's description.
+          type: string
+          minLength: 1
+          default: ''
+        editable:
+          type: boolean
+          description: Whether or not the dashboard can be edited by a user.
+          readOnly: true
+        copyable:
+          type: boolean
+          description: Whether or not the dashboard can be copied by a user.
+          default: 1
       x-addon: vanillaanalytics
     AnalyticsGroupedIntervalResult:
       description: Time-series results with grouping returned when both interval and groupBy are specified.
@@ -690,295 +1011,6 @@ components:
           - category.name: General Discussion
             result: 95
       x-addon: vanillaanalytics
-    FilterOperator:
-      type: string
-      default: eq
-      description: The comparison or logical operation for analytics filters.
-      enum:
-      - eq
-      - ne
-      - gt
-      - gte
-      - lt
-      - lte
-      - in
-      - contains
-      - not_contains
-      - exists
-      - and
-      - or
-      minLength: 1
-      x-addon: vanillaanalytics
-    InsertInfo:
-      type: object
-      properties:
-        dateInserted:
-          type: string
-          format: date-time
-          description: The date the record was inserted.
-          readOnly: true
-        insertUserID:
-          type: integer
-          description: The user that inserted the record.
-          readOnly: true
-        insertIPAddress:
-          type: string
-          format: ipv4
-          description: The IP address the record was inserted from.
-          readOnly: true
-      required:
-      - dateInserted
-      - insertUserID
-      - insertIPAddress
-      x-addon: dashboard
-    AnalyticsDashboard:
-      description: An analytics dashboard.
-      allOf:
-      - $ref: '#/components/schemas/AnalyticsDashboardFragment'
-      - type: object
-        properties:
-          attributes:
-            description: The dashboard definition.
-            type: object
-        required:
-        - attributes
-      - $ref: '#/components/schemas/InsertInfo'
-      - $ref: '#/components/schemas/UpdateInfo'
-      x-addon: vanillaanalytics
-    AnalyticsCatalog:
-      description: Contains meta information about analytics data sources.
-      type: object
-      properties:
-        dataSources:
-          description: All of the data sources that can be queried for analytics.
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/AnalyticsDataSource'
-      required:
-      - dataSources
-      x-addon: vanillaanalytics
-    UpdateInfo:
-      type: object
-      properties:
-        dateUpdated:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: The date the record was updateed.
-          readOnly: true
-        updateUserID:
-          type:
-          - integer
-          - 'null'
-          description: The user that updateed the record.
-          readOnly: true
-        updateIPAddress:
-          type:
-          - string
-          - 'null'
-          format: ipv4
-          description: The IP address the record was updateed from.
-          readOnly: true
-      x-addon: dashboard
-    AnalyticsLimit:
-      description: Maximum number of results to return. Requires at least one group field.
-      type: integer
-      minimum: 1
-      x-addon: vanillaanalytics
-    TargetProperty:
-      description: An event property to perform the analysis on. Required for count_unique, minimum, maximum, median and sum query types.
-      x-addon: vanillaanalytics
-    Leaderboard:
-      properties:
-        count:
-          description: Associated total for this row.
-          type: integer
-        id:
-          description: ID of the record.
-          type: integer
-        position:
-          description: Current leaderboard position.
-          type: integer
-        positionChange:
-          description: Progression status of the record.
-          enum:
-          - Fall
-          - New
-          - Rise
-          - Same
-          minLength: 1
-          type: string
-        previous:
-          description: Previous position of the record
-          type:
-          - integer
-          - 'null'
-        title:
-          description: Title for the row.
-          minLength: 1
-          type:
-          - string
-          - 'null'
-        url:
-          description: Full URL to the record.
-          minLength: 1
-          type: string
-      required:
-      - id
-      - position
-      - positionChange
-      - previous
-      - url
-      - title
-      - count
-      type: object
-      x-addon: vanillaanalytics
-    GroupByArray:
-      description: An array of event properties to group results by. When used with interval, only one group field is allowed.
-      type: array
-      items:
-        type: string
-        minLength: 1
-      x-addon: vanillaanalytics
-    QueryScope:
-      description: Should the query be scoped to the single site or the hub.
-      type: string
-      enum:
-      - site
-      - hub
-      default: site
-      x-addon: vanillaanalytics
-    StandardOrderBy:
-      description: Ordering specification for standard analytics queries.
-      type: object
-      properties:
-        propertyName:
-          description: The property name to order by.
-          minLength: 1
-          type: string
-        direction:
-          $ref: '#/components/schemas/SortDirection'
-      x-addon: vanillaanalytics
-    SortDirection:
-      description: The sort direction for ordering results.
-      type: string
-      enum:
-      - ASC
-      - DESC
-      default: DESC
-      x-addon: vanillaanalytics
-    EventCollection:
-      description: Analytics event collection. Different types of events are stored in different collections.
-      enum:
-      - aiConversation
-      - article
-      - article_modify
-      - article_reaction
-      - attachmentDownload
-      - cmdEscalation
-      - communityEvent
-      - escalation
-      - group
-      - keyword
-      - moderation
-      - page
-      - point
-      - post
-      - postEscalations
-      - post-modify
-      - qna
-      - reaction
-      - registration
-      - report
-      - reports
-      - search
-      - subscriptionChange
-      - tag
-      - userBadge
-      minLength: 1
-      type: string
-      x-addon: vanillaanalytics
-    AnalyticsSingleResult:
-      description: Single numeric result returned when neither grouping nor intervals are specified.
-      type: object
-      properties:
-        resultType:
-          description: The type of result.
-          type: string
-          enum:
-          - single
-          default: single
-        result:
-          description: The single aggregated value.
-          type: number
-      required:
-      - resultType
-      - result
-      example:
-        resultType: single
-        result: 38
-      x-addon: vanillaanalytics
-    LegacyOrderBy:
-      description: Ordering specification for legacy analytics queries.
-      type: object
-      properties:
-        prop:
-          description: The property name to order by.
-          minLength: 1
-          type: string
-        direction:
-          $ref: '#/components/schemas/SortDirection'
-      x-addon: vanillaanalytics
-    AnalyticsDashboardFragment:
-      description: Basic information about an analytics dashboard.
-      type: object
-      properties:
-        dashboardID:
-          type: integer
-          description: The ID of the dasboard.
-          readOnly: true
-        name:
-          type: string
-          description: The name of the dashboard.
-        description:
-          description: The dashboard's description.
-          type: string
-          minLength: 1
-          default: ''
-        editable:
-          type: boolean
-          description: Whether or not the dashboard can be edited by a user.
-          readOnly: true
-        copyable:
-          type: boolean
-          description: Whether or not the dashboard can be copied by a user.
-          default: 1
-      x-addon: vanillaanalytics
-    ExtractionFormat:
-      description: The format to extract the data in.
-      type: string
-      enum:
-      - json
-      - csv
-      default: json
-      x-addon: vanillaanalytics
-    AnalysisType:
-      description: Type of analysis to perform on the data.
-      type: string
-      enum:
-      - average
-      - count
-      - count_unique
-      - minimum
-      - maximum
-      - median
-      - sum
-      - extraction
-      - export
-      minLength: 1
-      example: count
-      x-addon: vanillaanalytics
     KeenQueryFilter:
       description: Filter condition for Keen-compatible analytics queries. Supports nested filters using 'and'/'or' operators with operands array, or field filters with property_name/operator/property_value.
       type: object
@@ -999,31 +1031,21 @@ components:
       required:
       - operator
       x-addon: vanillaanalytics
-    Timeframe:
-      description: Time range for analytics queries.
-      type: object
-      properties:
-        start:
-          description: Start of the time frame.
-          format: date-time
-          type: string
-        end:
-          description: End of the time frame.
-          format: date-time
-          type: string
-      required:
-      - start
-      - end
-      x-addon: vanillaanalytics
-    QueryInterval:
-      description: Time interval for grouping results. If your specified interval and date range produce more than 500 intervals, the interval will be automatically bumped up to the next largest interval.
+    AnalysisType:
+      description: Type of analysis to perform on the data.
       type: string
       enum:
-      - hourly
-      - daily
-      - weekly
-      - monthly
-      - yearly
+      - average
+      - count
+      - count_unique
+      - minimum
+      - maximum
+      - median
+      - sum
+      - extraction
+      - export
+      minLength: 1
+      example: count
       x-addon: vanillaanalytics
     AnalyticsDataSource:
       allOf:
@@ -1043,6 +1065,27 @@ components:
             dateTime.timestamp: 1615398283
             dateTime.year: 2021
       x-addon: vanillaanalytics
+    QueryScope:
+      description: Should the query be scoped to the single site or the hub.
+      type: string
+      enum:
+      - site
+      - hub
+      default: site
+      x-addon: vanillaanalytics
+    BasicError:
+      type: object
+      properties:
+        message:
+          description: Verbose description of the error.
+          type: string
+        status:
+          description: Response status code.
+          type: integer
+      required:
+      - message
+      - status
+      x-addon: dashboard
     StandardQueryFilter:
       description: Filter condition for standard analytics queries. Supports nested filters using 'and'/'or' operators with operands array, or field filters with propertyName/operator/propertyValue.
       type: object
@@ -1063,25 +1106,50 @@ components:
       required:
       - operator
       x-addon: vanillaanalytics
-    LegacyQueryFilter:
-      description: Filter condition for legacy analytics queries. Supports nested filters using 'and'/'or' operators with operands array, or field filters with prop/op/val.
+    StandardOrderBy:
+      description: Ordering specification for standard analytics queries.
       type: object
       properties:
-        op:
-          $ref: '#/components/schemas/FilterOperator'
-        prop:
-          description: The property name. Required for field filters (when op is not 'and'/'or').
+        propertyName:
+          description: The property name to order by.
           minLength: 1
           type: string
-        val:
-          description: The target value for comparison. Required for most operators except 'exists', 'and', and 'or'.
-        operands:
-          description: Array of nested filter conditions. Required when op is 'and' or 'or'.
-          type: array
-          items:
-            $ref: '#/components/schemas/LegacyQueryFilter'
-      required:
-      - op
+        direction:
+          $ref: '#/components/schemas/SortDirection'
+      x-addon: vanillaanalytics
+    ExtractionFields:
+      description: Select specific fields to extract during an extraction query. Wildcard patterns are supported.
+      type: array
+      items:
+        type: string
+        minLength: 1
+      example:
+      - type
+      - urlParsed.*
+      - user.*
+      x-addon: vanillaanalytics
+    AnalyticsExtractJson:
+      description: JSON data returned when extracting JSON data.
+      type: array
+      items:
+        type: object
+      example:
+      - type: page
+        urlParsed:
+          path: /page
+        user:
+          name: John Doe
+      x-addon: vanillaanalytics
+    KeenOrderBy:
+      description: Ordering specification for Keen-compatible analytics queries.
+      type: object
+      properties:
+        property_name:
+          description: The property name to order by.
+          minLength: 1
+          type: string
+        direction:
+          $ref: '#/components/schemas/SortDirection'
       x-addon: vanillaanalytics
     AnalyticsDataSourceProperty:
       description: Represents a column in a data source.
@@ -1108,48 +1176,18 @@ components:
       - name
       - type
       x-addon: vanillaanalytics
-    AnalyticsDashboardSection:
-      description: A section that groups similar analytics dashboards together.
+    AnalyticsCatalog:
+      description: Contains meta information about analytics data sources.
       type: object
       properties:
-        name:
-          type: string
-          description: The name of the section.
-        dashboards:
-          type: array
-          items:
-            $ref: '#/components/schemas/AnalyticsDashboardFragment'
+        dataSources:
+          description: All of the data sources that can be queried for analytics.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AnalyticsDataSource'
       required:
-      - name
-      - dashboards
+      - dataSources
       x-addon: vanillaanalytics
-    AnalyticsExtractCsv:
-      description: CSV data returned when extracting CSV data.
-      type: string
-      format: text/csv
-      example: 'type,urlParsed.path,user.name
-
-        page,/page,John Doe
-
-        page,/page,Jane Doe
-
-        page,/page,Jim Doe
-
-        '
-      x-addon: vanillaanalytics
-    BasicError:
-      type: object
-      properties:
-        message:
-          description: Verbose description of the error.
-          type: string
-        status:
-          description: Response status code.
-          type: integer
-      required:
-      - message
-      - status
-      x-addon: dashboard
     AnalyticsGroupedResult:
       description: Array of grouped results returned when groupBy is specified without interval.
       type: object
@@ -1181,120 +1219,57 @@ components:
         - category.name: General Discussion
           result: 312
       x-addon: vanillaanalytics
-    ExtractionFields:
-      description: Select specific fields to extract during an extraction query. Wildcard patterns are supported.
+    LegacyQueryFilter:
+      description: Filter condition for legacy analytics queries. Supports nested filters using 'and'/'or' operators with operands array, or field filters with prop/op/val.
+      type: object
+      properties:
+        op:
+          $ref: '#/components/schemas/FilterOperator'
+        prop:
+          description: The property name. Required for field filters (when op is not 'and'/'or').
+          minLength: 1
+          type: string
+        val:
+          description: The target value for comparison. Required for most operators except 'exists', 'and', and 'or'.
+        operands:
+          description: Array of nested filter conditions. Required when op is 'and' or 'or'.
+          type: array
+          items:
+            $ref: '#/components/schemas/LegacyQueryFilter'
+      required:
+      - op
+      x-addon: vanillaanalytics
+    GroupByArray:
+      description: An array of event properties to group results by. When used with interval, only one group field is allowed.
       type: array
       items:
         type: string
         minLength: 1
-      example:
-      - type
-      - urlParsed.*
-      - user.*
       x-addon: vanillaanalytics
-    AnalyticsIntervalResult:
-      description: Time-series results returned when interval is specified without groupBy.
+    AnalyticsDashboardSection:
+      description: A section that groups similar analytics dashboards together.
       type: object
       properties:
-        result:
-          description: Array of time-bucketed results.
+        name:
+          type: string
+          description: The name of the section.
+        dashboards:
           type: array
           items:
-            type: object
-            properties:
-              timeframe:
-                type: object
-                properties:
-                  start:
-                    description: Start of this time bucket.
-                    type: string
-                    format: date-time
-                  end:
-                    description: End of this time bucket.
-                    type: string
-                    format: date-time
-                required:
-                - start
-                - end
-              value:
-                description: The aggregated value for this time bucket.
-                type: number
-            required:
-            - timeframe
-            - value
+            $ref: '#/components/schemas/AnalyticsDashboardFragment'
       required:
-      - resultType
-      - result
-      example:
-        resultType: interval
-        result:
-        - timeframe:
-            start: '2025-04-01T04:00:00.000Z'
-            end: '2025-05-01T04:00:00.000Z'
-          value: 359
-        - timeframe:
-            start: '2025-05-01T04:00:00.000Z'
-            end: '2025-06-01T04:00:00.000Z'
-          value: 421
+      - name
+      - dashboards
       x-addon: vanillaanalytics
-    ExportStatus:
+    ExtractionFormat:
+      description: The format to extract the data in.
       type: string
       enum:
-      - pending
-      - created
-      - failed
-      - timeout
-      description: The status of the export.
-      x-addon: dashboard
-    AnalyticsExtractJson:
-      description: JSON data returned when extracting JSON data.
-      type: array
-      items:
-        type: object
-      example:
-      - type: page
-        urlParsed:
-          path: /page
-        user:
-          name: John Doe
-      x-addon: vanillaanalytics
-    KeenOrderBy:
-      description: Ordering specification for Keen-compatible analytics queries.
-      type: object
-      properties:
-        property_name:
-          description: The property name to order by.
-          minLength: 1
-          type: string
-        direction:
-          $ref: '#/components/schemas/SortDirection'
+      - json
+      - csv
+      default: json
       x-addon: vanillaanalytics
   responses:
-    AnalyticsExtractTooLargeResponse:
-      description: Error returned when data is too large to extract. When this error is returned, your timeframe and filters are likely returning too much data. You can either switch to using the "export" analysis type, add filters to your query to reduce the amount of data returned, or use a shorter timeframe.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                description: The error message.
-              code:
-                type: number
-                description: Error code
-                format: int
-            required:
-            - message
-            - status
-      x-addon: vanillaanalytics
-    AnalyticsDashboardResponse:
-      description: Success.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/AnalyticsDashboard'
-      x-addon: vanillaanalytics
     NotFound:
       description: The record does not exist or was not found.
       content:
@@ -1315,6 +1290,61 @@ components:
             status: 404
             message: Page Not Found
       x-addon: dashboard
+    AnalyticsExtractTooLargeResponse:
+      description: Error returned when data is too large to extract. When this error is returned, your timeframe and filters are likely returning too much data. You can either switch to using the "export" analysis type, add filters to your query to reduce the amount of data returned, or use a shorter timeframe.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: The error message.
+              code:
+                type: number
+                description: Error code
+                format: int
+            required:
+            - message
+            - status
+      x-addon: vanillaanalytics
+    AnalyticsQueryResponse:
+      description: 'Success. The response format depends on query parameters:
+
+        - **AnalyticsSingleResult**: When neither grouping nor interval parameters are specified
+
+        - **AnalyticsGroupedResult**: When grouping is specified without interval
+
+        - **AnalyticsIntervalResult**: When interval is specified without grouping
+
+        - **AnalyticsGroupedIntervalResult**: When both grouping and interval are specified
+
+        - **AnalyticsExtractCsv**: When extracting CSV data.
+
+        - **AnalyticsExtractJson**: When extracting JSON data.
+
+        - **Export**: When exporting data. This is the same data returned from the /api/v2/exports/{exportUUID} endpoint.
+
+        '
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/AnalyticsSingleResult'
+            - $ref: '#/components/schemas/AnalyticsGroupedResult'
+            - $ref: '#/components/schemas/AnalyticsIntervalResult'
+            - $ref: '#/components/schemas/AnalyticsGroupedIntervalResult'
+            - $ref: '#/components/schemas/AnalyticsExtractCsv'
+            - $ref: '#/components/schemas/AnalyticsExtractJson'
+            - $ref: '#/components/schemas/Export'
+      x-addon: vanillaanalytics
+    AnalyticsDashboardResponse:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AnalyticsDashboard'
+      x-addon: vanillaanalytics
     PermissionError:
       description: Permission denied.
       content:
@@ -1355,36 +1385,6 @@ components:
             - 2425
             - 1342
       x-addon: dashboard
-    AnalyticsQueryResponse:
-      description: 'Success. The response format depends on query parameters:
-
-        - **AnalyticsSingleResult**: When neither grouping nor interval parameters are specified
-
-        - **AnalyticsGroupedResult**: When grouping is specified without interval
-
-        - **AnalyticsIntervalResult**: When interval is specified without grouping
-
-        - **AnalyticsGroupedIntervalResult**: When both grouping and interval are specified
-
-        - **AnalyticsExtractCsv**: When extracting CSV data.
-
-        - **AnalyticsExtractJson**: When extracting JSON data.
-
-        - **Export**: When exporting data. This is the same data returned from the /api/v2/exports/{exportUUID} endpoint.
-
-        '
-      content:
-        application/json:
-          schema:
-            oneOf:
-            - $ref: '#/components/schemas/AnalyticsSingleResult'
-            - $ref: '#/components/schemas/AnalyticsGroupedResult'
-            - $ref: '#/components/schemas/AnalyticsIntervalResult'
-            - $ref: '#/components/schemas/AnalyticsGroupedIntervalResult'
-            - $ref: '#/components/schemas/AnalyticsExtractCsv'
-            - $ref: '#/components/schemas/AnalyticsExtractJson'
-            - $ref: '#/components/schemas/Export'
-      x-addon: vanillaanalytics
 x-resourceEvents:
   emailTemplates:
     x-feature: Feature.emailTemplates.Enabled

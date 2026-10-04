@@ -63,18 +63,6 @@ paths:
       operationId: postCallsRun
       x-operation-id-source: derived
 components:
-  responses:
-    LongRunnerResponse:
-      description: 'Endpoints that may time out and require the client to
-
-        progress them with the `/api/v2/calls` endpoints may return this.
-
-        '
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/LongRunnerResult'
-      x-addon: dashboard
   schemas:
     LongRunnerProgress:
       description: Progress of the task.
@@ -148,6 +136,18 @@ components:
             '
         progress:
           $ref: '#/components/schemas/LongRunnerProgress'
+      x-addon: dashboard
+  responses:
+    LongRunnerResponse:
+      description: 'Endpoints that may time out and require the client to
+
+        progress them with the `/api/v2/calls` endpoints may return this.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LongRunnerResult'
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

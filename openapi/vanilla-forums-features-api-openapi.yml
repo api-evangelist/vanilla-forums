@@ -113,26 +113,81 @@ paths:
       x-addon: dashboard
 components:
   schemas:
-    PlanFeatureBase:
-      type: object
-      properties:
-        featureID:
-          $ref: '#/components/schemas/PlanFeatureID'
-        type:
-          $ref: '#/components/schemas/PlanFeatureType'
-        configKey:
-          type: string
-          description: Primary configuration key for this feature.
-        isInUse:
-          type: boolean
-          description: Whether the feature is in use on the site. Only present when `expand=usage`.
-        currentCount:
-          type: integer
-          description: Current usage count for limit features. Only present when `expand=usage`.
-      required:
-      - featureID
-      - type
-      - configKey
+    RetentionPlanFeature:
+      allOf:
+      - $ref: '#/components/schemas/PlanFeatureBase'
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - retention
+          isAvailable:
+            type: boolean
+            description: Whether the feature is allowed at the current plan level.
+          retainForTimespan:
+            type: string
+            description: Maximum queryable retention timespan at the current plan level.
+          retainFromDate:
+            type:
+            - string
+            - 'null'
+            format: date-time
+            description: Earliest date allowed in API/UI queries for this feature.
+        required:
+        - isAvailable
+        - retainForTimespan
+      x-addon: dashboard
+    BooleanPlanFeature:
+      allOf:
+      - $ref: '#/components/schemas/PlanFeatureBase'
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - boolean
+          isAvailable:
+            type: boolean
+            description: Whether the feature is allowed at the current plan level.
+        required:
+        - isAvailable
+      x-addon: dashboard
+    LimitPlanFeature:
+      allOf:
+      - $ref: '#/components/schemas/PlanFeatureBase'
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - limit
+          isAvailable:
+            type: boolean
+            description: Whether the feature is allowed at the current plan level. A limit of `0` is not available.
+          limitAvailable:
+            $ref: '#/components/schemas/LimitAvailable'
+        required:
+        - isAvailable
+        - limitAvailable
+      x-addon: dashboard
+    PlanFeatureType:
+      type: string
+      enum:
+      - boolean
+      - limit
+      - retention
+      - enum
+      - usage
+      x-addon: dashboard
+    LimitAvailable:
+      oneOf:
+      - type: integer
+        minimum: 0
+      - type: string
+        enum:
+        - infinity
+      description: Maximum allowed count at the current plan level. The string `infinity` means unlimited.
       x-addon: dashboard
     PlanFeatureID:
       type: string
@@ -158,56 +213,26 @@ components:
       - Webhooks
       - WidgetBuilder
       x-addon: dashboard
-    PlanFeatureType:
-      type: string
-      enum:
-      - boolean
-      - limit
-      - retention
-      - enum
-      - usage
-      x-addon: dashboard
-    LimitPlanFeature:
-      allOf:
-      - $ref: '#/components/schemas/PlanFeatureBase'
-      - type: object
-        properties:
-          type:
-            type: string
-            enum:
-            - limit
-          isAvailable:
-            type: boolean
-            description: Whether the feature is allowed at the current plan level. A limit of `0` is not available.
-          limitAvailable:
-            $ref: '#/components/schemas/LimitAvailable'
-        required:
-        - isAvailable
-        - limitAvailable
-      x-addon: dashboard
-    BooleanPlanFeature:
-      allOf:
-      - $ref: '#/components/schemas/PlanFeatureBase'
-      - type: object
-        properties:
-          type:
-            type: string
-            enum:
-            - boolean
-          isAvailable:
-            type: boolean
-            description: Whether the feature is allowed at the current plan level.
-        required:
-        - isAvailable
-      x-addon: dashboard
-    LimitAvailable:
-      oneOf:
-      - type: integer
-        minimum: 0
-      - type: string
-        enum:
-        - infinity
-      description: Maximum allowed count at the current plan level. The string `infinity` means unlimited.
+    PlanFeatureBase:
+      type: object
+      properties:
+        featureID:
+          $ref: '#/components/schemas/PlanFeatureID'
+        type:
+          $ref: '#/components/schemas/PlanFeatureType'
+        configKey:
+          type: string
+          description: Primary configuration key for this feature.
+        isInUse:
+          type: boolean
+          description: Whether the feature is in use on the site. Only present when `expand=usage`.
+        currentCount:
+          type: integer
+          description: Current usage count for limit features. Only present when `expand=usage`.
+      required:
+      - featureID
+      - type
+      - configKey
       x-addon: dashboard
     PlanFeature:
       oneOf:
@@ -224,31 +249,6 @@ components:
           retention: '#/components/schemas/RetentionPlanFeature'
           enum: '#/components/schemas/EnumPlanFeature'
           usage: '#/components/schemas/UsageFeature'
-      x-addon: dashboard
-    RetentionPlanFeature:
-      allOf:
-      - $ref: '#/components/schemas/PlanFeatureBase'
-      - type: object
-        properties:
-          type:
-            type: string
-            enum:
-            - retention
-          isAvailable:
-            type: boolean
-            description: Whether the feature is allowed at the current plan level.
-          retainForTimespan:
-            type: string
-            description: Maximum queryable retention timespan at the current plan level.
-          retainFromDate:
-            type:
-            - string
-            - 'null'
-            format: date-time
-            description: Earliest date allowed in API/UI queries for this feature.
-        required:
-        - isAvailable
-        - retainForTimespan
       x-addon: dashboard
     UsageFeature:
       allOf:

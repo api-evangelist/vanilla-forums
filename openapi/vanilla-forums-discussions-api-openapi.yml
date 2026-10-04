@@ -1545,50 +1545,104 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    PostMeta:
+    Image:
+      description: An image, pulled from content.
       type: object
-      description: Custom post fields. This is an object keyed by postFieldID.
-      example:
-        my-field: value1
-        my-arrayField:
-        - arrVal1
-        - arrVal2
-      x-addon: vanilla
-    TrackingSlipData:
-      type: object
-      description: 'Represents a scheduled server-side job.
-
-        '
       properties:
-        jobID:
-          description: The ID of a particular job.
+        url:
+          description: The original image URL.
           type: string
-          example: 10232183.longrunnerjob.5fa1a178cfe1b9.07902191
-        jobTrackingID:
-          description: 'A shared ID that can be used to track the status of a job.
-
-            This ID persists even if jobs fail and retry, or spawn child jobs.
-
-            '
+        urlSrcSet:
+          $ref: '#/components/schemas/SrcSet'
+        alt:
+          description: The image's alternative text.
           type: string
-          example: 42adsf424::613fda84bdea32.25565677
-        status:
-          description: The current status of the job.
-          type: string
-          enum:
-          - abandoned
-          - complete
-          - error
-          - failed
-          - intended
-          - invalid
-          - stackError
-          - progress
-          - retry
-          - received
-          - unknown
-          example: received
       x-addon: dashboard
+    PostFragment:
+      properties:
+        discussionID:
+          description: The discussion ID of the post.
+          type: integer
+        commentID:
+          description: The comment ID of the post, if any.
+          type: integer
+        name:
+          description: The title of the post.
+          minLength: 1
+          type: string
+        body:
+          description: The HTML formatted body of the post.
+          type: string
+        url:
+          description: The URL of the post.
+          minLength: 1
+          type: string
+        dateInserted:
+          description: The date of the post.
+          format: date-time
+          type: string
+        insertUser:
+          $ref: '#/components/schemas/UserFragment'
+        insertUserID:
+          description: The author of the post.
+          type: integer
+      required:
+      - name
+      - url
+      - dateInserted
+      - insertUserID
+      type: object
+      x-addon: vanilla
+    TagFragment:
+      description: A tag that can be applied to content.
+      type: object
+      properties:
+        tagID:
+          type: integer
+          description: The ID of the tag.
+          readOnly: true
+        urlcode:
+          type: string
+          description: The URL slug of the tag.
+        name:
+          type:
+          - string
+          - 'null'
+          description: The full name of the tag.
+        description:
+          type: string
+          description: The description of the tag.
+      required:
+      - tagID
+      - urlcode
+      - name
+      x-addon: vanilla
+    PostPremoderation:
+      properties:
+        description:
+          description: Body of the premoderation
+          type: string
+        message:
+          description: General Message of the premoderation
+          type: string
+        reportID:
+          description: Id of the Report of the premoderation
+          type: string
+        premoderatinReasons:
+          items:
+            properties:
+              premoderationType:
+                description: Premoderation Type
+                enum:
+                - premoderatedCategory
+                - premoderatedKeyword
+                - premoderatedRole
+                - premoderatedSpamStopForumSpam
+                - premoderatedSpamAkisment
+                type: string
+            type: object
+          type: array
+      x-addon: vanilla
     StatusFragment:
       type: object
       description: Describes a status currently applied to a discussion. Expandable with `status` and `status.log` expands.
@@ -1641,17 +1695,251 @@ components:
       - recordType
       - state
       x-addon: vanilla
-    Format:
-      description: The format of the body used to convert it to HTML.
+    RangeExpression:
+      description: Specify a range or CSV of values.
       type: string
-      enum:
-      - rich
-      - markdown
-      - text
-      - textex
-      - wysiwyg
-      - bbcode
-      example: markdown
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+      x-addon: dashboard
+    ReportMeta:
+      type: object
+      properties:
+        reportsReasons:
+          type: array
+          description: Report reasons.
+          items:
+            $ref: '#/components/schemas/ReportReasonFragment'
+        reportUserIDs:
+          description: User IDs that have reported this post.
+          type: array
+          items:
+            type: integer
+        reportUsers:
+          description: Users that have reported this post.
+          type: array
+          items:
+            $ref: '#/components/schemas/UserFragment'
+        countReportUsers:
+          description: The number of users that have reported this post.
+          type: number
+        reportGuestUsers:
+          description: Guest reporters, with email and name.
+          type: array
+          items:
+            type: object
+            properties:
+              reporterEmail:
+                type: string
+                description: The guest reporter's email address.
+              reporterName:
+                type: string
+                description: The guest reporter's display name.
+            required:
+            - reporterEmail
+        dateLastReport:
+          description: The date of the last report on the post.
+          type: string
+          format: date-time
+        countReports:
+          type: integer
+          default: 0
+          description: The number of reports on the post.
+      x-addon: vanilla
+    DiscussionPatch:
+      properties:
+        body:
+          description: The body of the discussion.
+          minLength: 1
+          type: string
+        categoryID:
+          description: The category the discussion is in.
+          type: integer
+        closed:
+          description: Whether the discussion is closed or open.
+          type: boolean
+        format:
+          $ref: '#/components/schemas/Format'
+        name:
+          description: The title of the discussion.
+          minLength: 1
+          type: string
+        pinLocation:
+          description: The location for the discussion, if pinned. "category" are pinned to their own category. "recent" are pinned to the recent discussions list, as well as their own category.
+          enum:
+          - category
+          - recent
+          minLength: 1
+          type:
+          - string
+          - 'null'
+        pinned:
+          description: Whether or not the discussion has been pinned.
+          type: boolean
+        sink:
+          description: Whether or not the discussion has been sunk.
+          type: boolean
+        postMeta:
+          $ref: '#/components/schemas/PostMeta'
+        newTagNames:
+          type: array
+          items:
+            type: string
+        tagIDs:
+          type: array
+          items:
+            type: integer
+      type: object
+      x-addon: vanilla
+    ReportReasonFragment:
+      type: object
+      properties:
+        reportReasonID:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        sort:
+          type: integer
+        reportID:
+          type: integer
+        deleted:
+          type: boolean
+      required:
+      - reportReasonID
+      - name
+      - description
+      - sort
+      - deleted
+      x-addon: vanilla
+    PostMeta:
+      type: object
+      description: Custom post fields. This is an object keyed by postFieldID.
+      example:
+        my-field: value1
+        my-arrayField:
+        - arrVal1
+        - arrVal2
+      x-addon: vanilla
+    CategoryFragment:
+      properties:
+        categoryID:
+          description: The ID of the category.
+          type: integer
+        name:
+          description: The name of the category.
+          minLength: 1
+          type: string
+        url:
+          description: Full URL to the category.
+          minLength: 1
+          type: string
+      required:
+      - categoryID
+      - name
+      - url
+      type: object
+      x-addon: vanilla
+    UserFragment:
+      oneOf:
+      - type: object
+        properties:
+          userID:
+            description: The ID of the user.
+            type: integer
+          name:
+            description: The username of the user.
+            minLength: 1
+            type: string
+          url:
+            description: The URL of the user's profile.
+            type: string
+            format: uri
+          photoUrl:
+            description: The URL of the user's avatar picture.
+            type: string
+            format: uri
+          dateLastActive:
+            description: Time the user was last active.
+            format: date-time
+            type:
+            - string
+            - 'null'
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+          label:
+            description: The label of the user as plaintext.
+            type: string
+          labelHtml:
+            description: The label of the user in HTML format.
+            type: string
+          private:
+            description: Whether the user profile is private or not.
+            type: boolean
+        required:
+        - userID
+        - name
+        - photoUrl
+        - dateLastActive
+      - type: object
+        description: A user fragment when only expanding by ssoID.
+        properties:
+          ssoID:
+            description: The unique ID of the user from the source site, if using SSO.
+            type: string
+        required:
+        - ssoID
+      x-addon: dashboard
+    LongRunnerProgress:
+      description: Progress of the task.
+      type: object
+      required:
+      - successIDs
+      - failedIDs
+      - exceptionsByID
+      properties:
+        successIDs:
+          description: 'The IDs of records for which an action has succeeded.
+
+            '
+          example:
+          - 25
+          - 145
+          - 11431
+          - 1313
+          type: array
+          items:
+            type: integer
+        failedIDs:
+          description: 'The IDs of records for which and action has failed.
+
+            '
+          example:
+          - 14424
+          - 1264524
+          type: array
+          items:
+            type: integer
+        exceptionsByID:
+          description: Detailed errors by failedID during the action.
+          example:
+            '14424':
+              message: Discussions of type "redirect" can't be moved.
+              code: 400
+          type: object
+          required:
+          - message
+          - type
+          properties:
+            message:
+              type: string
+            code:
+              type: number
+        countTotalIDs:
+          description: Total count of records that can be progressed.
+          type: integer
       x-addon: dashboard
     DiscussionGetEdit:
       properties:
@@ -1712,186 +2000,6 @@ components:
       - closed
       - pinned
       - pinLocation
-      type: object
-      x-addon: vanilla
-    LongRunnerProgress:
-      description: Progress of the task.
-      type: object
-      required:
-      - successIDs
-      - failedIDs
-      - exceptionsByID
-      properties:
-        successIDs:
-          description: 'The IDs of records for which an action has succeeded.
-
-            '
-          example:
-          - 25
-          - 145
-          - 11431
-          - 1313
-          type: array
-          items:
-            type: integer
-        failedIDs:
-          description: 'The IDs of records for which and action has failed.
-
-            '
-          example:
-          - 14424
-          - 1264524
-          type: array
-          items:
-            type: integer
-        exceptionsByID:
-          description: Detailed errors by failedID during the action.
-          example:
-            '14424':
-              message: Discussions of type "redirect" can't be moved.
-              code: 400
-          type: object
-          required:
-          - message
-          - type
-          properties:
-            message:
-              type: string
-            code:
-              type: number
-        countTotalIDs:
-          description: Total count of records that can be progressed.
-          type: integer
-      x-addon: dashboard
-    PostFragment:
-      properties:
-        discussionID:
-          description: The discussion ID of the post.
-          type: integer
-        commentID:
-          description: The comment ID of the post, if any.
-          type: integer
-        name:
-          description: The title of the post.
-          minLength: 1
-          type: string
-        body:
-          description: The HTML formatted body of the post.
-          type: string
-        url:
-          description: The URL of the post.
-          minLength: 1
-          type: string
-        dateInserted:
-          description: The date of the post.
-          format: date-time
-          type: string
-        insertUser:
-          $ref: '#/components/schemas/UserFragment'
-        insertUserID:
-          description: The author of the post.
-          type: integer
-      required:
-      - name
-      - url
-      - dateInserted
-      - insertUserID
-      type: object
-      x-addon: vanilla
-    UserFragment:
-      oneOf:
-      - type: object
-        properties:
-          userID:
-            description: The ID of the user.
-            type: integer
-          name:
-            description: The username of the user.
-            minLength: 1
-            type: string
-          url:
-            description: The URL of the user's profile.
-            type: string
-            format: uri
-          photoUrl:
-            description: The URL of the user's avatar picture.
-            type: string
-            format: uri
-          dateLastActive:
-            description: Time the user was last active.
-            format: date-time
-            type:
-            - string
-            - 'null'
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-          label:
-            description: The label of the user as plaintext.
-            type: string
-          labelHtml:
-            description: The label of the user in HTML format.
-            type: string
-          private:
-            description: Whether the user profile is private or not.
-            type: boolean
-        required:
-        - userID
-        - name
-        - photoUrl
-        - dateLastActive
-      - type: object
-        description: A user fragment when only expanding by ssoID.
-        properties:
-          ssoID:
-            description: The unique ID of the user from the source site, if using SSO.
-            type: string
-        required:
-        - ssoID
-      x-addon: dashboard
-    DiscussionPatch:
-      properties:
-        body:
-          description: The body of the discussion.
-          minLength: 1
-          type: string
-        categoryID:
-          description: The category the discussion is in.
-          type: integer
-        closed:
-          description: Whether the discussion is closed or open.
-          type: boolean
-        format:
-          $ref: '#/components/schemas/Format'
-        name:
-          description: The title of the discussion.
-          minLength: 1
-          type: string
-        pinLocation:
-          description: The location for the discussion, if pinned. "category" are pinned to their own category. "recent" are pinned to the recent discussions list, as well as their own category.
-          enum:
-          - category
-          - recent
-          minLength: 1
-          type:
-          - string
-          - 'null'
-        pinned:
-          description: Whether or not the discussion has been pinned.
-          type: boolean
-        sink:
-          description: Whether or not the discussion has been sunk.
-          type: boolean
-        postMeta:
-          $ref: '#/components/schemas/PostMeta'
-        newTagNames:
-          type: array
-          items:
-            type: string
-        tagIDs:
-          type: array
-          items:
-            type: integer
       type: object
       x-addon: vanilla
     Discussion:
@@ -2125,139 +2233,6 @@ components:
       - attributes
       type: object
       x-addon: vanilla
-    CategoryFragment:
-      properties:
-        categoryID:
-          description: The ID of the category.
-          type: integer
-        name:
-          description: The name of the category.
-          minLength: 1
-          type: string
-        url:
-          description: Full URL to the category.
-          minLength: 1
-          type: string
-      required:
-      - categoryID
-      - name
-      - url
-      type: object
-      x-addon: vanilla
-    LongRunnerResult:
-      description: 'Endpoints will return this if they may time out and require the client
-
-        to progress the task with additional requests.
-
-        '
-      type: object
-      required:
-      - progress
-      - callbackPayload
-      properties:
-        callbackPayload:
-          description: 'A signed JWT payload to pass to the /api/v2/calls endpoint in order to continue
-
-            progression of the task.
-
-            '
-          type: string
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-
-            '
-        progress:
-          $ref: '#/components/schemas/LongRunnerProgress'
-      x-addon: dashboard
-    TagFragment:
-      description: A tag that can be applied to content.
-      type: object
-      properties:
-        tagID:
-          type: integer
-          description: The ID of the tag.
-          readOnly: true
-        urlcode:
-          type: string
-          description: The URL slug of the tag.
-        name:
-          type:
-          - string
-          - 'null'
-          description: The full name of the tag.
-        description:
-          type: string
-          description: The description of the tag.
-      required:
-      - tagID
-      - urlcode
-      - name
-      x-addon: vanilla
-    ReportMeta:
-      type: object
-      properties:
-        reportsReasons:
-          type: array
-          description: Report reasons.
-          items:
-            $ref: '#/components/schemas/ReportReasonFragment'
-        reportUserIDs:
-          description: User IDs that have reported this post.
-          type: array
-          items:
-            type: integer
-        reportUsers:
-          description: Users that have reported this post.
-          type: array
-          items:
-            $ref: '#/components/schemas/UserFragment'
-        countReportUsers:
-          description: The number of users that have reported this post.
-          type: number
-        reportGuestUsers:
-          description: Guest reporters, with email and name.
-          type: array
-          items:
-            type: object
-            properties:
-              reporterEmail:
-                type: string
-                description: The guest reporter's email address.
-              reporterName:
-                type: string
-                description: The guest reporter's display name.
-            required:
-            - reporterEmail
-        dateLastReport:
-          description: The date of the last report on the post.
-          type: string
-          format: date-time
-        countReports:
-          type: integer
-          default: 0
-          description: The number of reports on the post.
-      x-addon: vanilla
-    ReportReasonFragment:
-      type: object
-      properties:
-        reportReasonID:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        sort:
-          type: integer
-        reportID:
-          type: integer
-        deleted:
-          type: boolean
-      required:
-      - reportReasonID
-      - name
-      - description
-      - sort
-      - deleted
-      x-addon: vanilla
     StatusLog:
       type: object
       properties:
@@ -2291,12 +2266,22 @@ components:
       - recordType
       - recordID
       x-addon: vanilla
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+    SrcSet:
+      description: An image's srcset for various sizes.
+      type: object
+      properties:
+        '10':
+          description: 10px large Image url.
+          type: string
+        '300':
+          description: 300px large Image url.
+          type: string
+        '800':
+          description: 800px large Image url.
+          type: string
+        '1200':
+          description: 1200px large Image url.
+          type: string
       x-addon: dashboard
     DiscussionPermissions:
       type: object
@@ -2311,21 +2296,53 @@ components:
         comments.edit: false
         comments.delete: false
       x-addon: vanilla
-    TagReference:
-      description: A reference to a tag for assignment to other items.
+    TrackingSlipData:
       type: object
+      description: 'Represents a scheduled server-side job.
+
+        '
       properties:
-        tagIDs:
-          type: array
-          items:
-            type: integer
-          description: You can specify the name of the tag.
-        urlcodes:
-          type: array
-          items:
-            type: string
-          description: You can also specify the url code of the tag.
-      x-addon: vanilla
+        jobID:
+          description: The ID of a particular job.
+          type: string
+          example: 10232183.longrunnerjob.5fa1a178cfe1b9.07902191
+        jobTrackingID:
+          description: 'A shared ID that can be used to track the status of a job.
+
+            This ID persists even if jobs fail and retry, or spawn child jobs.
+
+            '
+          type: string
+          example: 42adsf424::613fda84bdea32.25565677
+        status:
+          description: The current status of the job.
+          type: string
+          enum:
+          - abandoned
+          - complete
+          - error
+          - failed
+          - intended
+          - invalid
+          - stackError
+          - progress
+          - retry
+          - received
+          - unknown
+          example: received
+      x-addon: dashboard
+    Format:
+      description: The format of the body used to convert it to HTML.
+      type: string
+      enum:
+      - rich
+      - markdown
+      - text
+      - textex
+      - wysiwyg
+      - bbcode
+      example: markdown
+      x-addon: dashboard
     DiscussionPost:
       properties:
         body:
@@ -2383,94 +2400,46 @@ components:
       - format
       type: object
       x-addon: vanilla
-    Image:
-      description: An image, pulled from content.
+    LongRunnerResult:
+      description: 'Endpoints will return this if they may time out and require the client
+
+        to progress the task with additional requests.
+
+        '
+      type: object
+      required:
+      - progress
+      - callbackPayload
+      properties:
+        callbackPayload:
+          description: 'A signed JWT payload to pass to the /api/v2/calls endpoint in order to continue
+
+            progression of the task.
+
+            '
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+            '
+        progress:
+          $ref: '#/components/schemas/LongRunnerProgress'
+      x-addon: dashboard
+    TagReference:
+      description: A reference to a tag for assignment to other items.
       type: object
       properties:
-        url:
-          description: The original image URL.
-          type: string
-        urlSrcSet:
-          $ref: '#/components/schemas/SrcSet'
-        alt:
-          description: The image's alternative text.
-          type: string
-      x-addon: dashboard
-    SrcSet:
-      description: An image's srcset for various sizes.
-      type: object
-      properties:
-        '10':
-          description: 10px large Image url.
-          type: string
-        '300':
-          description: 300px large Image url.
-          type: string
-        '800':
-          description: 800px large Image url.
-          type: string
-        '1200':
-          description: 1200px large Image url.
-          type: string
-      x-addon: dashboard
-    PostPremoderation:
-      properties:
-        description:
-          description: Body of the premoderation
-          type: string
-        message:
-          description: General Message of the premoderation
-          type: string
-        reportID:
-          description: Id of the Report of the premoderation
-          type: string
-        premoderatinReasons:
-          items:
-            properties:
-              premoderationType:
-                description: Premoderation Type
-                enum:
-                - premoderatedCategory
-                - premoderatedKeyword
-                - premoderatedRole
-                - premoderatedSpamStopForumSpam
-                - premoderatedSpamAkisment
-                type: string
-            type: object
+        tagIDs:
           type: array
+          items:
+            type: integer
+          description: You can specify the name of the tag.
+        urlcodes:
+          type: array
+          items:
+            type: string
+          description: You can also specify the url code of the tag.
       x-addon: vanilla
   parameters:
-    DateInserted:
-      name: dateInserted
-      in: query
-      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
-
-        '
-      schema:
-        format: date-filter
-        type: string
-      x-addon: dashboard
-    Page:
-      name: page
-      in: query
-      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
-
-        '
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
-      x-addon: dashboard
-    DateUpdated:
-      name: dateUpdated
-      in: query
-      description: 'Filter by update date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
-
-        '
-      schema:
-        format: date-filter
-        type: string
-      x-addon: dashboard
     discussionExpand:
       name: expand
       description: 'Expand associated records using one or more valid field names. A value of "all" will expand all expandable fields.
@@ -2520,6 +2489,27 @@ components:
           - warnings
       style: form
       x-addon: vanilla
+    DateInserted:
+      name: dateInserted
+      in: query
+      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
+
+        '
+      schema:
+        format: date-filter
+        type: string
+      x-addon: dashboard
+    Page:
+      name: page
+      in: query
+      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
+
+        '
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      x-addon: dashboard
     DateLastComment:
       name: dateLastComment
       in: query
@@ -2530,6 +2520,16 @@ components:
         format: date-filter
         type: string
       x-addon: vanilla
+    DateUpdated:
+      name: dateUpdated
+      in: query
+      description: 'Filter by update date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
+
+        '
+      schema:
+        format: date-filter
+        type: string
+      x-addon: dashboard
   responses:
     NotFound:
       description: The record does not exist or was not found.
@@ -2550,6 +2550,26 @@ components:
           example:
             status: 404
             message: Page Not Found
+      x-addon: dashboard
+    TrackingSlipResponse:
+      description: 'Endpoints may queue a job to perform a task in the background.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TrackingSlipData'
+      x-addon: dashboard
+    LongRunnerResponse:
+      description: 'Endpoints that may time out and require the client to
+
+        progress them with the `/api/v2/calls` endpoints may return this.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LongRunnerResult'
       x-addon: dashboard
     PermissionError:
       description: Permission denied.
@@ -2590,26 +2610,6 @@ components:
             recordIDs:
             - 2425
             - 1342
-      x-addon: dashboard
-    LongRunnerResponse:
-      description: 'Endpoints that may time out and require the client to
-
-        progress them with the `/api/v2/calls` endpoints may return this.
-
-        '
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/LongRunnerResult'
-      x-addon: dashboard
-    TrackingSlipResponse:
-      description: 'Endpoints may queue a job to perform a task in the background.
-
-        '
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/TrackingSlipData'
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

@@ -1035,6 +1035,58 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    PostFragment:
+      properties:
+        discussionID:
+          description: The discussion ID of the post.
+          type: integer
+        commentID:
+          description: The comment ID of the post, if any.
+          type: integer
+        name:
+          description: The title of the post.
+          minLength: 1
+          type: string
+        body:
+          description: The HTML formatted body of the post.
+          type: string
+        url:
+          description: The URL of the post.
+          minLength: 1
+          type: string
+        dateInserted:
+          description: The date of the post.
+          format: date-time
+          type: string
+        insertUser:
+          $ref: '#/components/schemas/UserFragment'
+        insertUserID:
+          description: The author of the post.
+          type: integer
+      required:
+      - name
+      - url
+      - dateInserted
+      - insertUserID
+      type: object
+      x-addon: vanilla
+    CategoryPreferences:
+      type: object
+      properties:
+        preferences.followed:
+          type: boolean
+        preferences.popup.posts:
+          type: boolean
+        preferences.email.posts:
+          type: boolean
+        preferences.popup.comments:
+          type: boolean
+        preferences.email.comments:
+          type: boolean
+        preferences.email.digest:
+          type: boolean
+          x-feature: Digest
+      x-addon: vanilla
     UserFragment:
       oneOf:
       - type: object
@@ -1086,87 +1138,6 @@ components:
         required:
         - ssoID
       x-addon: dashboard
-    DiscussionPermissions:
-      type: object
-      description: Permissions for the current user related to discussions. Applied when expanded..
-      example:
-        discussions.view: true
-        discussions.add: true
-        discussions.edit: false
-        discussions.delete: false
-        discussions.sink: false
-        comments.add: true
-        comments.edit: false
-        comments.delete: false
-      x-addon: vanilla
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
-      x-addon: dashboard
-    CategoryPost:
-      properties:
-        customPermissions:
-          description: Are custom permissions set for this category?
-          type: boolean
-        displayAs:
-          type: string
-          default: discussions
-          description: The display style of the category.
-          enum:
-          - categories
-          - discussions
-          - flat
-          - heading
-          minLength: 1
-        name:
-          description: The name of the category.
-          minLength: 1
-          type: string
-        parentCategoryID:
-          description: Parent category ID.
-          type:
-          - integer
-          - 'null'
-        urlcode:
-          description: The URL code of the category.
-          minLength: 1
-          type: string
-        featured:
-          description: Category is featured
-          type: boolean
-          default: false
-        ideationType:
-          description: Voting type used for ideation posts.
-          enum:
-          - up
-          - up-down
-          - false
-          x-addon: ideation
-        allowedDiscussionTypes:
-          description: Allowed discussion types in this category.
-          type: array
-          items:
-            type: string
-            example: Discussion
-        allowedPostTypeIDs:
-          description: Allowed post type IDs in this category.
-          type: array
-          items:
-            type: string
-        hasRestrictedPostTypes:
-          description: If the category has restricted post types.
-          type: boolean
-        defaultStatusID:
-          description: The default status ID of the category.
-          type: integer
-      required:
-      - name
-      - urlcode
-      type: object
-      x-addon: vanilla
     CategorySchema:
       properties:
         categoryID:
@@ -1262,6 +1233,13 @@ components:
       - countAllComments
       type: object
       x-addon: vanilla
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+      x-addon: dashboard
     SrcSet:
       description: An image's srcset for various sizes.
       type: object
@@ -1279,56 +1257,78 @@ components:
           description: 1200px large Image url.
           type: string
       x-addon: dashboard
-    CategoryPreferences:
+    DiscussionPermissions:
       type: object
-      properties:
-        preferences.followed:
-          type: boolean
-        preferences.popup.posts:
-          type: boolean
-        preferences.email.posts:
-          type: boolean
-        preferences.popup.comments:
-          type: boolean
-        preferences.email.comments:
-          type: boolean
-        preferences.email.digest:
-          type: boolean
-          x-feature: Digest
+      description: Permissions for the current user related to discussions. Applied when expanded..
+      example:
+        discussions.view: true
+        discussions.add: true
+        discussions.edit: false
+        discussions.delete: false
+        discussions.sink: false
+        comments.add: true
+        comments.edit: false
+        comments.delete: false
       x-addon: vanilla
-    PostFragment:
+    CategoryPost:
       properties:
-        discussionID:
-          description: The discussion ID of the post.
-          type: integer
-        commentID:
-          description: The comment ID of the post, if any.
-          type: integer
+        customPermissions:
+          description: Are custom permissions set for this category?
+          type: boolean
+        displayAs:
+          type: string
+          default: discussions
+          description: The display style of the category.
+          enum:
+          - categories
+          - discussions
+          - flat
+          - heading
+          minLength: 1
         name:
-          description: The title of the post.
+          description: The name of the category.
           minLength: 1
           type: string
-        body:
-          description: The HTML formatted body of the post.
-          type: string
-        url:
-          description: The URL of the post.
+        parentCategoryID:
+          description: Parent category ID.
+          type:
+          - integer
+          - 'null'
+        urlcode:
+          description: The URL code of the category.
           minLength: 1
           type: string
-        dateInserted:
-          description: The date of the post.
-          format: date-time
-          type: string
-        insertUser:
-          $ref: '#/components/schemas/UserFragment'
-        insertUserID:
-          description: The author of the post.
+        featured:
+          description: Category is featured
+          type: boolean
+          default: false
+        ideationType:
+          description: Voting type used for ideation posts.
+          enum:
+          - up
+          - up-down
+          - false
+          x-addon: ideation
+        allowedDiscussionTypes:
+          description: Allowed discussion types in this category.
+          type: array
+          items:
+            type: string
+            example: Discussion
+        allowedPostTypeIDs:
+          description: Allowed post type IDs in this category.
+          type: array
+          items:
+            type: string
+        hasRestrictedPostTypes:
+          description: If the category has restricted post types.
+          type: boolean
+        defaultStatusID:
+          description: The default status ID of the category.
           type: integer
       required:
       - name
-      - url
-      - dateInserted
-      - insertUserID
+      - urlcode
       type: object
       x-addon: vanilla
   requestBodies:

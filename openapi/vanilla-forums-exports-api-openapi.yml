@@ -142,15 +142,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ExportStatus:
-      type: string
-      enum:
-      - pending
-      - created
-      - failed
-      - timeout
-      description: The status of the export.
-      x-addon: dashboard
     Export:
       type: object
       properties:
@@ -235,6 +226,15 @@ components:
       - dateUpdated
       - updateUserID
       - mediaID
+      x-addon: dashboard
+    ExportStatus:
+      type: string
+      enum:
+      - pending
+      - created
+      - failed
+      - timeout
+      description: The status of the export.
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

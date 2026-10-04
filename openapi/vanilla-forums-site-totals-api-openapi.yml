@@ -39,40 +39,7 @@ paths:
       operationId: getSiteTotals
       x-operation-id-source: derived
 components:
-  parameters:
-    SiteTotalsCounts:
-      name: counts
-      description: Choose the site counts you want by choosing one or more valid field names. Choosing "all" will return all available counts.
-      in: query
-      schema:
-        type: array
-        items:
-          type: string
-          enum:
-          - customPage
-          - question
-          - accepted
-          - category
-          - discussion
-          - comment
-          - post
-          - user
-          - all
-      style: form
-      x-addon: dashboard
   schemas:
-    Count:
-      type: object
-      properties:
-        count:
-          type: integer
-        isCalculating:
-          type: boolean
-          description: Whether the value is currently being calculated.
-        isFiltered:
-          type: boolean
-          description: Indicates whether the count value has been filtered by siteSection
-      x-addon: dashboard
     SiteTotalsCountsResponseFields:
       type: object
       properties:
@@ -97,6 +64,39 @@ components:
               $ref: '#/components/schemas/Count'
             user:
               $ref: '#/components/schemas/Count'
+      x-addon: dashboard
+    Count:
+      type: object
+      properties:
+        count:
+          type: integer
+        isCalculating:
+          type: boolean
+          description: Whether the value is currently being calculated.
+        isFiltered:
+          type: boolean
+          description: Indicates whether the count value has been filtered by siteSection
+      x-addon: dashboard
+  parameters:
+    SiteTotalsCounts:
+      name: counts
+      description: Choose the site counts you want by choosing one or more valid field names. Choosing "all" will return all available counts.
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - customPage
+          - question
+          - accepted
+          - category
+          - discussion
+          - comment
+          - post
+          - user
+          - all
+      style: form
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

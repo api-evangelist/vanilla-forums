@@ -1399,8 +1399,29 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ThemeHeaderAsset:
-      description: Custom header HTML.
+    ThemeVariablesAsset:
+      description: A collection of variables intended to be used by theme.
+      properties:
+        type:
+          description: The type of the asset.
+          type: string
+        url:
+          type: string
+          description: Absolute URL of the asset.
+        content-type:
+          description: The content-type of the asset.
+          type: string
+          example: application/json
+        data:
+          type: object
+          description: JSON contents of the asset.
+      required:
+      - url
+      - type
+      type: object
+      x-addon: dashboard
+    ThemeCssAsset:
+      description: CSS for the theme.
       properties:
         type:
           description: The type of the asset.
@@ -1416,12 +1437,20 @@ components:
           type: string
           description: Contents of the asset. May require an expand parameter to retreive.
       required:
-      - url
+      - data
       - type
       type: object
       x-addon: dashboard
-    ThemeFooterAsset:
-      description: Custom footer HTML.
+    ThemeScript:
+      properties:
+        url:
+          type: string
+      required:
+      - url
+      type: object
+      x-addon: dashboard
+    ThemeHeaderAsset:
+      description: Custom header HTML.
       properties:
         type:
           description: The type of the asset.
@@ -1462,27 +1491,6 @@ components:
       - type
       type: object
       x-addon: dashboard
-    ThemeCssAsset:
-      description: CSS for the theme.
-      properties:
-        type:
-          description: The type of the asset.
-          type: string
-        url:
-          type: string
-          description: Absolute URL of the asset.
-        content-type:
-          description: The content-type of the asset.
-          type: string
-          example: application/json
-        data:
-          type: string
-          description: Contents of the asset. May require an expand parameter to retreive.
-      required:
-      - data
-      - type
-      type: object
-      x-addon: dashboard
     ThemeScriptsAsset:
       description: External script files to be included.
       properties:
@@ -1505,16 +1513,8 @@ components:
       - type
       type: object
       x-addon: dashboard
-    ThemeScript:
-      properties:
-        url:
-          type: string
-      required:
-      - url
-      type: object
-      x-addon: dashboard
-    ThemeVariablesAsset:
-      description: A collection of variables intended to be used by theme.
+    ThemeFooterAsset:
+      description: Custom footer HTML.
       properties:
         type:
           description: The type of the asset.
@@ -1527,8 +1527,8 @@ components:
           type: string
           example: application/json
         data:
-          type: object
-          description: JSON contents of the asset.
+          type: string
+          description: Contents of the asset. May require an expand parameter to retreive.
       required:
       - url
       - type

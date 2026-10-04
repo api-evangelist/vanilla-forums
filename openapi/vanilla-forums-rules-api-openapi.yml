@@ -151,14 +151,6 @@ paths:
       operationId: patchRulesById
       x-operation-id-source: derived
 components:
-  requestBodies:
-    RulePost:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RulePost'
-      required: true
-      x-addon: warnings2
   schemas:
     Rule:
       properties:
@@ -196,6 +188,14 @@ components:
       - name
       - description
       type: object
+      x-addon: warnings2
+  requestBodies:
+    RulePost:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RulePost'
+      required: true
       x-addon: warnings2
 x-resourceEvents:
   emailTemplates:

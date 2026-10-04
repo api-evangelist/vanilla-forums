@@ -458,19 +458,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    PollOptionPost:
-      properties:
-        body:
-          description: The name of the option.
-          minLength: 1
-          type: string
-        pollOptionID:
-          description: Poll Option ID to update.
-          type: integer
-      required:
-      - body
-      type: object
-      x-addon: polls
     UserFragment:
       oneOf:
       - type: object
@@ -557,6 +544,19 @@ components:
           type: integer
       required:
       - pollOptionID
+      type: object
+      x-addon: polls
+    PollOptionPost:
+      properties:
+        body:
+          description: The name of the option.
+          minLength: 1
+          type: string
+        pollOptionID:
+          description: Poll Option ID to update.
+          type: integer
+      required:
+      - body
       type: object
       x-addon: polls
 x-resourceEvents:

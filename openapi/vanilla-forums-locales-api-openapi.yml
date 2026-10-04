@@ -100,24 +100,6 @@ paths:
       operationId: patchLocalesByLocale
       x-operation-id-source: derived
 components:
-  parameters:
-    LocaleCodeParameter:
-      name: locale
-      in: path
-      description: The locale code requested.
-      required: true
-      schema:
-        type: string
-        pattern: '[a-zA-Z0-9-]+'
-      x-addon: dashboard
-    TranslatableParameter:
-      name: translatable
-      in: query
-      description: Whether or not to mark this locale as translatable by machine translations.
-      required: false
-      schema:
-        type: boolean
-      x-addon: dashboard
   schemas:
     LocaleConfig:
       allOf:
@@ -147,6 +129,24 @@ components:
             fr: Français
             de: Französisch
       type: object
+      x-addon: dashboard
+  parameters:
+    LocaleCodeParameter:
+      name: locale
+      in: path
+      description: The locale code requested.
+      required: true
+      schema:
+        type: string
+        pattern: '[a-zA-Z0-9-]+'
+      x-addon: dashboard
+    TranslatableParameter:
+      name: translatable
+      in: query
+      description: Whether or not to mark this locale as translatable by machine translations.
+      required: false
+      schema:
+        type: boolean
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

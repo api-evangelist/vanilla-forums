@@ -82,6 +82,76 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Image:
+      description: An image, pulled from content.
+      type: object
+      properties:
+        url:
+          description: The original image URL.
+          type: string
+        urlSrcSet:
+          $ref: '#/components/schemas/SrcSet'
+        alt:
+          description: The image's alternative text.
+          type: string
+      x-addon: dashboard
+    PostFragment:
+      properties:
+        discussionID:
+          description: The discussion ID of the post.
+          type: integer
+        commentID:
+          description: The comment ID of the post, if any.
+          type: integer
+        name:
+          description: The title of the post.
+          minLength: 1
+          type: string
+        body:
+          description: The HTML formatted body of the post.
+          type: string
+        url:
+          description: The URL of the post.
+          minLength: 1
+          type: string
+        dateInserted:
+          description: The date of the post.
+          format: date-time
+          type: string
+        insertUser:
+          $ref: '#/components/schemas/UserFragment'
+        insertUserID:
+          description: The author of the post.
+          type: integer
+      required:
+      - name
+      - url
+      - dateInserted
+      - insertUserID
+      type: object
+      x-addon: vanilla
+    ReportReasonFragment:
+      type: object
+      properties:
+        reportReasonID:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        sort:
+          type: integer
+        reportID:
+          type: integer
+        deleted:
+          type: boolean
+      required:
+      - reportReasonID
+      - name
+      - description
+      - sort
+      - deleted
+      x-addon: vanilla
     PostMeta:
       type: object
       description: Custom post fields. This is an object keyed by postFieldID.
@@ -90,6 +160,25 @@ components:
         my-arrayField:
         - arrVal1
         - arrVal2
+      x-addon: vanilla
+    CategoryFragment:
+      properties:
+        categoryID:
+          description: The ID of the category.
+          type: integer
+        name:
+          description: The name of the category.
+          minLength: 1
+          type: string
+        url:
+          description: Full URL to the category.
+          minLength: 1
+          type: string
+      required:
+      - categoryID
+      - name
+      - url
+      type: object
       x-addon: vanilla
     UserFragment:
       oneOf:
@@ -142,26 +231,125 @@ components:
         required:
         - ssoID
       x-addon: dashboard
-    DiscussionPermissions:
+    Comment:
+      properties:
+        attributes:
+          type:
+          - object
+          - 'null'
+        name:
+          description: Name of the comment (based on the discussion).
+          type: string
+        body:
+          description: The body of the comment.
+          minLength: 1
+          type: string
+        image:
+          $ref: '#/components/schemas/Image'
+        commentID:
+          description: The ID of the comment.
+          type: integer
+        dateInserted:
+          description: When the comment was created.
+          format: date-time
+          type: string
+        groupID:
+          description: GroupID of the comment if applicable.
+          type:
+          - integer
+          - 'null'
+        dateUpdated:
+          description: When the comment was last updated.
+          format: date-time
+          type:
+          - string
+          - 'null'
+        categoryID:
+          description: The category of the comment.
+          type: integer
+        discussionID:
+          description: The ID of the discussion.
+          type: integer
+        isLivePost:
+          description: true if this post is live.
+          type: boolean
+        parentRecordType:
+          description: The type of the parent record.
+          type: string
+          enum:
+          - discussion
+          - escalation
+          - event
+        parentRecordID:
+          description: The ID of the parent record.
+          type: integer
+        parentCommentID:
+          description: The ID of the parent comment.
+          type: integer
+        insertUser:
+          $ref: '#/components/schemas/UserFragment'
+        insertUserID:
+          description: The user that created the comment.
+          type: integer
+        score:
+          description: Total points associated with this post.
+          type:
+          - integer
+          - 'null'
+        scoreChildComments:
+          description: Total points associated with this post and its children.
+          type: integer
+        countChildComments:
+          description: Count of all the nested comments.
+          type: integer
+        depth:
+          description: The depth of the comment. Depths start at 1 and increment for every parent comment.
+          type: integer
+          default: 1
+        url:
+          description: The full URL to the comment.
+          type: string
+        contentLocale:
+          description: The locale from which the comment body was last updated.
+          type: string
+        reportMeta:
+          $ref: '#/components/schemas/ReportMeta'
+        suggestion:
+          type: object
+          properties:
+            format:
+              type: string
+              description: Source of the suggestion
+            sourceIcon:
+              type: string
+              description: Icon of the suggestion source
+            type:
+              type: string
+              description: Type of suggestion discussion/comment
+            id:
+              type: integer
+              description: Index of the suggestion
+            url:
+              type: string
+              description: URL of the suggestion
+            title:
+              type: string
+              description: Title of the suggestion
+          x-feature: Feature.AISuggestions.Enabled
+      required:
+      - commentID
+      - categoryID
+      - name
+      - body
+      - parentRecordID
+      - parentRecordType
+      - dateInserted
+      - dateUpdated
+      - insertUserID
+      - score
+      - attributes
       type: object
-      description: Permissions for the current user related to discussions. Applied when expanded..
-      example:
-        discussions.view: true
-        discussions.add: true
-        discussions.edit: false
-        discussions.delete: false
-        discussions.sink: false
-        comments.add: true
-        comments.edit: false
-        comments.delete: false
       x-addon: vanilla
-    RangeExpression:
-      description: Specify a range or CSV of values.
-      type: string
-      format: range-expression
-      externalDocs:
-        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
-      x-addon: dashboard
     StatusFragment:
       type: object
       description: Describes a status currently applied to a discussion. Expandable with `status` and `status.log` expands.
@@ -213,6 +401,43 @@ components:
       - name
       - recordType
       - state
+      x-addon: vanilla
+    RangeExpression:
+      description: Specify a range or CSV of values.
+      type: string
+      format: range-expression
+      externalDocs:
+        url: https://success.vanillaforums.com/kb/articles/308-range-expressions
+      x-addon: dashboard
+    SrcSet:
+      description: An image's srcset for various sizes.
+      type: object
+      properties:
+        '10':
+          description: 10px large Image url.
+          type: string
+        '300':
+          description: 300px large Image url.
+          type: string
+        '800':
+          description: 800px large Image url.
+          type: string
+        '1200':
+          description: 1200px large Image url.
+          type: string
+      x-addon: dashboard
+    DiscussionPermissions:
+      type: object
+      description: Permissions for the current user related to discussions. Applied when expanded..
+      example:
+        discussions.view: true
+        discussions.add: true
+        discussions.edit: false
+        discussions.delete: false
+        discussions.sink: false
+        comments.add: true
+        comments.edit: false
+        comments.delete: false
       x-addon: vanilla
     ReportMeta:
       type: object
@@ -487,231 +712,6 @@ components:
       - muted
       - unread
       - attributes
-      type: object
-      x-addon: vanilla
-    Image:
-      description: An image, pulled from content.
-      type: object
-      properties:
-        url:
-          description: The original image URL.
-          type: string
-        urlSrcSet:
-          $ref: '#/components/schemas/SrcSet'
-        alt:
-          description: The image's alternative text.
-          type: string
-      x-addon: dashboard
-    CategoryFragment:
-      properties:
-        categoryID:
-          description: The ID of the category.
-          type: integer
-        name:
-          description: The name of the category.
-          minLength: 1
-          type: string
-        url:
-          description: Full URL to the category.
-          minLength: 1
-          type: string
-      required:
-      - categoryID
-      - name
-      - url
-      type: object
-      x-addon: vanilla
-    SrcSet:
-      description: An image's srcset for various sizes.
-      type: object
-      properties:
-        '10':
-          description: 10px large Image url.
-          type: string
-        '300':
-          description: 300px large Image url.
-          type: string
-        '800':
-          description: 800px large Image url.
-          type: string
-        '1200':
-          description: 1200px large Image url.
-          type: string
-      x-addon: dashboard
-    Comment:
-      properties:
-        attributes:
-          type:
-          - object
-          - 'null'
-        name:
-          description: Name of the comment (based on the discussion).
-          type: string
-        body:
-          description: The body of the comment.
-          minLength: 1
-          type: string
-        image:
-          $ref: '#/components/schemas/Image'
-        commentID:
-          description: The ID of the comment.
-          type: integer
-        dateInserted:
-          description: When the comment was created.
-          format: date-time
-          type: string
-        groupID:
-          description: GroupID of the comment if applicable.
-          type:
-          - integer
-          - 'null'
-        dateUpdated:
-          description: When the comment was last updated.
-          format: date-time
-          type:
-          - string
-          - 'null'
-        categoryID:
-          description: The category of the comment.
-          type: integer
-        discussionID:
-          description: The ID of the discussion.
-          type: integer
-        isLivePost:
-          description: true if this post is live.
-          type: boolean
-        parentRecordType:
-          description: The type of the parent record.
-          type: string
-          enum:
-          - discussion
-          - escalation
-          - event
-        parentRecordID:
-          description: The ID of the parent record.
-          type: integer
-        parentCommentID:
-          description: The ID of the parent comment.
-          type: integer
-        insertUser:
-          $ref: '#/components/schemas/UserFragment'
-        insertUserID:
-          description: The user that created the comment.
-          type: integer
-        score:
-          description: Total points associated with this post.
-          type:
-          - integer
-          - 'null'
-        scoreChildComments:
-          description: Total points associated with this post and its children.
-          type: integer
-        countChildComments:
-          description: Count of all the nested comments.
-          type: integer
-        depth:
-          description: The depth of the comment. Depths start at 1 and increment for every parent comment.
-          type: integer
-          default: 1
-        url:
-          description: The full URL to the comment.
-          type: string
-        contentLocale:
-          description: The locale from which the comment body was last updated.
-          type: string
-        reportMeta:
-          $ref: '#/components/schemas/ReportMeta'
-        suggestion:
-          type: object
-          properties:
-            format:
-              type: string
-              description: Source of the suggestion
-            sourceIcon:
-              type: string
-              description: Icon of the suggestion source
-            type:
-              type: string
-              description: Type of suggestion discussion/comment
-            id:
-              type: integer
-              description: Index of the suggestion
-            url:
-              type: string
-              description: URL of the suggestion
-            title:
-              type: string
-              description: Title of the suggestion
-          x-feature: Feature.AISuggestions.Enabled
-      required:
-      - commentID
-      - categoryID
-      - name
-      - body
-      - parentRecordID
-      - parentRecordType
-      - dateInserted
-      - dateUpdated
-      - insertUserID
-      - score
-      - attributes
-      type: object
-      x-addon: vanilla
-    ReportReasonFragment:
-      type: object
-      properties:
-        reportReasonID:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        sort:
-          type: integer
-        reportID:
-          type: integer
-        deleted:
-          type: boolean
-      required:
-      - reportReasonID
-      - name
-      - description
-      - sort
-      - deleted
-      x-addon: vanilla
-    PostFragment:
-      properties:
-        discussionID:
-          description: The discussion ID of the post.
-          type: integer
-        commentID:
-          description: The comment ID of the post, if any.
-          type: integer
-        name:
-          description: The title of the post.
-          minLength: 1
-          type: string
-        body:
-          description: The HTML formatted body of the post.
-          type: string
-        url:
-          description: The URL of the post.
-          minLength: 1
-          type: string
-        dateInserted:
-          description: The date of the post.
-          format: date-time
-          type: string
-        insertUser:
-          $ref: '#/components/schemas/UserFragment'
-        insertUserID:
-          description: The author of the post.
-          type: integer
-      required:
-      - name
-      - url
-      - dateInserted
-      - insertUserID
       type: object
       x-addon: vanilla
 x-resourceEvents:

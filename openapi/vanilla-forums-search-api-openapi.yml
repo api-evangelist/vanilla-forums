@@ -333,6 +333,43 @@ paths:
       operationId: getSearch
       x-operation-id-source: derived
 components:
+  parameters:
+    DateInserted:
+      name: dateInserted
+      in: query
+      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
+
+        '
+      schema:
+        format: date-filter
+        type: string
+      x-addon: dashboard
+    PostMetaSearchFilters:
+      name: postMeta
+      description: Post meta values to filter posts
+      in: query
+      style: form
+      schema:
+        type: object
+        properties:
+          internal-data:
+            type: string
+          private-data:
+            type: string
+          public-data:
+            type: string
+      x-addon: dashboard
+    Page:
+      name: page
+      in: query
+      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
+
+        '
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      x-addon: dashboard
   schemas:
     UserFragment:
       oneOf:
@@ -491,43 +528,6 @@ components:
       - updateUserID
       - dateUpdated
       type: object
-      x-addon: dashboard
-  parameters:
-    PostMetaSearchFilters:
-      name: postMeta
-      description: Post meta values to filter posts
-      in: query
-      style: form
-      schema:
-        type: object
-        properties:
-          internal-data:
-            type: string
-          private-data:
-            type: string
-          public-data:
-            type: string
-      x-addon: dashboard
-    DateInserted:
-      name: dateInserted
-      in: query
-      description: 'Filter by insert date. See [date filters](https://docs.vanillaforums.com/help/apiv2/date-filters/).
-
-        '
-      schema:
-        format: date-filter
-        type: string
-      x-addon: dashboard
-    Page:
-      name: page
-      in: query
-      description: 'Page number. See [Pagination](https://docs.vanillaforums.com/apiv2/#pagination).
-
-        '
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

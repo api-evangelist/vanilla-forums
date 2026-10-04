@@ -136,6 +136,13 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    EmailFormat:
+      description: The format the email should be in.
+      type: string
+      enum:
+      - html
+      - text
+      x-addon: dashboard
     TemplateStyles:
       description: Configurable style properties on an email template
       type: object
@@ -156,13 +163,6 @@ components:
     Footer:
       description: A Rich2 formatted JSON body to use for a footer contents.
       type: string
-      x-addon: dashboard
-    EmailFormat:
-      description: The format the email should be in.
-      type: string
-      enum:
-      - html
-      - text
       x-addon: dashboard
 x-resourceEvents:
   emailTemplates:

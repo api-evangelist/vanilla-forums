@@ -367,6 +367,18 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Format:
+      description: The format of the body used to convert it to HTML.
+      type: string
+      enum:
+      - rich
+      - markdown
+      - text
+      - textex
+      - wysiwyg
+      - bbcode
+      example: markdown
+      x-addon: dashboard
     ConversationParticipants:
       description: List of participants.
       items:
@@ -387,6 +399,22 @@ components:
         - status
         type: object
       type: array
+      x-addon: conversations
+    ConversationPost:
+      properties:
+        participantUserIDs:
+          description: List of userID of the participants.
+          items:
+            type: integer
+          type: array
+        initialBody:
+          description: Initial conversation message body.
+          type: string
+        initialFormat:
+          $ref: '#/components/schemas/Format'
+      required:
+      - participantUserIDs
+      type: object
       x-addon: conversations
     UserFragment:
       oneOf:
@@ -439,20 +467,21 @@ components:
         required:
         - ssoID
       x-addon: dashboard
-    ConversationPost:
+    MessagePost:
       properties:
-        participantUserIDs:
-          description: List of userID of the participants.
-          items:
-            type: integer
-          type: array
-        initialBody:
-          description: Initial conversation message body.
+        body:
+          description: The body of the message.
+          maxLength: 2000
+          minLength: 1
           type: string
-        initialFormat:
+        conversationID:
+          description: The ID of the conversation.
+          type: integer
+        format:
           $ref: '#/components/schemas/Format'
       required:
-      - participantUserIDs
+      - conversationID
+      - body
       type: object
       x-addon: conversations
     Message:
@@ -485,18 +514,6 @@ components:
       - dateInserted
       type: object
       x-addon: conversations
-    Format:
-      description: The format of the body used to convert it to HTML.
-      type: string
-      enum:
-      - rich
-      - markdown
-      - text
-      - textex
-      - wysiwyg
-      - bbcode
-      example: markdown
-      x-addon: dashboard
     Conversation:
       properties:
         body:
@@ -562,23 +579,6 @@ components:
       - insertUserID
       - countParticipants
       - countMessages
-      type: object
-      x-addon: conversations
-    MessagePost:
-      properties:
-        body:
-          description: The body of the message.
-          maxLength: 2000
-          minLength: 1
-          type: string
-        conversationID:
-          description: The ID of the conversation.
-          type: integer
-        format:
-          $ref: '#/components/schemas/Format'
-      required:
-      - conversationID
-      - body
       type: object
       x-addon: conversations
   requestBodies:

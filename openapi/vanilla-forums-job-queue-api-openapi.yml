@@ -57,18 +57,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    JobFeedbackResponse:
-      type: object
-      properties:
-        jobs:
-          type: array
-          items:
-            $ref: '#/components/schemas/JobFeedbackSchema'
-        failedIDs:
-          type: array
-          items:
-            type: string
-      x-addon: vanilla-queue
     JobFeedbackSchema:
       type: object
       properties:
@@ -98,6 +86,18 @@ components:
           type: string
         dateCompleted:
           type: string
+      x-addon: vanilla-queue
+    JobFeedbackResponse:
+      type: object
+      properties:
+        jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobFeedbackSchema'
+        failedIDs:
+          type: array
+          items:
+            type: string
       x-addon: vanilla-queue
 x-resourceEvents:
   emailTemplates:

@@ -758,8 +758,6 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
-  - Addons
-  tags_raw:
   - Add Ons
   properties:
   - type: OpenAPI
@@ -772,8 +770,6 @@ apis:
   humanURL: https://success.vanillaforums.com/kb/articles/1842-api-v2-endpoints
   baseURL: https://open.vanillaforums.com/api/v2
   tags:
-  - DataSource
-  tags_raw:
   - Data Source
   properties:
   - type: OpenAPI

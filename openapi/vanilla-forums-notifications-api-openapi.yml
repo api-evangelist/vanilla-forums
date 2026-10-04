@@ -182,6 +182,25 @@ components:
           enum:
           - true
       x-addon: dashboard
+    NotificationDiscussionFragment:
+      description: An expanded discussion fragment for notifications.
+      type: object
+      properties:
+        discussionID:
+          description: The ID of the discussion.
+          type: integer
+        name:
+          description: The title of the discussion.
+          type: string
+        url:
+          description: The URL to the discussion.
+          type: string
+        categoryID:
+          description: An avatar or thumbnail associated with the discussion.
+          type:
+          - string
+          - 'null'
+      x-addon: dashboard
     NotificationSchema:
       properties:
         body:
@@ -257,25 +276,6 @@ components:
       - dateUpdated
       - read
       type: object
-      x-addon: dashboard
-    NotificationDiscussionFragment:
-      description: An expanded discussion fragment for notifications.
-      type: object
-      properties:
-        discussionID:
-          description: The ID of the discussion.
-          type: integer
-        name:
-          description: The title of the discussion.
-          type: string
-        url:
-          description: The URL to the discussion.
-          type: string
-        categoryID:
-          description: An avatar or thumbnail associated with the discussion.
-          type:
-          - string
-          - 'null'
       x-addon: dashboard
   parameters:
     Page:
